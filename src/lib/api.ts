@@ -4,7 +4,7 @@
  * apenas usuários autenticados enxergam catálogo e capítulos.
  */
 import { supabase } from "@/integrations/supabase/client";
-import type { Chapter, Genre, Manga } from "@/lib/types";
+import type { Chapter, Genre, Manga, MangaStatus, MangaType } from "@/lib/types";
 
 const MANGA_SELECT = `
   id, slug, title, alt_title, synopsis, author, artist, cover_url, banner_url,
