@@ -39,8 +39,8 @@ export async function fetchCatalog(filters: CatalogFilters = {}): Promise<Manga[
   let query = supabase.from("manga").select(MANGA_SELECT);
 
   if (filters.search) query = query.ilike("title", `%${filters.search}%`);
-  if (filters.status) query = query.eq("status", filters.status);
-  if (filters.type) query = query.eq("type", filters.type);
+  if (filters.status) query = query.eq("status", filters.status as MangaStatus);
+  if (filters.type) query = query.eq("type", filters.type as MangaType);
 
   if (filters.sort === "popular") query = query.order("views", { ascending: false });
   else if (filters.sort === "alpha") query = query.order("title", { ascending: true });
