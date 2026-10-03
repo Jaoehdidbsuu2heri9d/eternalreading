@@ -66,7 +66,7 @@ function ProfilePage() {
         {(favs.data ?? []).length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum favorito ainda.</p>
         ) : (
-          <MangaGrid mangas={favs.data ?? []} />
+          <MangaGrid items={favs.data ?? []} />
         )}
       </div>
     </div>
