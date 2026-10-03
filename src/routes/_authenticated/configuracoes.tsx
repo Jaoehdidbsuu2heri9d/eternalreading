@@ -58,7 +58,7 @@ function SettingsPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
-      <PageHeader title="Configurações" subtitle={profile ? `@${profile.username}` : undefined} />
+      <PageHeader title="Configurações" subtitle={profile ? `@${profile.username}` : ""} />
       <form onSubmit={save} className="surface-panel space-y-4 rounded-2xl p-6">
         <label className="block space-y-1 text-sm"><span>Nome de exibição</span><input className={field} value={form.display_name} onChange={(e) => setForm({ ...form, display_name: e.target.value })} /></label>
         <label className="block space-y-1 text-sm"><span>Link da foto de perfil</span><input className={field} value={form.avatar_url} onChange={(e) => setForm({ ...form, avatar_url: e.target.value })} /></label>
