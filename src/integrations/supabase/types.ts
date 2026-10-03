@@ -360,6 +360,39 @@ export type Database = {
           },
         ]
       }
+      scan_requests: {
+        Row: {
+          community_url: string | null
+          contact: string
+          created_at: string
+          id: string
+          message: string
+          scan_name: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          community_url?: string | null
+          contact: string
+          created_at?: string
+          id?: string
+          message: string
+          scan_name: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          community_url?: string | null
+          contact?: string
+          created_at?: string
+          id?: string
+          message?: string
+          scan_name?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       scans: {
         Row: {
           approved: boolean
