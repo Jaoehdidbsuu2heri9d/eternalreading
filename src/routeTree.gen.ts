@@ -19,6 +19,9 @@ import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedInicioRouteImport } from './routes/_authenticated/inicio'
+import { Route as AuthenticatedObraSlugRouteImport } from './routes/_authenticated/obra.$slug'
+import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
+import { Route as AuthenticatedLerObraCapituloRouteImport } from './routes/_authenticated/ler.$obra.$capitulo'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -70,6 +73,23 @@ const AuthenticatedInicioRoute = AuthenticatedInicioRouteImport.update({
   path: '/inicio',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedObraSlugRoute = AuthenticatedObraSlugRouteImport.update({
+  id: '/obra/$slug',
+  path: '/obra/$slug',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPerfilUsernameRoute =
+  AuthenticatedPerfilUsernameRouteImport.update({
+    id: '/perfil/$username',
+    path: '/perfil/$username',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedLerObraCapituloRoute =
+  AuthenticatedLerObraCapituloRouteImport.update({
+    id: '/ler/$obra/$capitulo',
+    path: '/ler/$obra/$capitulo',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -81,6 +101,9 @@ export interface FileRoutesByFullPath {
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
+  '/obra/$slug': typeof AuthenticatedObraSlugRoute
+  '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -92,6 +115,9 @@ export interface FileRoutesByTo {
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
+  '/obra/$slug': typeof AuthenticatedObraSlugRoute
+  '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -105,6 +131,9 @@ export interface FileRoutesById {
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/inicio': typeof AuthenticatedInicioRoute
+  '/_authenticated/obra/$slug': typeof AuthenticatedObraSlugRoute
+  '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/_authenticated/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -118,6 +147,9 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/historico'
     | '/inicio'
+    | '/obra/$slug'
+    | '/perfil/$username'
+    | '/ler/$obra/$capitulo'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -129,6 +161,9 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/historico'
     | '/inicio'
+    | '/obra/$slug'
+    | '/perfil/$username'
+    | '/ler/$obra/$capitulo'
   id:
     | '__root__'
     | '/'
@@ -141,6 +176,9 @@ export interface FileRouteTypes {
     | '/_authenticated/favoritos'
     | '/_authenticated/historico'
     | '/_authenticated/inicio'
+    | '/_authenticated/obra/$slug'
+    | '/_authenticated/perfil/$username'
+    | '/_authenticated/ler/$obra/$capitulo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -223,6 +261,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInicioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/obra/$slug': {
+      id: '/_authenticated/obra/$slug'
+      path: '/obra/$slug'
+      fullPath: '/obra/$slug'
+      preLoaderRoute: typeof AuthenticatedObraSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/perfil/$username': {
+      id: '/_authenticated/perfil/$username'
+      path: '/perfil/$username'
+      fullPath: '/perfil/$username'
+      preLoaderRoute: typeof AuthenticatedPerfilUsernameRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/ler/$obra/$capitulo': {
+      id: '/_authenticated/ler/$obra/$capitulo'
+      path: '/ler/$obra/$capitulo'
+      fullPath: '/ler/$obra/$capitulo'
+      preLoaderRoute: typeof AuthenticatedLerObraCapituloRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -232,6 +291,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedInicioRoute: typeof AuthenticatedInicioRoute
+  AuthenticatedObraSlugRoute: typeof AuthenticatedObraSlugRoute
+  AuthenticatedPerfilUsernameRoute: typeof AuthenticatedPerfilUsernameRoute
+  AuthenticatedLerObraCapituloRoute: typeof AuthenticatedLerObraCapituloRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -240,6 +302,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedInicioRoute: AuthenticatedInicioRoute,
+  AuthenticatedObraSlugRoute: AuthenticatedObraSlugRoute,
+  AuthenticatedPerfilUsernameRoute: AuthenticatedPerfilUsernameRoute,
+  AuthenticatedLerObraCapituloRoute: AuthenticatedLerObraCapituloRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
