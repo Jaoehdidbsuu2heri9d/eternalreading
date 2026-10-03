@@ -5,6 +5,7 @@ import {
   createRootRouteWithContext,
   useRouter,
   HeadContent,
+  type ErrorComponentProps,
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
@@ -34,7 +35,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -77,14 +78,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Eternal — Leitura e comunidade de manhwas" },
+      { name: "description", content: "Comunidade fechada para ler manhwas de scans parceiras." },
+            { property: "og:title", content: "Eternal" },
+      { property: "og:description", content: "Comunidade fechada para ler manhwas." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
@@ -102,7 +101,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR" className="dark">
       <head>
         <HeadContent />
       </head>
