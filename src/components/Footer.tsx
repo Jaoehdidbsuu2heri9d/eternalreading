@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
 
 const columns = [
@@ -35,6 +36,11 @@ export function Footer() {
         ))}
         <div>
           <h4 className="mb-3 text-sm font-semibold text-foreground">Eternal</h4>
+          <ul className="mb-3 space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/scans" className="hover:text-foreground">Scans parceiras</Link></li>
+            <li><Link to="/seja-parceiro" className="hover:text-foreground">Seja parceiro</Link></li>
+            <li><Link to="/configuracoes" className="hover:text-foreground">Configurações</Link></li>
+          </ul>
           <p className="text-sm text-muted-foreground">
             Planos Eternal e Eternal Sunshine em breve, com personalizações exclusivas.
           </p>

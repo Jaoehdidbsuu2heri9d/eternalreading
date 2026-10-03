@@ -15,12 +15,17 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as ConviteRouteImport } from './routes/convite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedAtualizacoesRouteImport } from './routes/_authenticated/atualizacoes'
+import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticated/explorar'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedInicioRouteImport } from './routes/_authenticated/inicio'
+import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
+import { Route as AuthenticatedScansRouteImport } from './routes/_authenticated/scans'
+import { Route as AuthenticatedSejaParceiroRouteImport } from './routes/_authenticated/seja-parceiro'
 import { Route as AuthenticatedObraSlugRouteImport } from './routes/_authenticated/obra.$slug'
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
+import { Route as AuthenticatedScanSlugRouteImport } from './routes/_authenticated/scan.$slug'
 import { Route as AuthenticatedLerObraCapituloRouteImport } from './routes/_authenticated/ler.$obra.$capitulo'
 
 const IndexRoute = IndexRouteImport.update({
@@ -53,6 +58,12 @@ const AuthenticatedAtualizacoesRoute =
     path: '/atualizacoes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedConfiguracoesRoute =
+  AuthenticatedConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedExplorarRoute = AuthenticatedExplorarRouteImport.update({
   id: '/explorar',
   path: '/explorar',
@@ -73,6 +84,22 @@ const AuthenticatedInicioRoute = AuthenticatedInicioRouteImport.update({
   path: '/inicio',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
+  id: '/me',
+  path: '/me',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedScansRoute = AuthenticatedScansRouteImport.update({
+  id: '/scans',
+  path: '/scans',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSejaParceiroRoute =
+  AuthenticatedSejaParceiroRouteImport.update({
+    id: '/seja-parceiro',
+    path: '/seja-parceiro',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedObraSlugRoute = AuthenticatedObraSlugRouteImport.update({
   id: '/obra/$slug',
   path: '/obra/$slug',
@@ -84,6 +111,11 @@ const AuthenticatedPerfilUsernameRoute =
     path: '/perfil/$username',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedScanSlugRoute = AuthenticatedScanSlugRouteImport.update({
+  id: '/scan/$slug',
+  path: '/scan/$slug',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLerObraCapituloRoute =
   AuthenticatedLerObraCapituloRouteImport.update({
     id: '/ler/$obra/$capitulo',
@@ -97,12 +129,17 @@ export interface FileRoutesByFullPath {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/explorar': typeof AuthenticatedExplorarRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
+  '/me': typeof AuthenticatedMeRoute
+  '/scans': typeof AuthenticatedScansRoute
+  '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/scan/$slug': typeof AuthenticatedScanSlugRoute
   '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
 }
 export interface FileRoutesByTo {
@@ -111,12 +148,17 @@ export interface FileRoutesByTo {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
+  '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/explorar': typeof AuthenticatedExplorarRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
+  '/me': typeof AuthenticatedMeRoute
+  '/scans': typeof AuthenticatedScansRoute
+  '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/scan/$slug': typeof AuthenticatedScanSlugRoute
   '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
 }
 export interface FileRoutesById {
@@ -127,12 +169,17 @@ export interface FileRoutesById {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/_authenticated/atualizacoes': typeof AuthenticatedAtualizacoesRoute
+  '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/explorar': typeof AuthenticatedExplorarRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/inicio': typeof AuthenticatedInicioRoute
+  '/_authenticated/me': typeof AuthenticatedMeRoute
+  '/_authenticated/scans': typeof AuthenticatedScansRoute
+  '/_authenticated/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/_authenticated/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/_authenticated/scan/$slug': typeof AuthenticatedScanSlugRoute
   '/_authenticated/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
 }
 export interface FileRouteTypes {
@@ -143,12 +190,17 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/atualizacoes'
+    | '/configuracoes'
     | '/explorar'
     | '/favoritos'
     | '/historico'
     | '/inicio'
+    | '/me'
+    | '/scans'
+    | '/seja-parceiro'
     | '/obra/$slug'
     | '/perfil/$username'
+    | '/scan/$slug'
     | '/ler/$obra/$capitulo'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -157,12 +209,17 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/atualizacoes'
+    | '/configuracoes'
     | '/explorar'
     | '/favoritos'
     | '/historico'
     | '/inicio'
+    | '/me'
+    | '/scans'
+    | '/seja-parceiro'
     | '/obra/$slug'
     | '/perfil/$username'
+    | '/scan/$slug'
     | '/ler/$obra/$capitulo'
   id:
     | '__root__'
@@ -172,12 +229,17 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/_authenticated/atualizacoes'
+    | '/_authenticated/configuracoes'
     | '/_authenticated/explorar'
     | '/_authenticated/favoritos'
     | '/_authenticated/historico'
     | '/_authenticated/inicio'
+    | '/_authenticated/me'
+    | '/_authenticated/scans'
+    | '/_authenticated/seja-parceiro'
     | '/_authenticated/obra/$slug'
     | '/_authenticated/perfil/$username'
+    | '/_authenticated/scan/$slug'
     | '/_authenticated/ler/$obra/$capitulo'
   fileRoutesById: FileRoutesById
 }
@@ -233,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAtualizacoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/configuracoes': {
+      id: '/_authenticated/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/configuracoes'
+      preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/explorar': {
       id: '/_authenticated/explorar'
       path: '/explorar'
@@ -261,6 +330,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInicioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/me': {
+      id: '/_authenticated/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof AuthenticatedMeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/scans': {
+      id: '/_authenticated/scans'
+      path: '/scans'
+      fullPath: '/scans'
+      preLoaderRoute: typeof AuthenticatedScansRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/seja-parceiro': {
+      id: '/_authenticated/seja-parceiro'
+      path: '/seja-parceiro'
+      fullPath: '/seja-parceiro'
+      preLoaderRoute: typeof AuthenticatedSejaParceiroRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/obra/$slug': {
       id: '/_authenticated/obra/$slug'
       path: '/obra/$slug'
@@ -275,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPerfilUsernameRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/scan/$slug': {
+      id: '/_authenticated/scan/$slug'
+      path: '/scan/$slug'
+      fullPath: '/scan/$slug'
+      preLoaderRoute: typeof AuthenticatedScanSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/ler/$obra/$capitulo': {
       id: '/_authenticated/ler/$obra/$capitulo'
       path: '/ler/$obra/$capitulo'
@@ -287,23 +384,33 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAtualizacoesRoute: typeof AuthenticatedAtualizacoesRoute
+  AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedExplorarRoute: typeof AuthenticatedExplorarRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedInicioRoute: typeof AuthenticatedInicioRoute
+  AuthenticatedMeRoute: typeof AuthenticatedMeRoute
+  AuthenticatedScansRoute: typeof AuthenticatedScansRoute
+  AuthenticatedSejaParceiroRoute: typeof AuthenticatedSejaParceiroRoute
   AuthenticatedObraSlugRoute: typeof AuthenticatedObraSlugRoute
   AuthenticatedPerfilUsernameRoute: typeof AuthenticatedPerfilUsernameRoute
+  AuthenticatedScanSlugRoute: typeof AuthenticatedScanSlugRoute
   AuthenticatedLerObraCapituloRoute: typeof AuthenticatedLerObraCapituloRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAtualizacoesRoute: AuthenticatedAtualizacoesRoute,
+  AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedExplorarRoute: AuthenticatedExplorarRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedInicioRoute: AuthenticatedInicioRoute,
+  AuthenticatedMeRoute: AuthenticatedMeRoute,
+  AuthenticatedScansRoute: AuthenticatedScansRoute,
+  AuthenticatedSejaParceiroRoute: AuthenticatedSejaParceiroRoute,
   AuthenticatedObraSlugRoute: AuthenticatedObraSlugRoute,
   AuthenticatedPerfilUsernameRoute: AuthenticatedPerfilUsernameRoute,
+  AuthenticatedScanSlugRoute: AuthenticatedScanSlugRoute,
   AuthenticatedLerObraCapituloRoute: AuthenticatedLerObraCapituloRoute,
 }
 

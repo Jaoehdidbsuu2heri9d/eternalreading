@@ -15,6 +15,7 @@ const links = [
   { to: "/atualizacoes", label: "Atualizações" },
   { to: "/favoritos", label: "Favoritos" },
   { to: "/historico", label: "Histórico" },
+  { to: "/scans", label: "Scans" },
 ] as const;
 
 /** Barra de navegação superior (desktop e tablet). */
