@@ -38,7 +38,7 @@ export function useVisibleAnim<T extends HTMLElement>() {
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { rootMargin: "100px" });
+    const io = new IntersectionObserver((entries) => setVisible(!!entries[0]?.isIntersecting), { rootMargin: "100px" });
     io.observe(el);
     return () => io.disconnect();
   }, []);
