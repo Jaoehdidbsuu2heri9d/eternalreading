@@ -5,6 +5,7 @@ import { Lock } from "lucide-react";
 
 import { Button } from "@/components/common/EButton";
 import { Badge } from "@/components/common/EBadge";
+import { GifBannerManager } from "@/components/GifBannerManager";
 import { PageHeader } from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useSession } from "@/hooks/useAuth";
@@ -69,6 +70,7 @@ function CustomizePage() {
     <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
       <PageHeader title="Personalizar" subtitle="Equipe itens para exibir no seu perfil." />
       {err && <p role="alert" className="mb-4 text-sm text-destructive">{err}</p>}
+      {profile && <GifBannerManager profile={profile} />}
       {groups.map(([kind, list]) => (
         <section key={kind} className="mb-8">
           <h2 className="mb-3 text-lg font-semibold">{KIND_LABEL[kind] ?? kind}</h2>
@@ -90,6 +92,9 @@ function CustomizePage() {
                       <Badge tone={c.rarity === "legendary" ? "eternal" : c.rarity === "common" ? "muted" : "primary"}>{RARITY_LABEL[c.rarity]}</Badge>
                     </div>
                     <p className="text-sm text-muted-foreground">{c.description}</p>
+                    <p className="text-xs font-medium">
+                      {on ? <span className="text-success">Equipado</span> : locked ? <span className="text-muted-foreground">Bloqueado</span> : <span className="text-primary">Desbloqueado</span>}
+                    </p>
                     {locked ? (
                       <p className="flex items-center gap-1 text-xs text-muted-foreground">
                         <Lock className="h-3.5 w-3.5" aria-hidden />
