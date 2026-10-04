@@ -117,10 +117,12 @@ function AdminPage() {
   });
 
   const s = stats.data;
+  const { user } = useSession();
+  const { isOwner } = useRoles(user?.id);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      <PageHeader title="Administração" subtitle="Visão geral da plataforma." />
+      <PageHeader title="Administração" subtitle={isOwner ? "Você é o Dono da plataforma." : "Visão geral da plataforma."} />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[["Membros", s?.users], ["Obras", s?.manga], ["Capítulos", s?.chapters], ["Scans", s?.scans]].map(([label, v]) => (
