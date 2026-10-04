@@ -115,7 +115,7 @@ function ChapterForm({ mangaId, chapter, defaultScan, scans, nextNumber, onDone 
   const [title, setTitle] = useState(chapter?.title ?? "");
   const [volume, setVolume] = useState(chapter?.volume ?? "");
   const [scan, setScan] = useState(chapter?.scan_id ?? defaultScan ?? "");
-  const [date, setDate] = useState((chapter?.published_at ?? new Date().toISOString()).slice(0, 16));
+  const [date, setDate] = useState(() => { const d = chapter ? new Date(chapter.published_at) : new Date(); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16); });
   const [pages, setPages] = useState<string[] | null>(chapter ? null : []);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
