@@ -12,6 +12,8 @@ import { formatDate } from "@/lib/format";
 import { useEquipped, useSignedUrl } from "@/lib/media";
 import { levelProgress, PLAN_LABEL, type Profile } from "@/lib/types";
 import { useSession } from "@/hooks/useAuth";
+import { animClass, useVisibleAnim } from "@/lib/cosmetics";
+import { cosmeticBackground } from "@/components/cosmetics/CosmeticPreview";
 
 export const Route = createFileRoute("/_authenticated/perfil/$username")({
   head: () => ({
@@ -58,23 +60,27 @@ function ProfilePage() {
   if (profile.isLoading) return <div className="p-8 text-muted-foreground">Carregando…</div>;
   if (!p) return <div className="p-8">Perfil não encontrado.</div>;
   const lv = levelProgress(p.xp, p.level);
-  const banner = equipped?.["banner"]?.preview;
-  const background = equipped?.["background"]?.preview;
+  const bannerItem = equipped?.["banner"];
+  const bgItem = equipped?.["background"];
+  const borderItem = equipped?.["border"];
   const title = equipped?.["title"]?.preview;
   const badge = equipped?.["badge"]?.preview;
   const isMe = user?.id === p.id;
 
   return (
-    <div style={background ? { background } : undefined} className="min-h-full">
+    <div style={bgItem ? { background: cosmeticBackground(bgItem.preview, bgItem.media_url) } : undefined} className={`min-h-full ${animClass(bgItem?.animation)}`}>
       <div className="relative h-40 overflow-hidden sm:h-56">
         {gifUrl ? (
           <img src={gifUrl} alt="" className="h-full w-full object-cover" />
         ) : (
-          <div className="gradient-eternal h-full w-full" style={banner ? { background: banner } : undefined} />
+          <div className={`gradient-eternal relative h-full w-full overflow-hidden ${animClass(bannerItem?.animation)}`} style={bannerItem ? { background: cosmeticBackground(bannerItem.preview, bannerItem.media_url) } : undefined}>
+            {bannerItem?.animation === "shimmer" && <span className="cos-shimmer" />}
+          </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-background/70 to-transparent" />
       </div>
       <div className="mx-auto -mt-14 max-w-5xl px-4 pb-10">
+        <ProfileBorder item={borderItem}>
         <div className="relative flex flex-col items-start gap-4 sm:flex-row sm:items-end">
           <UserAvatar userId={p.id} username={p.username} avatarPath={p.avatar_path} avatarUrl={p.avatar_url} size={112} className="border-4 border-background" />
           <div className="min-w-0 flex-1">
@@ -90,6 +96,7 @@ function ProfilePage() {
             {isMe && <Link to="/personalizar" className="text-sm text-primary hover:underline">Personalizar</Link>}
           </div>
         </div>
+        </ProfileBorder>
         <FollowPanel userId={p.id} me={user?.id} />
         {p.bio && <p className="mt-4 text-muted-foreground">{p.bio}</p>}
 
@@ -135,6 +142,19 @@ function ProfilePage() {
           <MangaGrid items={favs.data ?? []} />
         )}
       </div>
+    </div>
+  );
+}
+
+/** Borda equipada ao redor do cabeçalho do perfil; animação pausa fora da tela. */
+function ProfileBorder({ item, children }: { item?: { preview: string; animation: string } | undefined; children: React.ReactNode }) {
+  const { ref, pausedClass } = useVisibleAnim<HTMLDivElement>();
+  if (!item) return <>{children}</>;
+  const spin = item.animation === "spin";
+  return (
+    <div ref={ref} className={`relative overflow-hidden rounded-2xl p-[3px] ${pausedClass}`}>
+      <span aria-hidden className={`absolute ${spin ? "-inset-[50%] cos-anim-spin" : `inset-0 ${animClass(item.animation)}`}`} style={{ background: item.preview, ["--cos-color" as string]: item.preview }} />
+      <div className="relative rounded-[13px] bg-background/90 p-4">{children}</div>
     </div>
   );
 }
