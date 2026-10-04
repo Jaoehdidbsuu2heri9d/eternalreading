@@ -47,6 +47,51 @@ export type Database = {
         }
         Relationships: []
       }
+      activities: {
+        Row: {
+          chapter_id: string | null
+          created_at: string
+          data: Json
+          id: string
+          kind: string
+          manga_id: string | null
+          user_id: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          created_at?: string
+          data?: Json
+          id?: string
+          kind: string
+          manga_id?: string | null
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string | null
+          created_at?: string
+          data?: Json
+          id?: string
+          kind?: string
+          manga_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_manga_id_fkey"
+            columns: ["manga_id"]
+            isOneToOne: false
+            referencedRelation: "manga"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_logs: {
         Row: {
           action: string
@@ -157,6 +202,149 @@ export type Database = {
           },
         ]
       }
+      comment_bans: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      comment_likes: {
+        Row: {
+          comment_id: string
+          created_at: string
+          user_id: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          user_id: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_likes_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comment_reports: {
+        Row: {
+          comment_id: string
+          created_at: string
+          id: string
+          reason: string
+          reporter_id: string
+          status: string
+        }
+        Insert: {
+          comment_id: string
+          created_at?: string
+          id?: string
+          reason: string
+          reporter_id: string
+          status?: string
+        }
+        Update: {
+          comment_id?: string
+          created_at?: string
+          id?: string
+          reason?: string
+          reporter_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reports_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      comments: {
+        Row: {
+          body: string
+          chapter_id: string | null
+          created_at: string
+          edited_at: string | null
+          hidden: boolean
+          id: string
+          is_spoiler: boolean
+          manga_id: string
+          parent_id: string | null
+          user_id: string
+        }
+        Insert: {
+          body: string
+          chapter_id?: string | null
+          created_at?: string
+          edited_at?: string | null
+          hidden?: boolean
+          id?: string
+          is_spoiler?: boolean
+          manga_id: string
+          parent_id?: string | null
+          user_id: string
+        }
+        Update: {
+          body?: string
+          chapter_id?: string | null
+          created_at?: string
+          edited_at?: string | null
+          hidden?: boolean
+          id?: string
+          is_spoiler?: boolean
+          manga_id?: string
+          parent_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_manga_id_fkey"
+            columns: ["manga_id"]
+            isOneToOne: false
+            referencedRelation: "manga"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cosmetics: {
         Row: {
           active: boolean
@@ -221,6 +409,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+        }
+        Relationships: []
       }
       genres: {
         Row: {
@@ -766,8 +972,16 @@ export type Database = {
           xp: number
         }[]
       }
+      admin_moderate_comment: {
+        Args: { p_action: string; p_comment: string }
+        Returns: undefined
+      }
       admin_set_chapter_pages: {
         Args: { p_chapter: string; p_urls: string[] }
+        Returns: undefined
+      }
+      admin_set_comment_ban: {
+        Args: { p_banned: boolean; p_reason?: string; p_user: string }
         Returns: undefined
       }
       admin_set_plan: {
