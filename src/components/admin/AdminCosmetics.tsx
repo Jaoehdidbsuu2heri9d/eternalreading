@@ -6,8 +6,10 @@ import { Field, Input, Select } from "@/components/common/EInput";
 import { CosmeticPreview } from "@/components/cosmetics/CosmeticPreview";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  ANIMATIONS, ANIMATION_LABEL, AVAILABILITY_LABEL, KIND_LABEL, RARITIES, RARITY_LABEL, type CosmeticRow,
+  ANIMATIONS, ANIMATION_LABEL, AVAILABILITY_LABEL, EFFECT_LABEL, EFFECT_STYLES, KIND_LABEL, RARITIES, RARITY_LABEL, type CosmeticRow,
 } from "@/lib/cosmetics";
+import { validateVideo } from "@/lib/media";
+import { formatCoins } from "@/lib/coins";
 import { PLAN_LABEL } from "@/lib/types";
 
 type Draft = Omit<CosmeticRow, "id"> & { id?: string };
@@ -15,7 +17,9 @@ const EMPTY: Draft = {
   slug: "", name: "", description: "", kind: "frame", rarity: "common", preview: "#8b5cf6", animation: "none",
   media_url: null, required_level: 1, required_plan: "free", active: true, coin_price: null,
   availability: "unlockable", event_slug: null, starts_at: null, ends_at: null,
+  in_shop: false, stock: null, effect: {}, media_path: null, media_type: "image",
 };
+const IMG_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
 const toLocal = (v: string | null) => (v ? v.slice(0, 16) : "");
 
 /** Administração de cosméticos: criar, editar, ativar/desativar, conceder e ver estatísticas. */
@@ -28,13 +32,15 @@ export function AdminCosmetics() {
   const data = useQuery({
     queryKey: ["admin-cosmetics"],
     queryFn: async () => {
-      const [items, stats] = await Promise.all([
+      const [items, stats, shop] = await Promise.all([
         supabase.from("cosmetics").select("*").order("kind").order("sort"),
         supabase.rpc("admin_cosmetic_stats"),
+        supabase.rpc("admin_shop_stats"),
       ]);
       if (items.error) throw items.error;
       const map = new Map((stats.data ?? []).map((s) => [s.cosmetic_id, s]));
-      return (items.data as CosmeticRow[]).map((c) => ({ ...c, owners: Number(map.get(c.id)?.owners ?? 0), equippedCount: Number(map.get(c.id)?.equipped ?? 0) }));
+      const sales = new Map((shop.data ?? []).map((s) => [s.cosmetic_id, s]));
+      return (items.data as unknown as CosmeticRow[]).map((c) => ({ ...c, owners: Number(map.get(c.id)?.owners ?? 0), equippedCount: Number(map.get(c.id)?.equipped ?? 0), purchases: Number(sales.get(c.id)?.purchases ?? 0), coins: Number(sales.get(c.id)?.coins ?? 0) }));
     },
   });
   const refresh = () => { qc.invalidateQueries({ queryKey: ["admin-cosmetics"] }); qc.invalidateQueries({ queryKey: ["admin-logs"] }); };
@@ -42,7 +48,10 @@ export function AdminCosmetics() {
   const save = useMutation({
     mutationFn: async (d: Draft) => {
       const { id, ...row } = d;
-      const payload = { ...row, slug: row.slug.trim().toLowerCase(), media_url: row.media_url || null, event_slug: row.event_slug || null };
+      const r = row as Record<string, unknown>;
+      delete r["owners"]; delete r["equippedCount"]; delete r["purchases"]; delete r["coins"];
+      delete r["created_at"]; delete r["updated_at"]; delete r["sold"];
+      const payload = { ...row, slug: row.slug.trim().toLowerCase(), media_url: row.media_url || null, event_slug: row.event_slug || null } as never;
       const { error } = id ? await supabase.from("cosmetics").update(payload).eq("id", id) : await supabase.from("cosmetics").insert(payload);
       if (error) throw error;
     },
@@ -67,6 +76,22 @@ export function AdminCosmetics() {
     onError: (e: Error) => setMsg(e.message),
   });
 
+  const [uploading, setUploading] = useState(false);
+  async function uploadMedia(f: File) {
+    const isVideo = f.type.startsWith("video/");
+    const err = isVideo ? await validateVideo(f, 15 * 1024 * 1024) : !IMG_TYPES.includes(f.type) ? "Use PNG, JPG, WEBP, GIF, MP4 ou WebM." : f.size > 5 * 1024 * 1024 ? "Imagem até 5 MB." : null;
+    if (err) return setMsg(err);
+    setUploading(true);
+    const ext = f.name.split(".").pop()!.toLowerCase();
+    const path = `items/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage.from("cosmetic-media").upload(path, f, { contentType: f.type });
+    setUploading(false);
+    if (error) return setMsg("Não foi possível enviar o arquivo.");
+    setDraft((d) => (d ? { ...d, media_path: path, media_type: isVideo ? "video" : "image", media_url: null } : d));
+    setMsg(isVideo ? "Vídeo enviado. Salve o item para aplicar." : "Imagem enviada. Salve o item para aplicar.");
+  }
+  const eff = (k: string, v: string | number) => setDraft((d) => (d ? { ...d, effect: { ...(d.effect ?? {}), [k]: v } } : d));
+
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setDraft((d) => (d ? { ...d, [k]: v } : d));
 
   return (
@@ -79,7 +104,7 @@ export function AdminCosmetics() {
 
       {draft && (
         <form className="surface-panel mb-6 grid gap-4 rounded-2xl p-4 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); save.mutate(draft); }}>
-          <div className="sm:col-span-2"><CosmeticPreview kind={draft.kind} preview={draft.preview} animation={draft.animation} mediaUrl={draft.media_url} className="rounded-xl" /></div>
+          <div className="sm:col-span-2"><CosmeticPreview kind={draft.kind} preview={draft.preview} animation={draft.animation} mediaUrl={draft.media_url} mediaPath={draft.media_path} mediaType={draft.media_type} effect={draft.effect} className="rounded-xl" /></div>
           <Field label="Nome" htmlFor="c-name"><Input id="c-name" required maxLength={60} value={draft.name} onChange={(e) => set("name", e.target.value)} /></Field>
           <Field label="Identificador (slug)" htmlFor="c-slug" hint="letras minúsculas, números e hífen"><Input id="c-slug" required pattern="[a-z0-9-]{3,40}" value={draft.slug} onChange={(e) => set("slug", e.target.value)} /></Field>
           <div className="sm:col-span-2"><Field label="Descrição" htmlFor="c-desc"><Input id="c-desc" required maxLength={200} value={draft.description} onChange={(e) => set("description", e.target.value)} /></Field></div>
@@ -88,14 +113,36 @@ export function AdminCosmetics() {
           <Field label="Visual (cor ou gradiente CSS; texto para títulos/selos)" htmlFor="c-prev"><Input id="c-prev" required maxLength={300} value={draft.preview} onChange={(e) => set("preview", e.target.value)} /></Field>
           <Field label="Animação" htmlFor="c-anim"><Select id="c-anim" value={draft.animation} onChange={(e) => set("animation", e.target.value)}>{ANIMATIONS.map((a) => <option key={a} value={a}>{ANIMATION_LABEL[a]}</option>)}</Select></Field>
           <Field label="Imagem (link https, opcional)" htmlFor="c-media" hint="Para fundos/banners. Use arquivos leves (até ~2 MB, 1500×500)."><Input id="c-media" type="url" pattern="https://.*" value={draft.media_url ?? ""} onChange={(e) => set("media_url", e.target.value)} /></Field>
+          <Field label="Arquivo de mídia (banners/fundos)" htmlFor="c-file" hint="Imagem até 5 MB, ou vídeo MP4/WebM até 15 MB, 15 s e 1920×1080. Vídeos tocam sem som, em loop.">
+            <input id="c-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" disabled={uploading}
+              onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void uploadMedia(f); }} className="text-sm" />
+            {draft.media_path && <button type="button" className="mt-1 text-xs text-primary" onClick={() => setDraft({ ...draft, media_path: null, media_type: "image" })}>Remover arquivo ({draft.media_type === "video" ? "vídeo" : "imagem"})</button>}
+          </Field>
+          <Field label="Borda animada ao redor do avatar" htmlFor="c-eff" hint="Para a categoria Bordas. Use uma cor (#hex) no Visual.">
+            <Select id="c-eff" value={draft.effect?.style ?? ""} onChange={(e) => setDraft({ ...draft, effect: e.target.value ? { intensity: 1, speed: 1, size: 1, ...(draft.effect ?? {}), style: e.target.value } : {} })}>
+              <option value="">Nenhuma</option>
+              {EFFECT_STYLES.map((st) => <option key={st} value={st}>{EFFECT_LABEL[st]}</option>)}
+            </Select>
+          </Field>
+          {draft.effect?.style && (
+            <div className="grid grid-cols-3 gap-2 sm:col-span-2">
+              {([["intensity", "Intensidade", 0.4, 1.5], ["speed", "Velocidade", 0.3, 3], ["size", "Tamanho", 0.6, 1.6]] as const).map(([k, l, mn, mx]) => (
+                <Field key={k} label={`${l}: ${(draft.effect?.[k] ?? 1).toFixed(1)}`} htmlFor={`c-${k}`}>
+                  <input id={`c-${k}`} type="range" min={mn} max={mx} step={0.1} value={draft.effect?.[k] ?? 1} onChange={(e) => eff(k, Number(e.target.value))} className="w-full" />
+                </Field>
+              ))}
+            </div>
+          )}
           <Field label="Disponibilidade" htmlFor="c-av"><Select id="c-av" value={draft.availability} onChange={(e) => set("availability", e.target.value)}>{Object.entries(AVAILABILITY_LABEL).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select></Field>
           <Field label="Nível exigido" htmlFor="c-lv"><Input id="c-lv" type="number" min={1} max={100} value={draft.required_level} onChange={(e) => set("required_level", Number(e.target.value))} /></Field>
           <Field label="Assinatura exigida" htmlFor="c-plan"><Select id="c-plan" value={draft.required_plan} onChange={(e) => set("required_plan", e.target.value as Draft["required_plan"])}>{Object.entries(PLAN_LABEL).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select></Field>
-          <Field label="Preço em Eternal Coins (futuro)" htmlFor="c-coin"><Input id="c-coin" type="number" min={0} value={draft.coin_price ?? ""} onChange={(e) => set("coin_price", e.target.value === "" ? null : Number(e.target.value))} /></Field>
+          <Field label="Estoque (vazio = ilimitado)" htmlFor="c-stock"><Input id="c-stock" type="number" min={0} value={draft.stock ?? ""} onChange={(e) => set("stock", e.target.value === "" ? null : Number(e.target.value))} /></Field>
+          <Field label="Preço em Eternal Coins" htmlFor="c-coin"><Input id="c-coin" type="number" min={0} value={draft.coin_price ?? ""} onChange={(e) => set("coin_price", e.target.value === "" ? null : Number(e.target.value))} /></Field>
           <Field label="Evento relacionado" htmlFor="c-ev"><Input id="c-ev" maxLength={60} value={draft.event_slug ?? ""} onChange={(e) => set("event_slug", e.target.value)} /></Field>
           <Field label="Início" htmlFor="c-st"><Input id="c-st" type="datetime-local" value={toLocal(draft.starts_at)} onChange={(e) => set("starts_at", e.target.value ? new Date(e.target.value).toISOString() : null)} /></Field>
           <Field label="Fim" htmlFor="c-en"><Input id="c-en" type="datetime-local" value={toLocal(draft.ends_at)} onChange={(e) => set("ends_at", e.target.value ? new Date(e.target.value).toISOString() : null)} /></Field>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={draft.active} onChange={(e) => set("active", e.target.checked)} /> Ativo</label>
+          <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!draft.in_shop} onChange={(e) => set("in_shop", e.target.checked)} /> Aparece na Loja (exige preço)</label>
           <div className="flex justify-end gap-2 sm:col-span-2">
             <Button type="button" variant="ghost" onClick={() => setDraft(null)}>Cancelar</Button>
             <Button type="submit" disabled={save.isPending}>Salvar</Button>
@@ -115,10 +162,23 @@ export function AdminCosmetics() {
         <Button size="sm" variant="secondary" disabled={!grant.user || !grant.cosmetic} onClick={() => doGrant.mutate(false)}>Retirar</Button>
       </div>
 
+      {(() => {
+        const all = data.data ?? [];
+        const total = all.reduce((a, c) => a + c.purchases, 0);
+        const coins = all.reduce((a, c) => a + c.coins, 0);
+        const top = [...all].filter((c) => c.purchases > 0).sort((a, b) => b.purchases - a.purchases).slice(0, 5);
+        return (
+          <div className="surface-panel mb-4 grid gap-3 rounded-2xl p-4 sm:grid-cols-3">
+            <div><p className="text-xs text-muted-foreground">Compras na Loja</p><p className="text-xl font-bold">{total}</p></div>
+            <div><p className="text-xs text-muted-foreground">Coins gastas na Loja</p><p className="text-xl font-bold">{formatCoins(coins)}</p></div>
+            <div><p className="text-xs text-muted-foreground">Mais comprados</p><p className="text-sm">{top.length ? top.map((c) => `${c.name} (${c.purchases})`).join(", ") : "—"}</p></div>
+          </div>
+        );
+      })()}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="text-left text-muted-foreground">
-            <tr><th className="p-2">Item</th><th className="p-2">Categoria</th><th className="p-2">Raridade</th><th className="p-2">Disponib.</th><th className="p-2">Possuem</th><th className="p-2">Equipado</th><th className="p-2" /></tr>
+            <tr><th className="p-2">Item</th><th className="p-2">Categoria</th><th className="p-2">Raridade</th><th className="p-2">Disponib.</th><th className="p-2">Vendas</th><th className="p-2">Coins</th><th className="p-2">Possuem</th><th className="p-2">Equipado</th><th className="p-2" /></tr>
           </thead>
           <tbody>
             {(data.data ?? []).map((c) => (
@@ -126,7 +186,9 @@ export function AdminCosmetics() {
                 <td className="p-2 font-medium">{c.name}{!c.active && <span className="ml-2 text-xs text-muted-foreground">(inativo)</span>}</td>
                 <td className="p-2">{KIND_LABEL[c.kind]}</td>
                 <td className="p-2">{RARITY_LABEL[c.rarity]}</td>
-                <td className="p-2">{AVAILABILITY_LABEL[c.availability]}{c.coin_price ? ` • ${c.coin_price}◈` : ""}</td>
+                <td className="p-2">{c.in_shop ? "Loja" : AVAILABILITY_LABEL[c.availability]}{c.coin_price != null ? ` • ${c.coin_price}◈` : ""}{c.stock != null ? ` • estoque ${c.stock}` : ""}</td>
+                <td className="p-2">{c.purchases}</td>
+                <td className="p-2">{formatCoins(c.coins)}</td>
                 <td className="p-2">{c.owners}</td>
                 <td className="p-2">{c.equippedCount}</td>
                 <td className="flex gap-1 p-2">

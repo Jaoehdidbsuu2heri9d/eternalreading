@@ -5,7 +5,8 @@ import { Lock, X } from "lucide-react";
 
 import { Button } from "@/components/common/EButton";
 import { Badge } from "@/components/common/EBadge";
-import { Select } from "@/components/common/EInput";
+import { Input, Select } from "@/components/common/EInput";
+import { Link } from "@tanstack/react-router";
 import { GifBannerManager } from "@/components/GifBannerManager";
 import { PageHeader } from "@/components/PageHeader";
 import { UserAvatar } from "@/components/UserAvatar";
@@ -13,7 +14,7 @@ import { CosmeticPreview } from "@/components/cosmetics/CosmeticPreview";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useSession } from "@/hooks/useAuth";
 import {
-  ANIMATION_LABEL, AVAILABILITY_LABEL, KIND_LABEL, RARITIES, RARITY_COLOR, RARITY_LABEL, needsOwnership, type CosmeticRow,
+  ANIMATION_LABEL, AVAILABILITY_LABEL, EFFECT_LABEL, hasEffect, KIND_LABEL, RARITIES, RARITY_COLOR, RARITY_LABEL, needsOwnership, type CosmeticRow,
 } from "@/lib/cosmetics";
 import { PLAN_LABEL, type PlanTier } from "@/lib/types";
 
@@ -41,6 +42,7 @@ function CustomizePage() {
   const [tab, setTab] = useState<"catalog" | "inventory">("catalog");
   const [kind, setKind] = useState("all");
   const [rarity, setRarity] = useState("all");
+  const [q, setQ] = useState("");
   const [preview, setPreview] = useState<CosmeticRow | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
@@ -54,7 +56,7 @@ function CustomizePage() {
       ]);
       const rows = (mine.data ?? []);
       return {
-        all: (all.data ?? []) as CosmeticRow[],
+        all: (all.data ?? []) as unknown as CosmeticRow[],
         owned: new Set(rows.map((m) => m.cosmetic_id)),
         equipped: new Set(rows.filter((m) => m.equipped).map((m) => m.cosmetic_id)),
       };
@@ -81,12 +83,12 @@ function CustomizePage() {
     const owned = !!d?.owned.has(c.id);
     const lockedLevel = (profile?.level ?? 1) < c.required_level;
     const lockedPlan = PLAN_RANK[(profile?.plan ?? "free") as PlanTier] < PLAN_RANK[c.required_plan];
-    const lockedOwn = !owned && needsOwnership(c.availability);
+    const lockedOwn = !owned && (needsOwnership(c.availability) || !!c.in_shop);
     const now = Date.now();
     const lockedDate = !owned && ((c.starts_at && now < +new Date(c.starts_at)) || (c.ends_at && now > +new Date(c.ends_at)));
     const reason = lockedPlan ? `Exclusivo ${PLAN_LABEL[c.required_plan]}`
       : lockedLevel ? `Requer nível ${c.required_level}`
-      : lockedOwn ? (c.availability === "event" ? "Item de evento" : c.coin_price ? `${c.coin_price} Eternal Coins (em breve)` : "Item exclusivo")
+      : lockedOwn ? (c.in_shop ? `À venda na Loja • ${c.coin_price ?? 0} Coins` : c.availability === "event" ? "Item de evento" : "Item exclusivo")
       : lockedDate ? "Fora do período" : null;
     return { on: !!d?.equipped.has(c.id), locked: !!reason, reason, acquired: owned || !reason };
   };
@@ -95,8 +97,9 @@ function CustomizePage() {
     if (kind !== "all" && c.kind !== kind) return false;
     if (rarity !== "all" && c.rarity !== rarity) return false;
     if (tab === "inventory" && !status(c).acquired) return false;
+    if (q.trim() && !c.name.toLowerCase().includes(q.trim().toLowerCase())) return false;
     return true;
-  }), [items.data, kind, rarity, tab, profile]); // eslint-disable-line react-hooks/exhaustive-deps
+  }), [items.data, kind, rarity, tab, profile, q]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const equippedList = (items.data?.all ?? []).filter((c) => items.data?.equipped.has(c.id));
 
@@ -126,7 +129,8 @@ function CustomizePage() {
         </div>
       )}
 
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:max-w-md">
+      <div className="mb-6 grid gap-3 sm:max-w-2xl sm:grid-cols-3">
+        <Input placeholder="Pesquisar…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Pesquisar cosmético" />
         <label className="text-sm">
           <span className="sr-only">Categoria</span>
           <Select value={kind} onChange={(e) => setKind(e.target.value)} aria-label="Filtrar por categoria">
@@ -153,7 +157,7 @@ function CustomizePage() {
               <div key={c.id} className={`surface-panel overflow-hidden rounded-2xl ${s.on ? "glow-ring" : ""}`}
                 style={{ borderTop: `2px solid ${color}`, boxShadow: high ? `0 0 24px -12px ${color}` : undefined }}>
                 <button className="block w-full" onClick={() => setPreview(c)} aria-label={`Prévia de ${c.name}`}>
-                  <CosmeticPreview kind={c.kind} preview={c.preview} animation={c.animation} mediaUrl={c.media_url} />
+                  <CosmeticPreview kind={c.kind} preview={c.preview} animation={c.animation} mediaUrl={c.media_url} mediaPath={c.media_path} mediaType={c.media_type} effect={c.effect} />
                 </button>
                 <div className="space-y-2 p-4">
                   <div className="flex items-center justify-between gap-2">
@@ -161,12 +165,12 @@ function CustomizePage() {
                     <span className="rounded-full px-2 py-0.5 text-xs font-medium" style={{ color, background: `${color}22` }}>{RARITY_LABEL[c.rarity]}</span>
                   </div>
                   <p className="text-sm text-muted-foreground">{c.description}</p>
-                  <p className="text-xs text-muted-foreground">{KIND_LABEL[c.kind]} • {ANIMATION_LABEL[c.animation]}</p>
+                  <p className="text-xs text-muted-foreground">{KIND_LABEL[c.kind]} • {hasEffect(c.effect) ? EFFECT_LABEL[c.effect.style!] ?? "Animada" : c.media_type === "video" ? "Vídeo" : ANIMATION_LABEL[c.animation]}</p>
                   <p className="text-xs font-medium">
                     {s.on ? <span className="text-success">Equipado</span> : s.locked ? <span className="text-muted-foreground">Bloqueado</span> : <span className="text-primary">Desbloqueado</span>}
                   </p>
                   {s.locked ? (
-                    <p className="flex items-center gap-1 text-xs text-muted-foreground"><Lock className="h-3.5 w-3.5" aria-hidden />{s.reason}</p>
+                    <p className="flex items-center gap-1 text-xs text-muted-foreground"><Lock className="h-3.5 w-3.5" aria-hidden />{s.reason}{c.in_shop && <Link to="/loja" className="ml-1 text-primary hover:underline">Ir à Loja</Link>}</p>
                   ) : (
                     <div className="flex gap-2">
                       <Button size="sm" variant={s.on ? "secondary" : "primary"} onClick={() => toggle.mutate({ id: c.id, on: s.on })}>
@@ -189,9 +193,9 @@ function CustomizePage() {
               <p className="font-semibold">{preview.name}</p>
               <button onClick={() => setPreview(null)} aria-label="Fechar"><X className="h-5 w-5" /></button>
             </div>
-            <CosmeticPreview kind={preview.kind} preview={preview.preview} animation={preview.animation} mediaUrl={preview.media_url} className="h-32" />
-            <div className="flex items-center gap-3 p-4">
-              <UserAvatar username={profile.username} avatarPath={profile.avatar_path} avatarUrl={profile.avatar_url} size={56} showFrame={false} />
+            <CosmeticPreview kind={preview.kind} preview={preview.preview} animation={preview.animation} mediaUrl={preview.media_url} mediaPath={preview.media_path} mediaType={preview.media_type} effect={preview.effect} className="h-32" />
+            <div className="flex items-center gap-4 p-6">
+              <UserAvatar username={profile.username} avatarPath={profile.avatar_path} avatarUrl={profile.avatar_url} size={56} showFrame={false} previewAura={preview.kind === "border" && hasEffect(preview.effect) ? { effect: preview.effect, color: preview.preview } : null} />
               <div className="text-sm">
                 <p className="font-medium">{profile.display_name ?? profile.username}</p>
                 <p className="text-muted-foreground">{RARITY_LABEL[preview.rarity]} • {AVAILABILITY_LABEL[preview.availability]}</p>

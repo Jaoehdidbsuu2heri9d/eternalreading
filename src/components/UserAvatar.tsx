@@ -1,6 +1,7 @@
 import { useSignedUrl, useEquipped } from "@/lib/media";
 import { cn } from "@/lib/utils";
-import { animClass } from "@/lib/cosmetics";
+import { animClass, hasEffect, type CosmeticEffect } from "@/lib/cosmetics";
+import { AuraEffect } from "@/components/cosmetics/AuraEffect";
 
 /**
  * Avatar do usuário com foto enviada (ou link antigo) e moldura equipada.
@@ -15,6 +16,7 @@ export function UserAvatar({
   showFrame = true,
   className,
   previewSrc,
+  previewAura,
 }: {
   userId?: string | undefined;
   username: string;
@@ -24,6 +26,8 @@ export function UserAvatar({
   showFrame?: boolean;
   className?: string;
   previewSrc?: string | null;
+  /** Mostra uma borda animada específica (prévia na loja). */
+  previewAura?: { effect: CosmeticEffect; color: string } | null;
 }) {
   const signed = useSignedUrl("avatars", avatarPath);
   const { data: equipped } = useEquipped(showFrame ? userId : undefined);
@@ -32,9 +36,12 @@ export function UserAvatar({
   const gradFrame = frameItem && !frame ? frameItem.preview : undefined;
   const src = previewSrc ?? signed ?? avatarUrl ?? null;
   const ring = Math.max(2, Math.round(size / 20));
+  const borderItem = showFrame ? equipped?.["border"] : undefined;
+  const aura = previewAura ?? (borderItem && hasEffect(borderItem.effect) ? { effect: borderItem.effect, color: borderItem.preview } : null);
 
   return (
     <span className="relative inline-flex shrink-0" style={{ width: size, height: size }}>
+    {aura && <AuraEffect effect={aura.effect} color={aura.color} avatarSize={size} />}
     {frameItem && (
       <span
         aria-hidden

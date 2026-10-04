@@ -23,7 +23,7 @@ export const ANIMATION_LABEL: Record<string, string> = {
   none: "Estático", pulse: "Pulso", spin: "Giro", shimmer: "Brilho", glow: "Aura", drift: "Movimento",
 };
 export const AVAILABILITY_LABEL: Record<string, string> = {
-  unlockable: "Desbloqueável", shop: "Loja (em breve)", event: "Evento", subscription: "Assinatura", exclusive: "Exclusivo", limited: "Limitado",
+  unlockable: "Desbloqueável", shop: "Loja", event: "Evento", subscription: "Assinatura", exclusive: "Exclusivo", limited: "Limitado",
 };
 /** Itens que só podem ser equipados se o usuário já os possuir. */
 export const needsOwnership = (availability: string) => !["unlockable", "subscription"].includes(availability);
@@ -50,4 +50,15 @@ export interface CosmeticRow {
   preview: string; animation: string; media_url: string | null; required_level: number;
   required_plan: "free" | "eternal" | "eternal_sunshine"; active: boolean; coin_price: number | null;
   availability: string; event_slug: string | null; starts_at: string | null; ends_at: string | null;
+  in_shop?: boolean; stock?: number | null; sold?: number; effect?: CosmeticEffect | null;
+  media_path?: string | null; media_type?: string;
 }
+
+/** Bordas animadas ao redor do avatar (efeito desenhado em SVG/CSS, não imagem). */
+export interface CosmeticEffect { style?: string; intensity?: number; speed?: number; size?: number }
+export const EFFECT_STYLES = ["lightning", "electric", "neon", "orbit", "fire", "aura", "magic"] as const;
+export const EFFECT_LABEL: Record<string, string> = {
+  lightning: "Raios de energia", electric: "Energia elétrica", neon: "Neon", orbit: "Partículas orbitando",
+  fire: "Fogo estilizado", aura: "Aura", magic: "Energia mágica",
+};
+export const hasEffect = (e: unknown): e is CosmeticEffect => !!e && typeof e === "object" && !!(e as CosmeticEffect).style;

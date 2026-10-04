@@ -24,6 +24,7 @@ import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedInicioRouteImport } from './routes/_authenticated/inicio'
+import { Route as AuthenticatedLojaRouteImport } from './routes/_authenticated/loja'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedPersonalizarRouteImport } from './routes/_authenticated/personalizar'
 import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated/planos'
@@ -113,6 +114,11 @@ const AuthenticatedInicioRoute = AuthenticatedInicioRouteImport.update({
   path: '/inicio',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLojaRoute = AuthenticatedLojaRouteImport.update({
+  id: '/loja',
+  path: '/loja',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   id: '/me',
   path: '/me',
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
+  '/loja': typeof AuthenticatedLojaRoute
   '/me': typeof AuthenticatedMeRoute
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
@@ -222,6 +229,7 @@ export interface FileRoutesByTo {
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
+  '/loja': typeof AuthenticatedLojaRoute
   '/me': typeof AuthenticatedMeRoute
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
@@ -252,6 +260,7 @@ export interface FileRoutesById {
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/inicio': typeof AuthenticatedInicioRoute
+  '/_authenticated/loja': typeof AuthenticatedLojaRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/personalizar': typeof AuthenticatedPersonalizarRoute
   '/_authenticated/planos': typeof AuthenticatedPlanosRoute
@@ -282,6 +291,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/historico'
     | '/inicio'
+    | '/loja'
     | '/me'
     | '/personalizar'
     | '/planos'
@@ -310,6 +320,7 @@ export interface FileRouteTypes {
     | '/favoritos'
     | '/historico'
     | '/inicio'
+    | '/loja'
     | '/me'
     | '/personalizar'
     | '/planos'
@@ -339,6 +350,7 @@ export interface FileRouteTypes {
     | '/_authenticated/favoritos'
     | '/_authenticated/historico'
     | '/_authenticated/inicio'
+    | '/_authenticated/loja'
     | '/_authenticated/me'
     | '/_authenticated/personalizar'
     | '/_authenticated/planos'
@@ -470,6 +482,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInicioRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/loja': {
+      id: '/_authenticated/loja'
+      path: '/loja'
+      fullPath: '/loja'
+      preLoaderRoute: typeof AuthenticatedLojaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/me': {
       id: '/_authenticated/me'
       path: '/me'
@@ -568,6 +587,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedInicioRoute: typeof AuthenticatedInicioRoute
+  AuthenticatedLojaRoute: typeof AuthenticatedLojaRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedPersonalizarRoute: typeof AuthenticatedPersonalizarRoute
   AuthenticatedPlanosRoute: typeof AuthenticatedPlanosRoute
@@ -591,6 +611,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedInicioRoute: AuthenticatedInicioRoute,
+  AuthenticatedLojaRoute: AuthenticatedLojaRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedPersonalizarRoute: AuthenticatedPersonalizarRoute,
   AuthenticatedPlanosRoute: AuthenticatedPlanosRoute,

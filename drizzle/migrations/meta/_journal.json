@@ -71,6 +71,13 @@
       "when": 1791137907399,
       "tag": "0009_billing_asaas",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1791141561960,
+      "tag": "0010_coins_shop_effects",
+      "breakpoints": true
     }
   ]
 }

@@ -144,3 +144,21 @@
 @media (prefers-reduced-motion: reduce) {
   .cos-anim-spin, .cos-anim-pulse, .cos-anim-glow, .cos-anim-drift, .cos-shimmer { animation: none !important; }
 }
+
+/* ===== Bordas animadas (auras) ===== */
+@keyframes aura-dash { to { stroke-dashoffset: -100; } }
+@keyframes aura-flicker { 0%,100% { opacity: 1; } 42% { opacity: .85; } 48% { opacity: .15; } 52% { opacity: .95; } 70% { opacity: .5; } }
+@keyframes aura-hue { to { filter: hue-rotate(360deg); } }
+@keyframes aura-breathe { 0%,100% { transform: scale(.94); opacity: .65; } 50% { transform: scale(1.06); opacity: 1; } }
+@keyframes aura-flame { 0%,100% { transform: scale(1) rotate(0deg); opacity: .85; } 33% { transform: scale(1.06) rotate(4deg); opacity: 1; } 66% { transform: scale(.97) rotate(-3deg); opacity: .75; } }
+@keyframes aura-rev { to { transform: rotate(-360deg); } }
+.aura-spin { animation: cos-spin var(--aura-dur, 6s) linear infinite; transform-origin: 50% 50%; }
+.aura-rev { animation: aura-rev var(--aura-dur, 6s) linear infinite; transform-origin: 50% 50%; }
+.aura-dash { animation: aura-dash var(--aura-dur, 1.6s) linear infinite; }
+.aura-flicker { animation: aura-flicker var(--aura-dur, 1.2s) steps(1) infinite; }
+.aura-hue { animation: aura-hue var(--aura-dur, 6s) linear infinite; }
+.aura-breathe { animation: aura-breathe var(--aura-dur, 2.6s) ease-in-out infinite; }
+.aura-flame { animation: aura-flame var(--aura-dur, .9s) ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .aura-spin, .aura-rev, .aura-dash, .aura-flicker, .aura-hue, .aura-breathe, .aura-flame { animation: none !important; }
+}

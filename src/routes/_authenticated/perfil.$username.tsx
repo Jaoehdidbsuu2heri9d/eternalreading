@@ -13,7 +13,10 @@ import { useEquipped, useSignedUrl } from "@/lib/media";
 import { levelProgress, PLAN_LABEL, type Profile } from "@/lib/types";
 import { useSession } from "@/hooks/useAuth";
 import { animClass, useVisibleAnim } from "@/lib/cosmetics";
-import { cosmeticBackground } from "@/components/cosmetics/CosmeticPreview";
+import { cosmeticBackground, CosmeticSurface, useCosmeticMedia } from "@/components/cosmetics/CosmeticPreview";
+import { BannerVideo } from "@/components/cosmetics/BannerVideo";
+import { hasEffect } from "@/lib/cosmetics";
+import { isVideoPath } from "@/lib/media";
 
 export const Route = createFileRoute("/_authenticated/perfil/$username")({
   head: () => ({
@@ -57,6 +60,7 @@ function ProfilePage() {
     },
   });
 
+  const bgMedia = useCosmeticMedia(equipped?.["background"]?.media_path, equipped?.["background"]?.media_url);
   if (profile.isLoading) return <div className="p-8 text-muted-foreground">Carregando…</div>;
   if (!p) return <div className="p-8">Perfil não encontrado.</div>;
   const lv = levelProgress(p.xp, p.level);
@@ -66,21 +70,22 @@ function ProfilePage() {
   const title = equipped?.["title"]?.preview;
   const badge = equipped?.["badge"]?.preview;
   const isMe = user?.id === p.id;
+  const customIsVideo = isVideoPath(p.gif_banner_path);
 
   return (
-    <div style={bgItem ? { background: cosmeticBackground(bgItem.preview, bgItem.media_url) } : undefined} className={`min-h-full ${animClass(bgItem?.animation)}`}>
+    <div style={bgItem ? { background: cosmeticBackground(bgItem.preview, bgMedia) } : undefined} className={`min-h-full ${animClass(bgItem?.animation)}`}>
       <div className="relative h-40 overflow-hidden sm:h-56">
         {gifUrl ? (
-          <img src={gifUrl} alt="" className="h-full w-full object-cover" />
+          customIsVideo ? <BannerVideo src={gifUrl} /> : <img src={gifUrl} alt="" className="h-full w-full object-cover" />
+        ) : bannerItem ? (
+          <CosmeticSurface preview={bannerItem.preview} animation={bannerItem.animation} mediaUrl={bannerItem.media_url} mediaPath={bannerItem.media_path} mediaType={bannerItem.media_type} className="h-full w-full" />
         ) : (
-          <div className={`gradient-eternal relative h-full w-full overflow-hidden ${animClass(bannerItem?.animation)}`} style={bannerItem ? { background: cosmeticBackground(bannerItem.preview, bannerItem.media_url) } : undefined}>
-            {bannerItem?.animation === "shimmer" && <span className="cos-shimmer" />}
-          </div>
+          <div className="gradient-eternal h-full w-full" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-background/70 to-transparent" />
       </div>
       <div className="mx-auto -mt-14 max-w-5xl px-4 pb-10">
-        <ProfileBorder item={borderItem}>
+        <ProfileBorder item={borderItem && !hasEffect(borderItem.effect) ? borderItem : undefined}>
         <div className="relative flex flex-col items-start gap-4 sm:flex-row sm:items-end">
           <UserAvatar userId={p.id} username={p.username} avatarPath={p.avatar_path} avatarUrl={p.avatar_url} size={112} className="border-4 border-background" />
           <div className="min-w-0 flex-1">
