@@ -15,6 +15,8 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/login" });
+    // Garante que toda conta tenha perfil (contas antigas ou cadastros interrompidos).
+    await supabase.rpc("ensure_profile", {}).then(() => undefined, () => undefined);
     return { user: data.user };
   },
   component: AuthenticatedLayout,
