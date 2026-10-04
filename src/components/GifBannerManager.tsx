@@ -5,7 +5,7 @@ import { Lock, Sparkles } from "lucide-react";
 import { Button } from "@/components/common/EButton";
 import { Badge } from "@/components/common/EBadge";
 import { supabase } from "@/integrations/supabase/client";
-import { isVideoPath, uploadGifBanner, useSignedUrl, validateGif, validateVideo } from "@/lib/media";
+import { isVideoPath, mediaUploadError, normalizeMediaFile, uploadGifBanner, useSignedUrl, validateGif, validateVideo } from "@/lib/media";
 import type { Profile } from "@/lib/types";
 
 /** Banner GIF personalizado (Eternal e Eternal Sunshine). O banco confirma o plano. */
@@ -18,6 +18,7 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [validating, setValidating] = useState(false);
 
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
 
@@ -27,10 +28,14 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
   };
 
   async function pick(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0];
+    const selected = e.target.files?.[0];
     e.target.value = "";
-    if (!f) return;
+    if (!selected) return;
+    const f = normalizeMediaFile(selected);
+    setValidating(true);
+    setMsg(null);
     const err = f.type.startsWith("video/") ? await validateVideo(f) : validateGif(f);
+    setValidating(false);
     if (err) return setMsg({ ok: false, text: err });
     setMsg(null);
     setFile(f);
@@ -46,19 +51,24 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
       setPreview(null);
       refresh();
       setMsg({ ok: true, text: "Banner animado salvo e equipado!" });
-    } catch {
-      setMsg({ ok: false, text: "Não foi possível salvar. Esse recurso exige plano Eternal." });
+    } catch (error) {
+      setMsg({ ok: false, text: mediaUploadError(error) });
     } finally {
       setBusy(false);
     }
   }
 
   async function toggle() {
+    const path = profile.gif_banner_path;
+    if (!path) return;
     setBusy(true);
-    const { error } = await supabase.rpc("set_gif_banner", { p_path: profile.gif_banner_path!, p_equipped: !profile.gif_banner_equipped });
-    setBusy(false);
-    if (error) return setMsg({ ok: false, text: "Não foi possível alterar." });
-    refresh();
+    try {
+      const { error } = await supabase.rpc("set_gif_banner", { p_path: path, p_equipped: !profile.gif_banner_equipped });
+      if (error) throw error;
+      refresh();
+      setMsg(null);
+    } catch (error) { setMsg({ ok: false, text: mediaUploadError(error) }); }
+    finally { setBusy(false); }
   }
 
   const shown = preview ?? current;
@@ -90,16 +100,16 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
           ) : (
             <>
               <p className="text-xs text-muted-foreground">GIF (até 8 MB) ou vídeo MP4/WebM (até 10 MB, 15 segundos, 1920×1080). Toca sem som e em loop. Quando equipado, substitui o banner normal.</p>
-              <input ref={input} type="file" accept="image/gif,video/mp4,video/webm" className="sr-only" onChange={pick} aria-label="Escolher GIF ou vídeo" />
+              <input ref={input} type="file" accept=".gif,.mp4,.webm,image/gif,video/mp4,video/webm" className="sr-only" onChange={pick} aria-label="Escolher GIF ou vídeo" disabled={busy || validating} />
               <div className="flex flex-wrap gap-2">
                 {file ? (
                   <>
-                    <Button size="sm" onClick={save} disabled={busy}>{busy ? "Enviando…" : "Salvar GIF"}</Button>
+                    <Button size="sm" onClick={save} disabled={busy || validating}>{busy ? "Enviando…" : "Salvar banner"}</Button>
                     <Button size="sm" variant="secondary" onClick={() => { setFile(null); setPreview(null); }} disabled={busy}>Cancelar</Button>
                   </>
                 ) : (
                   <>
-                    <Button size="sm" onClick={() => input.current?.click()}>Adicionar banner GIF ou vídeo</Button>
+                    <Button size="sm" onClick={() => input.current?.click()} disabled={busy || validating}>{validating ? "Verificando arquivo…" : "Adicionar banner GIF ou vídeo"}</Button>
                     {profile.gif_banner_path && (
                       <Button size="sm" variant="secondary" onClick={toggle} disabled={busy}>
                         {profile.gif_banner_equipped ? "Desequipar" : "Equipar"}

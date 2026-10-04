@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   ANIMATIONS, ANIMATION_LABEL, AVAILABILITY_LABEL, EFFECT_LABEL, EFFECT_STYLES, KIND_LABEL, RARITIES, RARITY_LABEL, type CosmeticRow,
 } from "@/lib/cosmetics";
-import { validateVideo } from "@/lib/media";
+import { mediaUploadError, normalizeMediaFile, validateVideo } from "@/lib/media";
 import { formatCoins } from "@/lib/coins";
 import { PLAN_LABEL } from "@/lib/types";
 
@@ -78,17 +78,21 @@ export function AdminCosmetics() {
 
   const [uploading, setUploading] = useState(false);
   async function uploadMedia(f: File) {
+    f = normalizeMediaFile(f);
+    setUploading(true);
+    setMsg(null);
+    try {
     const isVideo = f.type.startsWith("video/");
     const err = isVideo ? await validateVideo(f, 15 * 1024 * 1024) : !IMG_TYPES.includes(f.type) ? "Use PNG, JPG, WEBP, GIF, MP4 ou WebM." : f.size > 5 * 1024 * 1024 ? "Imagem até 5 MB." : null;
     if (err) return setMsg(err);
-    setUploading(true);
-    const ext = f.name.split(".").pop()!.toLowerCase();
+    const ext = f.type.split("/")[1] === "jpeg" ? "jpg" : f.type.split("/")[1];
     const path = `items/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const { error } = await supabase.storage.from("cosmetic-media").upload(path, f, { contentType: f.type });
-    setUploading(false);
-    if (error) return setMsg("Não foi possível enviar o arquivo.");
+    if (error) throw error;
     setDraft((d) => (d ? { ...d, media_path: path, media_type: isVideo ? "video" : "image", media_url: null } : d));
     setMsg(isVideo ? "Vídeo enviado. Salve o item para aplicar." : "Imagem enviada. Salve o item para aplicar.");
+    } catch (error) { setMsg(mediaUploadError(error)); }
+    finally { setUploading(false); }
   }
   const eff = (k: string, v: string | number) => setDraft((d) => (d ? { ...d, effect: { ...(d.effect ?? {}), [k]: v } } : d));
 
@@ -145,7 +149,7 @@ export function AdminCosmetics() {
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!draft.in_shop} onChange={(e) => set("in_shop", e.target.checked)} /> Aparece na Loja (exige preço)</label>
           <div className="flex justify-end gap-2 sm:col-span-2">
             <Button type="button" variant="ghost" onClick={() => setDraft(null)}>Cancelar</Button>
-            <Button type="submit" disabled={save.isPending}>Salvar</Button>
+            <Button type="submit" disabled={save.isPending || uploading}>Salvar</Button>
           </div>
         </form>
       )}

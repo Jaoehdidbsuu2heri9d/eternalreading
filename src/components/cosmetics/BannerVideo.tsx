@@ -11,6 +11,9 @@ export function BannerVideo({ src, className, poster }: { src: string; className
   useEffect(() => {
     const v = ref.current;
     if (!v) return;
+    v.pause();
+    v.removeAttribute("src");
+    v.load();
     const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
     if (reduce || typeof IntersectionObserver === "undefined") return;
     const io = new IntersectionObserver(([e]) => {
@@ -20,7 +23,7 @@ export function BannerVideo({ src, className, poster }: { src: string; className
       } else v.pause();
     }, { rootMargin: "50px" });
     io.observe(v);
-    return () => io.disconnect();
+    return () => { io.disconnect(); v.pause(); };
   }, [src]);
   return (
     <video ref={ref} muted loop playsInline preload="none" poster={poster} aria-hidden

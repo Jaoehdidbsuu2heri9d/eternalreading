@@ -10,6 +10,24 @@ export const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
 export const GIF_MAX_BYTES = 8 * 1024 * 1024;
 
+/** Some device file pickers omit MIME types; recover only supported extensions. */
+export function normalizeMediaFile(file: File): File {
+  const types: Record<string, string> = { gif: "image/gif", mp4: "video/mp4", webm: "video/webm", jpg: "image/jpeg", jpeg: "image/jpeg", png: "image/png", webp: "image/webp" };
+  const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+  const inferred = types[ext];
+  return inferred && (!file.type || file.type === "application/octet-stream" || file.type === "video/x-matroska")
+    ? new File([file], file.name, { type: inferred, lastModified: file.lastModified }) : file;
+}
+
+export function mediaUploadError(error: unknown): string {
+  const detail = error && typeof error === "object" && "message" in error ? String(error.message) : "";
+  if (/plan required|row-level security|permission denied/i.test(detail)) return "Envio não autorizado. Confira se sua assinatura está ativa e entre novamente na conta.";
+  if (/size|too large|exceeded/i.test(detail)) return "Arquivo grande demais. GIF: até 8 MB; vídeo: até 10 MB.";
+  if (/mime|content.?type/i.test(detail)) return "Formato recusado. Use GIF, MP4 ou WebM.";
+  if (/fetch|network/i.test(detail)) return "Falha de conexão durante o envio. Tente novamente.";
+  return detail ? `Não foi possível enviar: ${detail}` : "Não foi possível enviar o arquivo. Tente novamente.";
+}
+
 export type MediaBucket = "avatars" | "profile-banners" | "cosmetic-media";
 
 /** Link assinado (1h) com cache; null enquanto não houver caminho. */
@@ -19,7 +37,8 @@ export function useSignedUrl(bucket: MediaBucket, path: string | null | undefine
     enabled: !!path,
     staleTime: 50 * 60 * 1000,
     queryFn: async () => {
-      const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path!, 3600);
+      if (!path) return null;
+      const { data, error } = await supabase.storage.from(bucket).createSignedUrl(path, 3600);
       if (error) throw error;
       return data.signedUrl;
     },
@@ -52,15 +71,12 @@ export const isVideoPath = (p: string | null | undefined) => !!p && /\.(mp4|webm
 export async function validateVideo(file: File, maxBytes = VIDEO_MAX_BYTES): Promise<string | null> {
   if (!VIDEO_TYPES.includes(file.type)) return "Envie um vídeo MP4 ou WebM.";
   if (file.size > maxBytes) return `O vídeo deve ter no máximo ${Math.round(maxBytes / 1048576)} MB.`;
-  const url = URL.createObjectURL(file);
+  const { Input, BlobSource, ALL_FORMATS } = await import("mediabunny");
+  const input = new Input({ source: new BlobSource(file), formats: ALL_FORMATS });
   try {
-    const meta = await new Promise<{ d: number; w: number; h: number }>((res, rej) => {
-      const v = document.createElement("video");
-      v.preload = "metadata"; v.muted = true;
-      v.onloadedmetadata = () => res({ d: v.duration, w: v.videoWidth, h: v.videoHeight });
-      v.onerror = () => rej(new Error("bad"));
-      v.src = url;
-    });
+    const track = await input.getPrimaryVideoTrack();
+    if (!track) return "Esse arquivo não contém vídeo. Use MP4 ou WebM.";
+    const meta = { d: await input.computeDuration([track]), w: track.displayWidth, h: track.displayHeight };
     if (!isFinite(meta.d) || meta.d > VIDEO_MAX_SECONDS + 0.5) return `O vídeo deve ter no máximo ${VIDEO_MAX_SECONDS} segundos.`;
     const long = Math.max(meta.w, meta.h), short = Math.min(meta.w, meta.h);
     if (long > VIDEO_MAX_W || short > VIDEO_MAX_H) return "Resolução máxima: 1920×1080.";
@@ -68,7 +84,7 @@ export async function validateVideo(file: File, maxBytes = VIDEO_MAX_BYTES): Pro
   } catch {
     return "Não foi possível ler esse vídeo. Tente outro arquivo.";
   } finally {
-    URL.revokeObjectURL(url);
+    input.dispose();
   }
 }
 
@@ -91,6 +107,9 @@ export async function removeAvatar(userId: string, oldPath: string | null) {
 
 /** Envia o GIF (o banco recusa quem não é assinante) e já equipa. */
 export async function uploadGifBanner(userId: string, file: File, oldPath: string | null) {
+  file = normalizeMediaFile(file);
+  const validation = file.type.startsWith("video/") ? await validateVideo(file) : validateGif(file);
+  if (validation) throw new Error(validation);
   const ext = file.type === "video/mp4" ? "mp4" : file.type === "video/webm" ? "webm" : "gif";
   const path = `${userId}/${Date.now()}.${ext}`;
   const up = await supabase.storage.from("profile-banners").upload(path, file, { contentType: file.type });
@@ -113,7 +132,7 @@ export function useEquipped(userId: string | undefined) {
       const { data, error } = await supabase
         .from("user_cosmetics")
         .select("cosmetic:cosmetics ( id, name, kind, preview, rarity, animation, media_url, media_path, media_type, effect )")
-        .eq("user_id", userId!)
+        .eq("user_id", userId ?? "")
         .eq("equipped", true);
       if (error) throw error;
       const map: Record<string, EquippedItem> = {};

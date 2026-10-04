@@ -25,6 +25,8 @@ export const Route = createFileRoute("/_authenticated/perfil/$username")({
       { name: "description", content: "Perfil de leitor na comunidade Eternal: nível, XP e favoritos." },
       { property: "og:title", content: "Perfil — Eternal" },
       { property: "og:description", content: "Conheça um leitor da comunidade Eternal." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ProfilePage,
