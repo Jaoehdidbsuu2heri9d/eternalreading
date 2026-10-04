@@ -5,6 +5,7 @@ import { BookOpen, Heart } from "lucide-react";
 import { Button } from "@/components/common/EButton";
 import { Badge } from "@/components/common/EBadge";
 import { ChapterList } from "@/components/ChapterList";
+import { Comments } from "@/components/social/Comments";
 import { fetchChapters, fetchHistory, fetchMangaBySlug, isFavorite, toggleFavorite } from "@/lib/api";
 import { formatNumber } from "@/lib/format";
 import { STATUS_LABEL, TYPE_LABEL } from "@/lib/types";
@@ -104,6 +105,7 @@ function MangaPage() {
         {m.synopsis && <p className="mt-8 leading-relaxed text-muted-foreground">{m.synopsis}</p>}
         <h2 className="mb-3 mt-8 text-xl font-semibold">Capítulos</h2>
         <ChapterList chapters={list} mangaSlug={slug} />
+        <Comments mangaId={m.id} chapterId={null} {...(user ? { me: user.id } : {})} />
       </div>
     </div>
   );

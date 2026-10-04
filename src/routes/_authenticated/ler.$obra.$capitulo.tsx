@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/common/EButton";
+import { Comments } from "@/components/social/Comments";
 import { fetchChapterPages, fetchChapters, fetchMangaBySlug, grantReadingXp, saveProgress } from "@/lib/api";
 import { formatChapterNumber } from "@/lib/format";
 import { useSession } from "@/hooks/useAuth";
@@ -107,6 +108,7 @@ function ReaderPage() {
           ))}
         </div>
         <div className="p-4">{nav}</div>
+        {manga.data && chapter && <div className="px-4 pb-10"><Comments mangaId={manga.data.id} chapterId={chapter.id} {...(user ? { me: user.id } : {})} /></div>}
       </main>
     </div>
   );

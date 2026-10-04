@@ -11,6 +11,7 @@ import { formatDate } from "@/lib/format";
 import { AdminTeam } from "@/components/admin/AdminTeam";
 import { AdminLogs } from "@/components/admin/AdminLogs";
 import { AdminWorks } from "@/components/admin/AdminWorks";
+import { AdminModeration } from "@/components/admin/AdminModeration";
 import { useSession } from "@/hooks/useAuth";
 import { useRoles } from "@/hooks/useRoles";
 
@@ -199,6 +200,7 @@ function AdminPage() {
       </section>
       <AdminWorks />
       <AdminTeam isOwner={isOwner} />
+      <AdminModeration />
       <AdminLogs />
     </div>
   );
