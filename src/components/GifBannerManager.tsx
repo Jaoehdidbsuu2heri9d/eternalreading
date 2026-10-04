@@ -55,7 +55,7 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
 
   async function toggle() {
     setBusy(true);
-    const { error } = await supabase.rpc("set_gif_banner", { p_path: profile.gif_banner_path, p_equipped: !profile.gif_banner_equipped });
+    const { error } = await supabase.rpc("set_gif_banner", { p_path: profile.gif_banner_path!, p_equipped: !profile.gif_banner_equipped });
     setBusy(false);
     if (error) return setMsg({ ok: false, text: "Não foi possível alterar." });
     refresh();
