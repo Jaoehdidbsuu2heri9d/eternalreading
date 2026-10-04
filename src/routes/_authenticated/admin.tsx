@@ -32,6 +32,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { name: "description", content: "Painel administrativo da Eternal." },
       { property: "og:title", content: "Administração — Eternal" },
       { property: "og:description", content: "Painel administrativo." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],
   }),
