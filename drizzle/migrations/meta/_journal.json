@@ -36,6 +36,13 @@
       "when": 1791076341197,
       "tag": "0004_add_owner_role",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791076374977,
+      "tag": "0005_admin_hierarchy",
+      "breakpoints": true
     }
   ]
 }

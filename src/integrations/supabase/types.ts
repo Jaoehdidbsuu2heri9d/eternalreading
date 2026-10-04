@@ -47,6 +47,33 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          details: Json
+          id: string
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          details?: Json
+          id?: string
+          target_user_id?: string | null
+        }
+        Relationships: []
+      }
       chapter_pages: {
         Row: {
           chapter_id: string
@@ -685,6 +712,33 @@ export type Database = {
     }
     Functions: {
       add_xp: { Args: { p_amount: number }; Returns: undefined }
+      admin_list_users: {
+        Args: {
+          p_plan?: Database["public"]["Enums"]["plan_tier"]
+          p_search?: string
+        }
+        Returns: {
+          admin_since: string
+          avatar_path: string
+          avatar_url: string
+          display_name: string
+          email: string
+          id: string
+          is_admin: boolean
+          is_owner: boolean
+          level: number
+          plan: Database["public"]["Enums"]["plan_tier"]
+          username: string
+          xp: number
+        }[]
+      }
+      admin_set_plan: {
+        Args: {
+          p_plan: Database["public"]["Enums"]["plan_tier"]
+          p_user: string
+        }
+        Returns: undefined
+      }
       check_achievements: { Args: never; Returns: number }
       equip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       has_role: {
@@ -694,6 +748,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      owner_add_admin: { Args: { p_user: string }; Returns: undefined }
+      owner_remove_admin: { Args: { p_user: string }; Returns: undefined }
       redeem_invite_code: { Args: { p_code: string }; Returns: boolean }
       set_gif_banner: {
         Args: { p_equipped: boolean; p_path: string }
@@ -701,6 +757,10 @@ export type Database = {
       }
       unequip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       validate_invite_code: { Args: { p_code: string }; Returns: boolean }
+      write_admin_log: {
+        Args: { p_action: string; p_details: Json; p_target: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "scan" | "user" | "owner"
