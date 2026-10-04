@@ -6,7 +6,7 @@ function Spoiler({ children }: { children: React.ReactNode }) {
   if (open) return <span className="rounded bg-secondary px-1">{children}</span>;
   return (
     <button type="button" onClick={() => setOpen(true)}
-      className="rounded bg-warning/15 px-1.5 py-0.5 text-xs font-medium text-foreground ring-1 ring-border hover:bg-secondary">
+      className="rounded bg-primary/15 px-1.5 py-0.5 text-xs font-medium text-foreground ring-1 ring-border hover:bg-secondary">
       ⚠️ Spoiler — clique para revelar
     </button>
   );

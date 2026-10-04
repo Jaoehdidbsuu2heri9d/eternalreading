@@ -5,6 +5,7 @@ import { Trophy } from "lucide-react";
 import { Badge } from "@/components/common/EBadge";
 import { MangaGrid } from "@/components/MangaGrid";
 import { UserAvatar } from "@/components/UserAvatar";
+import { FollowPanel } from "@/components/social/FollowPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchFavorites } from "@/lib/api";
 import { formatDate } from "@/lib/format";
@@ -89,6 +90,7 @@ function ProfilePage() {
             {isMe && <Link to="/personalizar" className="text-sm text-primary hover:underline">Personalizar</Link>}
           </div>
         </div>
+        <FollowPanel userId={p.id} me={user?.id} />
         {p.bio && <p className="mt-4 text-muted-foreground">{p.bio}</p>}
 
         <div className="surface-panel mt-6 rounded-2xl p-4">
