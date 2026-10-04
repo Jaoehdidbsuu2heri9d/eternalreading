@@ -78,6 +78,13 @@
       "when": 1791141561960,
       "tag": "0010_coins_shop_effects",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1791145709330,
+      "tag": "0011_ensure_profile",
+      "breakpoints": true
     }
   ]
 }

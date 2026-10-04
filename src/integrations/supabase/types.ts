@@ -1294,6 +1294,7 @@ export type Database = {
         }
         Returns: number
       }
+      ensure_profile: { Args: { p_username?: string }; Returns: undefined }
       equip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       expire_subscriptions: { Args: never; Returns: number }
       has_active_subscription: {
