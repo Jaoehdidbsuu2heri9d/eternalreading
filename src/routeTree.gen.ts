@@ -15,6 +15,7 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as ConviteRouteImport } from './routes/convite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAssinaturaRouteImport } from './routes/_authenticated/assinatura'
 import { Route as AuthenticatedAtividadeRouteImport } from './routes/_authenticated/atividade'
 import { Route as AuthenticatedAtualizacoesRouteImport } from './routes/_authenticated/atualizacoes'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
@@ -63,6 +64,11 @@ const LoginRoute = LoginRouteImport.update({
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAssinaturaRoute = AuthenticatedAssinaturaRouteImport.update({
+  id: '/assinatura',
+  path: '/assinatura',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAtividadeRoute = AuthenticatedAtividadeRouteImport.update({
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/assinatura': typeof AuthenticatedAssinaturaRoute
   '/atividade': typeof AuthenticatedAtividadeRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -206,6 +213,7 @@ export interface FileRoutesByTo {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/assinatura': typeof AuthenticatedAssinaturaRoute
   '/atividade': typeof AuthenticatedAtividadeRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -235,6 +243,7 @@ export interface FileRoutesById {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/assinatura': typeof AuthenticatedAssinaturaRoute
   '/_authenticated/atividade': typeof AuthenticatedAtividadeRoute
   '/_authenticated/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -264,6 +273,7 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/admin'
+    | '/assinatura'
     | '/atividade'
     | '/atualizacoes'
     | '/configuracoes'
@@ -291,6 +301,7 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/admin'
+    | '/assinatura'
     | '/atividade'
     | '/atualizacoes'
     | '/configuracoes'
@@ -319,6 +330,7 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/_authenticated/admin'
+    | '/_authenticated/assinatura'
     | '/_authenticated/atividade'
     | '/_authenticated/atualizacoes'
     | '/_authenticated/configuracoes'
@@ -393,6 +405,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/assinatura': {
+      id: '/_authenticated/assinatura'
+      path: '/assinatura'
+      fullPath: '/assinatura'
+      preLoaderRoute: typeof AuthenticatedAssinaturaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/atividade': {
@@ -540,6 +559,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAssinaturaRoute: typeof AuthenticatedAssinaturaRoute
   AuthenticatedAtividadeRoute: typeof AuthenticatedAtividadeRoute
   AuthenticatedAtualizacoesRoute: typeof AuthenticatedAtualizacoesRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
@@ -562,6 +582,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAssinaturaRoute: AuthenticatedAssinaturaRoute,
   AuthenticatedAtividadeRoute: AuthenticatedAtividadeRoute,
   AuthenticatedAtualizacoesRoute: AuthenticatedAtualizacoesRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
