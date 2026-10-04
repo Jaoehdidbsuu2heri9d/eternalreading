@@ -78,6 +78,12 @@ function LoginPage() {
           </Button>
         </form>
 
+        <p className="mt-4 text-center text-sm">
+          <Link to="/esqueci-senha" className="text-muted-foreground underline underline-offset-4">
+            Esqueci minha senha
+          </Link>
+        </p>
+
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Recebeu um código de convite?{" "}
           <Link to="/convite" className="text-primary-foreground underline underline-offset-4">
