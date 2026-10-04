@@ -64,6 +64,13 @@
       "when": 1791136503745,
       "tag": "0008_cosmetics_v2",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1791137907399,
+      "tag": "0009_billing_asaas",
+      "breakpoints": true
     }
   ]
 }

@@ -119,6 +119,27 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_customers: {
+        Row: {
+          created_at: string
+          external_customer_id: string
+          provider: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          external_customer_id: string
+          provider: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          external_customer_id?: string
+          provider?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       chapter_pages: {
         Row: {
           chapter_id: string
@@ -678,6 +699,95 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_events: {
+        Row: {
+          created_at: string
+          error: string | null
+          event_id: string
+          event_type: string
+          id: string
+          payload: Json
+          processed: boolean
+          provider: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          event_id: string
+          event_type: string
+          id?: string
+          payload: Json
+          processed?: boolean
+          provider: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          event_id?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed?: boolean
+          provider?: string
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount_cents: number
+          billing_type: string | null
+          created_at: string
+          due_date: string | null
+          external_id: string
+          id: string
+          invoice_url: string | null
+          paid_at: string | null
+          provider: string
+          status: string
+          subscription_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          billing_type?: string | null
+          created_at?: string
+          due_date?: string | null
+          external_id: string
+          id?: string
+          invoice_url?: string | null
+          paid_at?: string | null
+          provider: string
+          status: string
+          subscription_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          billing_type?: string | null
+          created_at?: string
+          due_date?: string | null
+          external_id?: string
+          id?: string
+          invoice_url?: string | null
+          paid_at?: string | null
+          provider?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_path: string | null
@@ -842,25 +952,34 @@ export type Database = {
       }
       subscription_plans: {
         Row: {
+          billing_interval: string
+          features: Json
           id: Database["public"]["Enums"]["plan_tier"]
           name: string
           perks: string[]
+          price_cents: number | null
           price_label: string
           sort: number
           tagline: string
         }
         Insert: {
+          billing_interval?: string
+          features?: Json
           id: Database["public"]["Enums"]["plan_tier"]
           name: string
           perks?: string[]
+          price_cents?: number | null
           price_label: string
           sort?: number
           tagline: string
         }
         Update: {
+          billing_interval?: string
+          features?: Json
           id?: Database["public"]["Enums"]["plan_tier"]
           name?: string
           perks?: string[]
+          price_cents?: number | null
           price_label?: string
           sort?: number
           tagline?: string
@@ -869,33 +988,57 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          billing_type: string | null
+          cancel_at_period_end: boolean
+          canceled_at: string | null
           created_at: string
+          current_period_end: string | null
           ends_at: string | null
+          external_customer_id: string | null
           external_id: string | null
           id: string
+          next_due_date: string | null
           plan: Database["public"]["Enums"]["plan_tier"]
+          provider: string
           started_at: string | null
           status: string
+          updated_at: string
           user_id: string
         }
         Insert: {
+          billing_type?: string | null
+          cancel_at_period_end?: boolean
+          canceled_at?: string | null
           created_at?: string
+          current_period_end?: string | null
           ends_at?: string | null
+          external_customer_id?: string | null
           external_id?: string | null
           id?: string
+          next_due_date?: string | null
           plan?: Database["public"]["Enums"]["plan_tier"]
+          provider?: string
           started_at?: string | null
           status?: string
+          updated_at?: string
           user_id: string
         }
         Update: {
+          billing_type?: string | null
+          cancel_at_period_end?: boolean
+          canceled_at?: string | null
           created_at?: string
+          current_period_end?: string | null
           ends_at?: string | null
+          external_customer_id?: string | null
           external_id?: string | null
           id?: string
+          next_due_date?: string | null
           plan?: Database["public"]["Enums"]["plan_tier"]
+          provider?: string
           started_at?: string | null
           status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -1038,6 +1181,14 @@ export type Database = {
       }
       check_achievements: { Args: never; Returns: number }
       equip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
+      expire_subscriptions: { Args: never; Returns: number }
+      has_active_subscription: {
+        Args: {
+          p_plan: Database["public"]["Enums"]["plan_tier"]
+          p_user: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1051,6 +1202,10 @@ export type Database = {
       set_gif_banner: {
         Args: { p_equipped: boolean; p_path: string }
         Returns: undefined
+      }
+      sync_profile_plan: {
+        Args: { p_user: string }
+        Returns: Database["public"]["Enums"]["plan_tier"]
       }
       unequip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       validate_invite_code: { Args: { p_code: string }; Returns: boolean }
