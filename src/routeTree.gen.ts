@@ -30,6 +30,7 @@ import { Route as AuthenticatedSejaParceiroRouteImport } from './routes/_authent
 import { Route as AuthenticatedObraSlugRouteImport } from './routes/_authenticated/obra.$slug'
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
 import { Route as AuthenticatedScanSlugRouteImport } from './routes/_authenticated/scan.$slug'
+import { Route as AuthenticatedAdminObrasIdRouteImport } from './routes/_authenticated/admin_.obras.$id'
 import { Route as AuthenticatedLerObraCapituloRouteImport } from './routes/_authenticated/ler.$obra.$capitulo'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
@@ -142,6 +143,12 @@ const AuthenticatedScanSlugRoute = AuthenticatedScanSlugRouteImport.update({
   path: '/scan/$slug',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminObrasIdRoute =
+  AuthenticatedAdminObrasIdRouteImport.update({
+    id: '/admin_/obras/$id',
+    path: '/admin/obras/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedLerObraCapituloRoute =
   AuthenticatedLerObraCapituloRouteImport.update({
     id: '/ler/$obra/$capitulo',
@@ -175,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/scan/$slug': typeof AuthenticatedScanSlugRoute
+  '/admin/obras/$id': typeof AuthenticatedAdminObrasIdRoute
   '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -199,6 +207,7 @@ export interface FileRoutesByTo {
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/scan/$slug': typeof AuthenticatedScanSlugRoute
+  '/admin/obras/$id': typeof AuthenticatedAdminObrasIdRoute
   '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -225,6 +234,7 @@ export interface FileRoutesById {
   '/_authenticated/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/_authenticated/scan/$slug': typeof AuthenticatedScanSlugRoute
+  '/_authenticated/admin_/obras/$id': typeof AuthenticatedAdminObrasIdRoute
   '/_authenticated/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
     | '/obra/$slug'
     | '/perfil/$username'
     | '/scan/$slug'
+    | '/admin/obras/$id'
     | '/ler/$obra/$capitulo'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
@@ -275,6 +286,7 @@ export interface FileRouteTypes {
     | '/obra/$slug'
     | '/perfil/$username'
     | '/scan/$slug'
+    | '/admin/obras/$id'
     | '/ler/$obra/$capitulo'
     | '/api/public/media/$'
   id:
@@ -300,6 +312,7 @@ export interface FileRouteTypes {
     | '/_authenticated/obra/$slug'
     | '/_authenticated/perfil/$username'
     | '/_authenticated/scan/$slug'
+    | '/_authenticated/admin_/obras/$id'
     | '/_authenticated/ler/$obra/$capitulo'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
@@ -462,6 +475,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedScanSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin_/obras/$id': {
+      id: '/_authenticated/admin_/obras/$id'
+      path: '/admin/obras/$id'
+      fullPath: '/admin/obras/$id'
+      preLoaderRoute: typeof AuthenticatedAdminObrasIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/ler/$obra/$capitulo': {
       id: '/_authenticated/ler/$obra/$capitulo'
       path: '/ler/$obra/$capitulo'
@@ -496,6 +516,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedObraSlugRoute: typeof AuthenticatedObraSlugRoute
   AuthenticatedPerfilUsernameRoute: typeof AuthenticatedPerfilUsernameRoute
   AuthenticatedScanSlugRoute: typeof AuthenticatedScanSlugRoute
+  AuthenticatedAdminObrasIdRoute: typeof AuthenticatedAdminObrasIdRoute
   AuthenticatedLerObraCapituloRoute: typeof AuthenticatedLerObraCapituloRoute
 }
 
@@ -516,6 +537,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedObraSlugRoute: AuthenticatedObraSlugRoute,
   AuthenticatedPerfilUsernameRoute: AuthenticatedPerfilUsernameRoute,
   AuthenticatedScanSlugRoute: AuthenticatedScanSlugRoute,
+  AuthenticatedAdminObrasIdRoute: AuthenticatedAdminObrasIdRoute,
   AuthenticatedLerObraCapituloRoute: AuthenticatedLerObraCapituloRoute,
 }
 

@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { formatDate } from "@/lib/format";
 import { AdminTeam } from "@/components/admin/AdminTeam";
 import { AdminLogs } from "@/components/admin/AdminLogs";
+import { AdminWorks } from "@/components/admin/AdminWorks";
 import { useSession } from "@/hooks/useAuth";
 import { useRoles } from "@/hooks/useRoles";
 
@@ -196,6 +197,7 @@ function AdminPage() {
           </ul>
         )}
       </section>
+      <AdminWorks />
       <AdminTeam isOwner={isOwner} />
       <AdminLogs />
     </div>
