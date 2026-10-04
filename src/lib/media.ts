@@ -71,27 +71,12 @@ export const isVideoPath = (p: string | null | undefined) => !!p && /\.(mp4|webm
 export async function validateVideo(file: File, maxBytes = VIDEO_MAX_BYTES): Promise<string | null> {
   if (!VIDEO_TYPES.includes(file.type)) return "Envie um vídeo MP4 ou WebM.";
   if (file.size > maxBytes) return `O vídeo deve ter no máximo ${Math.round(maxBytes / 1048576)} MB.`;
-  const url = URL.createObjectURL(file);
+  const { Input, BlobSource, ALL_FORMATS } = await import("mediabunny");
+  const input = new Input({ source: new BlobSource(file), formats: ALL_FORMATS });
   try {
-    const meta = await new Promise<{ d: number; w: number; h: number }>((res, rej) => {
-      const v = document.createElement("video");
-      v.preload = "metadata"; v.muted = true;
-      const finish = (error?: Error) => {
-        clearTimeout(timer);
-        const meta = { d: v.duration, w: v.videoWidth, h: v.videoHeight };
-        v.onloadedmetadata = null; v.ondurationchange = null; v.onerror = null;
-        v.removeAttribute("src"); v.load();
-        if (error) rej(error); else res(meta);
-      };
-      const timer = setTimeout(() => finish(new Error("timeout")), 10000);
-      v.onloadedmetadata = () => {
-        if (Number.isFinite(v.duration)) finish();
-        else v.currentTime = 1e10; // WebM may only expose duration after seeking.
-      };
-      v.ondurationchange = () => { if (Number.isFinite(v.duration) && v.duration > 0 && v.videoWidth > 0) finish(); };
-      v.onerror = () => finish(new Error("bad"));
-      v.src = url;
-    });
+    const track = await input.getPrimaryVideoTrack();
+    if (!track) return "Esse arquivo não contém vídeo. Use MP4 ou WebM.";
+    const meta = { d: await input.computeDuration([track]), w: track.displayWidth, h: track.displayHeight };
     if (!isFinite(meta.d) || meta.d > VIDEO_MAX_SECONDS + 0.5) return `O vídeo deve ter no máximo ${VIDEO_MAX_SECONDS} segundos.`;
     const long = Math.max(meta.w, meta.h), short = Math.min(meta.w, meta.h);
     if (long > VIDEO_MAX_W || short > VIDEO_MAX_H) return "Resolução máxima: 1920×1080.";
@@ -99,7 +84,7 @@ export async function validateVideo(file: File, maxBytes = VIDEO_MAX_BYTES): Pro
   } catch {
     return "Não foi possível ler esse vídeo. Tente outro arquivo.";
   } finally {
-    URL.revokeObjectURL(url);
+    input.dispose();
   }
 }
 
