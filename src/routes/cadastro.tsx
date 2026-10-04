@@ -75,15 +75,12 @@ function SignUpPage() {
       return;
     }
 
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: data.user.id,
-      username: parsed.data.username,
-      display_name: parsed.data.username,
-    });
+    // Cria o perfil; se o nome já existir, o banco escolhe uma variação livre.
+    const { error: profileError } = await supabase.rpc("ensure_profile", { p_username: parsed.data.username });
     setLoading(false);
 
     if (profileError) {
-      setError("Esse nome de usuário já está em uso.");
+      setError("Conta criada, mas não foi possível finalizar o perfil. Entre novamente.");
       return;
     }
     navigate({ to: "/inicio" });
