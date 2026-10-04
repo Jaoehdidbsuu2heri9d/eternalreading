@@ -36,7 +36,7 @@ export interface CatalogFilters {
 }
 
 export async function fetchCatalog(filters: CatalogFilters = {}): Promise<Manga[]> {
-  let query = supabase.from("manga").select(MANGA_SELECT);
+  let query = supabase.from("manga").select(MANGA_SELECT).is("deleted_at", null);
 
   if (filters.search) query = query.ilike("title", `%${filters.search}%`);
   if (filters.status) query = query.eq("status", filters.status as MangaStatus);
@@ -61,6 +61,7 @@ export async function fetchMangaBySlug(slug: string): Promise<Manga | null> {
     .from("manga")
     .select(MANGA_SELECT)
     .eq("slug", slug)
+    .is("deleted_at", null)
     .maybeSingle();
   if (error) throw error;
   return data ? mapManga(data) : null;
@@ -71,6 +72,7 @@ export async function fetchChapters(mangaId: string): Promise<Chapter[]> {
     .from("chapters")
     .select("id, manga_id, number, title, published_at")
     .eq("manga_id", mangaId)
+    .is("deleted_at", null)
     .order("number", { ascending: false });
   if (error) throw error;
   return (data ?? []).map((c) => ({ ...c, number: Number(c.number) })) as Chapter[];
@@ -103,6 +105,8 @@ export async function fetchLatestUpdates(limit = 12) {
   const { data, error } = await supabase
     .from("chapters")
     .select("id, number, published_at, manga:manga ( id, slug, title, cover_url, scan:scans ( name ) )")
+    .is("deleted_at", null)
+    .eq("status", "published")
     .order("published_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
