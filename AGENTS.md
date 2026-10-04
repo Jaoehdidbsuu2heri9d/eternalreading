@@ -8,3 +8,4 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+- Admin hierarchy: owner role always also holds admin; role/plan changes go only through SECURITY DEFINER RPCs (owner_add_admin, owner_remove_admin, admin_set_plan) that log to admin_logs — clients never write user_roles directly.
