@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { followList, followStats, friendlyError, setFollow } from "@/lib/social";
 
 /** Seguidores, seguindo e botão Seguir/Seguindo no perfil. */
-export function FollowPanel({ userId, me }: { userId: string; me?: string }) {
+export function FollowPanel({ userId, me }: { userId: string; me?: string | undefined }) {
   const qc = useQueryClient();
   const [list, setList] = useState<"followers" | "following" | null>(null);
   const [err, setErr] = useState<string | null>(null);

@@ -55,7 +55,7 @@ export async function followList(userId: string, kind: "followers" | "following"
 // ---------- Atividade ----------
 export type Activity = {
   id: string; user_id: string; kind: string; created_at: string; data: Record<string, unknown>;
-  manga: { slug: string; title: string; cover_url: string | null } | null; user?: MiniProfile;
+  manga: { slug: string; title: string; cover_url: string | null } | null; user?: MiniProfile | undefined;
 };
 
 export async function fetchFriendActivity(me: string, before?: string): Promise<Activity[]> {
@@ -73,7 +73,7 @@ export async function fetchFriendActivity(me: string, before?: string): Promise<
 export type Comment = {
   id: string; user_id: string; manga_id: string; chapter_id: string | null; parent_id: string | null;
   body: string; is_spoiler: boolean; hidden: boolean; edited_at: string | null; created_at: string;
-  likes: { user_id: string }[]; author?: MiniProfile; replies?: Comment[];
+  likes: { user_id: string }[]; author?: MiniProfile | undefined; replies?: Comment[];
 };
 const C_SELECT = "id, user_id, manga_id, chapter_id, parent_id, body, is_spoiler, hidden, edited_at, created_at, likes:comment_likes(user_id)";
 export const COMMENTS_PAGE = 15;
