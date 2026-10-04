@@ -17,11 +17,14 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAtualizacoesRouteImport } from './routes/_authenticated/atualizacoes'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
+import { Route as AuthenticatedConquistasRouteImport } from './routes/_authenticated/conquistas'
 import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticated/explorar'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedInicioRouteImport } from './routes/_authenticated/inicio'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
+import { Route as AuthenticatedPersonalizarRouteImport } from './routes/_authenticated/personalizar'
+import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated/planos'
 import { Route as AuthenticatedScansRouteImport } from './routes/_authenticated/scans'
 import { Route as AuthenticatedSejaParceiroRouteImport } from './routes/_authenticated/seja-parceiro'
 import { Route as AuthenticatedObraSlugRouteImport } from './routes/_authenticated/obra.$slug'
@@ -70,6 +73,11 @@ const AuthenticatedConfiguracoesRoute =
     path: '/configuracoes',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedConquistasRoute = AuthenticatedConquistasRouteImport.update({
+  id: '/conquistas',
+  path: '/conquistas',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedExplorarRoute = AuthenticatedExplorarRouteImport.update({
   id: '/explorar',
   path: '/explorar',
@@ -93,6 +101,17 @@ const AuthenticatedInicioRoute = AuthenticatedInicioRouteImport.update({
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   id: '/me',
   path: '/me',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPersonalizarRoute =
+  AuthenticatedPersonalizarRouteImport.update({
+    id: '/personalizar',
+    path: '/personalizar',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPlanosRoute = AuthenticatedPlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedScansRoute = AuthenticatedScansRouteImport.update({
@@ -137,11 +156,14 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/conquistas': typeof AuthenticatedConquistasRoute
   '/explorar': typeof AuthenticatedExplorarRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
   '/me': typeof AuthenticatedMeRoute
+  '/personalizar': typeof AuthenticatedPersonalizarRoute
+  '/planos': typeof AuthenticatedPlanosRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
@@ -157,11 +179,14 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/conquistas': typeof AuthenticatedConquistasRoute
   '/explorar': typeof AuthenticatedExplorarRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
   '/me': typeof AuthenticatedMeRoute
+  '/personalizar': typeof AuthenticatedPersonalizarRoute
+  '/planos': typeof AuthenticatedPlanosRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
@@ -179,11 +204,14 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
+  '/_authenticated/conquistas': typeof AuthenticatedConquistasRoute
   '/_authenticated/explorar': typeof AuthenticatedExplorarRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/inicio': typeof AuthenticatedInicioRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
+  '/_authenticated/personalizar': typeof AuthenticatedPersonalizarRoute
+  '/_authenticated/planos': typeof AuthenticatedPlanosRoute
   '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/_authenticated/obra/$slug': typeof AuthenticatedObraSlugRoute
@@ -201,11 +229,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/atualizacoes'
     | '/configuracoes'
+    | '/conquistas'
     | '/explorar'
     | '/favoritos'
     | '/historico'
     | '/inicio'
     | '/me'
+    | '/personalizar'
+    | '/planos'
     | '/scans'
     | '/seja-parceiro'
     | '/obra/$slug'
@@ -221,11 +252,14 @@ export interface FileRouteTypes {
     | '/admin'
     | '/atualizacoes'
     | '/configuracoes'
+    | '/conquistas'
     | '/explorar'
     | '/favoritos'
     | '/historico'
     | '/inicio'
     | '/me'
+    | '/personalizar'
+    | '/planos'
     | '/scans'
     | '/seja-parceiro'
     | '/obra/$slug'
@@ -242,11 +276,14 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/atualizacoes'
     | '/_authenticated/configuracoes'
+    | '/_authenticated/conquistas'
     | '/_authenticated/explorar'
     | '/_authenticated/favoritos'
     | '/_authenticated/historico'
     | '/_authenticated/inicio'
     | '/_authenticated/me'
+    | '/_authenticated/personalizar'
+    | '/_authenticated/planos'
     | '/_authenticated/scans'
     | '/_authenticated/seja-parceiro'
     | '/_authenticated/obra/$slug'
@@ -321,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/conquistas': {
+      id: '/_authenticated/conquistas'
+      path: '/conquistas'
+      fullPath: '/conquistas'
+      preLoaderRoute: typeof AuthenticatedConquistasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/explorar': {
       id: '/_authenticated/explorar'
       path: '/explorar'
@@ -354,6 +398,20 @@ declare module '@tanstack/react-router' {
       path: '/me'
       fullPath: '/me'
       preLoaderRoute: typeof AuthenticatedMeRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/personalizar': {
+      id: '/_authenticated/personalizar'
+      path: '/personalizar'
+      fullPath: '/personalizar'
+      preLoaderRoute: typeof AuthenticatedPersonalizarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/planos': {
+      id: '/_authenticated/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof AuthenticatedPlanosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/scans': {
@@ -405,11 +463,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAtualizacoesRoute: typeof AuthenticatedAtualizacoesRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
+  AuthenticatedConquistasRoute: typeof AuthenticatedConquistasRoute
   AuthenticatedExplorarRoute: typeof AuthenticatedExplorarRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedInicioRoute: typeof AuthenticatedInicioRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
+  AuthenticatedPersonalizarRoute: typeof AuthenticatedPersonalizarRoute
+  AuthenticatedPlanosRoute: typeof AuthenticatedPlanosRoute
   AuthenticatedScansRoute: typeof AuthenticatedScansRoute
   AuthenticatedSejaParceiroRoute: typeof AuthenticatedSejaParceiroRoute
   AuthenticatedObraSlugRoute: typeof AuthenticatedObraSlugRoute
@@ -422,11 +483,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAtualizacoesRoute: AuthenticatedAtualizacoesRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
+  AuthenticatedConquistasRoute: AuthenticatedConquistasRoute,
   AuthenticatedExplorarRoute: AuthenticatedExplorarRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedInicioRoute: AuthenticatedInicioRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
+  AuthenticatedPersonalizarRoute: AuthenticatedPersonalizarRoute,
+  AuthenticatedPlanosRoute: AuthenticatedPlanosRoute,
   AuthenticatedScansRoute: AuthenticatedScansRoute,
   AuthenticatedSejaParceiroRoute: AuthenticatedSejaParceiroRoute,
   AuthenticatedObraSlugRoute: AuthenticatedObraSlugRoute,
