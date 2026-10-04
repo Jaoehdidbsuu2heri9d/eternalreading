@@ -37,7 +37,7 @@ export function AdminLogs() {
       ) : (
         <ul className="divide-y divide-border rounded-2xl border border-border">
           {logs.data!.map((l) => {
-            const d = l.details as Record<string, string>;
+            const d = l.details as { code?: string; scan?: string; from?: string; to?: string };
             const extra = d.code ? ` ${d.code}` : d.scan ? ` (${d.scan})` : d.to ? `: ${d.from} → ${d.to}` : "";
             return (
               <li key={l.id} className="flex flex-wrap justify-between gap-2 p-3 text-sm">
