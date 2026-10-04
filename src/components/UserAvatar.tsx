@@ -1,5 +1,6 @@
 import { useSignedUrl, useEquipped } from "@/lib/media";
 import { cn } from "@/lib/utils";
+import { animClass } from "@/lib/cosmetics";
 
 /**
  * Avatar do usuário com foto enviada (ou link antigo) e moldura equipada.
@@ -26,18 +27,27 @@ export function UserAvatar({
 }) {
   const signed = useSignedUrl("avatars", avatarPath);
   const { data: equipped } = useEquipped(showFrame ? userId : undefined);
-  const frame = showFrame ? equipped?.["frame"]?.preview : undefined;
+  const frameItem = showFrame ? equipped?.["frame"] : undefined;
+  const frame = frameItem && frameItem.preview.startsWith("#") ? frameItem.preview : undefined;
+  const gradFrame = frameItem && !frame ? frameItem.preview : undefined;
   const src = previewSrc ?? signed ?? avatarUrl ?? null;
   const ring = Math.max(2, Math.round(size / 20));
 
   return (
+    <span className="relative inline-flex shrink-0" style={{ width: size, height: size }}>
+    {frameItem && (
+      <span
+        aria-hidden
+        className={cn("pointer-events-none absolute rounded-full", animClass(frameItem.animation))}
+        style={{
+          inset: -ring,
+          ["--cos-color" as string]: frame,
+          ...(gradFrame ? { background: gradFrame } : { boxShadow: `0 0 0 ${ring}px ${frame}, 0 0 ${ring * 4}px ${frame}` }),
+        }}
+      />
+    )}
     <span
-      className={cn("relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full", !src && "gradient-eternal", className)}
-      style={{
-        width: size,
-        height: size,
-        boxShadow: frame ? `0 0 0 ${ring}px ${frame}, 0 0 ${ring * 4}px ${frame}` : undefined,
-      }}
+      className={cn("relative inline-flex h-full w-full items-center justify-center overflow-hidden rounded-full", !src && "gradient-eternal", className)}
     >
       {src ? (
         <img src={src} alt={`Foto de ${username}`} className="h-full w-full object-cover" />
@@ -46,6 +56,7 @@ export function UserAvatar({
           {username.charAt(0).toUpperCase()}
         </span>
       )}
+    </span>
     </span>
   );
 }
