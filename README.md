@@ -1,29 +1,50 @@
-# Welcome to your Lovable project
+# Eternal
 
-This project was built with [Lovable](https://lovable.dev).
+Comunidade fechada de leitura de manhwas, com cadastro por código de convite, catálogo, leitor vertical, favoritos, histórico, perfis com XP e scans parceiras. Publica apenas obras próprias ou autorizadas.
 
-## Build with Lovable
+## Tecnologias
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+- React 19 + TypeScript + TanStack Start (rotas e renderização) + Vite
+- Tailwind CSS v4 (tema em `src/styles.css`)
+- Lovable Cloud (banco PostgreSQL, autenticação e arquivos)
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+## Instalação e execução
 
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+```bash
+bun install
+bun run dev   # http://localhost:8080
 ```
 
-## Built with
+## Variáveis de ambiente
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+Arquivo `.env` (gerado pelo Lovable Cloud — nunca coloque chaves secretas no código):
+
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY` — usadas no navegador (chave pública)
+- `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` — usadas no servidor
+
+## Banco de dados
+
+As migrações ficam em `supabase/migrations` e `drizzle/migrations`. Todas as tabelas usam regras de segurança por linha (RLS): só membros logados leem o catálogo, e cada usuário só altera os próprios dados. Dados de demonstração: 6 obras, 3 scans e os códigos `ETERNAL2026` e `SUNSHINE`.
+
+## Usuário admin
+
+1. Crie uma conta normalmente pelo `/convite`.
+2. No banco, rode:
+
+```sql
+insert into public.user_roles (user_id, role)
+select id, 'admin' from auth.users where email = 'seu@email.com';
+```
+
+3. Acesse `/admin` para gerenciar códigos de convite e pedidos de parceria.
+
+## Deploy
+
+Publique pelo botão **Publish** no Lovable. O mesmo banco atende a prévia e o site publicado.
+
+## Estrutura
+
+- `src/routes` — páginas (`_authenticated/` exige login)
+- `src/components` — componentes reutilizáveis (`common/` = botões, campos, selos)
+- `src/lib` — acesso a dados (`api.ts`), tipos e formatação
+- `src/hooks` — sessão e perfil
