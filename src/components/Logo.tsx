@@ -10,7 +10,9 @@ export function Logo({ className, to = "/" }: { className?: string; to?: string 
       className={cn("group inline-flex items-center gap-2", className)}
       aria-label="Eternal — página inicial"
     >
-      <img src={logoAsset.url} alt="" className="h-12 w-10 shrink-0 object-contain" />
+      <span className="relative inline-block h-12 w-9 shrink-0 overflow-hidden rounded-[50%] ring-1 ring-border">
+        <img src={logoAsset.url} alt="" className="h-full w-full object-cover" />
+      </span>
       <span className="font-display text-lg font-semibold tracking-tight text-gradient-eternal">
         Eternal
       </span>
