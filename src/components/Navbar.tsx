@@ -1,13 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { LogOut, Search, User as UserIcon } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 
 import { Logo } from "@/components/Logo";
-import { UserAvatar } from "@/components/UserAvatar";
+import { UserMenu } from "@/components/UserMenu";
 import { NotificationBell } from "@/components/NotificationBell";
-import { Button } from "@/components/common/EButton";
-import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -24,15 +21,7 @@ const links = [
 /** Barra de navegação superior (desktop e tablet). */
 export function Navbar({ profile }: { profile?: Profile | null }) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [term, setTerm] = useState("");
-
-  async function handleSignOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/login", replace: true });
-  }
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -78,18 +67,7 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
 
         <div className={cn("flex items-center gap-1", "ml-auto lg:ml-0")}>
           <NotificationBell {...(profile ? { userId: profile.id } : {})} />
-          <Link
-            to="/perfil/$username"
-            params={{ username: profile?.username ?? "" }}
-            className="inline-flex h-10 items-center gap-2 rounded-xl px-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-          >
-            <UserAvatar userId={profile?.id} username={profile?.username ?? "?"} avatarPath={profile?.avatar_path} avatarUrl={profile?.avatar_url} size={28} />
-            <span className="hidden sm:inline">{profile?.username ?? "Perfil"}</span>
-          </Link>
-          <Button variant="ghost" size="icon" aria-label="Sair" onClick={handleSignOut}>
-            <LogOut className="h-5 w-5" aria-hidden />
-          </Button>
-          <UserIcon className="hidden" aria-hidden />
+          <UserMenu profile={profile ?? null} />
         </div>
       </div>
     </header>

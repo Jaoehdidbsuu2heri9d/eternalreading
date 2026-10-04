@@ -41,6 +41,13 @@ function SettingsPage() {
     if (profile) setForm({ display_name: profile.display_name ?? "", bio: profile.bio ?? "", avatar_url: profile.avatar_url ?? "" });
   }, [profile]);
 
+  // Atalho "Alterar foto" do menu: rola até a área da foto.
+  useEffect(() => {
+    if (profile && window.location.hash === "#foto") {
+      document.getElementById("foto")?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [profile]);
+
   async function save(e: React.FormEvent) {
     e.preventDefault();
     const parsed = schema.safeParse(form);
