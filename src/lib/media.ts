@@ -71,7 +71,7 @@ export async function uploadGifBanner(userId: string, file: File, oldPath: strin
 }
 
 /** Itens equipados de um usuário, agrupados por tipo. */
-export interface EquippedItem { id: string; name: string; kind: string; preview: string; rarity: string }
+export interface EquippedItem { id: string; name: string; kind: string; preview: string; rarity: string; animation: string; media_url: string | null }
 export function useEquipped(userId: string | undefined) {
   return useQuery({
     queryKey: ["equipped", userId],
@@ -79,7 +79,7 @@ export function useEquipped(userId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_cosmetics")
-        .select("cosmetic:cosmetics ( id, name, kind, preview, rarity )")
+        .select("cosmetic:cosmetics ( id, name, kind, preview, rarity, animation, media_url )")
         .eq("user_id", userId!)
         .eq("equipped", true);
       if (error) throw error;

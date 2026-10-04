@@ -12,6 +12,7 @@ import { AdminTeam } from "@/components/admin/AdminTeam";
 import { AdminLogs } from "@/components/admin/AdminLogs";
 import { AdminWorks } from "@/components/admin/AdminWorks";
 import { AdminModeration } from "@/components/admin/AdminModeration";
+import { AdminCosmetics } from "@/components/admin/AdminCosmetics";
 import { useSession } from "@/hooks/useAuth";
 import { useRoles } from "@/hooks/useRoles";
 
@@ -201,6 +202,7 @@ function AdminPage() {
       <AdminWorks />
       <AdminTeam isOwner={isOwner} />
       <AdminModeration />
+      <AdminCosmetics />
       <AdminLogs />
     </div>
   );

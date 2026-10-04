@@ -57,6 +57,13 @@
       "when": 1791135944479,
       "tag": "0007_social_system",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1791136503745,
+      "tag": "0008_cosmetics_v2",
+      "breakpoints": true
     }
   ]
 }

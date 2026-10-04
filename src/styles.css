@@ -128,3 +128,19 @@
     }
   }
 }
+
+/* ===== Cosméticos animados (pausam fora da tela via .cos-paused e com menos movimento) ===== */
+@keyframes cos-spin { to { transform: rotate(360deg); } }
+@keyframes cos-pulse { 0%,100% { opacity: 1; } 50% { opacity: .55; } }
+@keyframes cos-glow { 0%,100% { filter: drop-shadow(0 0 2px var(--cos-color, #a855f7)); } 50% { filter: drop-shadow(0 0 10px var(--cos-color, #a855f7)); } }
+@keyframes cos-drift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+@keyframes cos-shimmer { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+.cos-anim-spin { animation: cos-spin 6s linear infinite; }
+.cos-anim-pulse { animation: cos-pulse 2.4s ease-in-out infinite; }
+.cos-anim-glow { animation: cos-glow 2.8s ease-in-out infinite; }
+.cos-anim-drift { background-size: 200% 200% !important; animation: cos-drift 14s ease-in-out infinite; }
+.cos-shimmer { position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, oklch(1 0 0 / 18%) 50%, transparent 70%); animation: cos-shimmer 4s ease-in-out infinite; pointer-events: none; }
+.cos-paused, .cos-paused * { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .cos-anim-spin, .cos-anim-pulse, .cos-anim-glow, .cos-anim-drift, .cos-shimmer { animation: none !important; }
+}
