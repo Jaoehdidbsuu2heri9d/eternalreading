@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-/** Webhook do Asaas: valida o token, registra o evento (idempotente) e aplica. */
+/** Webhook do Asaas: valida o token (ASAAS_WEBHOOK_TOKEN), registra o evento (idempotente) e aplica. */
 export const Route = createFileRoute("/api/public/webhooks/asaas")({
   server: {
     handlers: {
