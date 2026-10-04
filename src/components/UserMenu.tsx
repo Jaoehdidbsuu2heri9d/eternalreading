@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { Camera, LogOut, Palette, Settings, Shield, User } from "lucide-react";
+import { CreditCard } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -54,6 +55,7 @@ export function UserMenu({ profile }: { profile?: Profile | null }) {
           <DropdownMenuItem className={item} onSelect={() => profile && navigate({ to: "/perfil/$username", params: { username: profile.username } })}><User className="h-4 w-4" />Meu perfil</DropdownMenuItem>
           <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/configuracoes", hash: "foto" })}><Camera className="h-4 w-4" />Alterar foto</DropdownMenuItem>
           <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/personalizar" })}><Palette className="h-4 w-4" />Personalizar</DropdownMenuItem>
+          <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/assinatura" })}><CreditCard className="h-4 w-4" />Minha assinatura</DropdownMenuItem>
           <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/configuracoes" })}><Settings className="h-4 w-4" />Configurações</DropdownMenuItem>
         </DropdownMenuGroup>
         {isAdmin && (

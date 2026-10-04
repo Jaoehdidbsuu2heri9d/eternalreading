@@ -15,6 +15,7 @@ import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as ConviteRouteImport } from './routes/convite'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAssinaturaRouteImport } from './routes/_authenticated/assinatura'
 import { Route as AuthenticatedAtividadeRouteImport } from './routes/_authenticated/atividade'
 import { Route as AuthenticatedAtualizacoesRouteImport } from './routes/_authenticated/atualizacoes'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
@@ -34,6 +35,7 @@ import { Route as AuthenticatedScanSlugRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAdminObrasIdRouteImport } from './routes/_authenticated/admin_.obras.$id'
 import { Route as AuthenticatedLerObraCapituloRouteImport } from './routes/_authenticated/ler.$obra.$capitulo'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
+import { Route as ApiPublicWebhooksAsaasRouteImport } from './routes/api/public/webhooks/asaas'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -62,6 +64,11 @@ const LoginRoute = LoginRouteImport.update({
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAssinaturaRoute = AuthenticatedAssinaturaRouteImport.update({
+  id: '/assinatura',
+  path: '/assinatura',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAtividadeRoute = AuthenticatedAtividadeRouteImport.update({
@@ -166,6 +173,11 @@ const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   path: '/api/public/media/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicWebhooksAsaasRoute = ApiPublicWebhooksAsaasRouteImport.update({
+  id: '/api/public/webhooks/asaas',
+  path: '/api/public/webhooks/asaas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -173,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/assinatura': typeof AuthenticatedAssinaturaRoute
   '/atividade': typeof AuthenticatedAtividadeRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -192,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/admin/obras/$id': typeof AuthenticatedAdminObrasIdRoute
   '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
+  '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -199,6 +213,7 @@ export interface FileRoutesByTo {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/assinatura': typeof AuthenticatedAssinaturaRoute
   '/atividade': typeof AuthenticatedAtividadeRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -218,6 +233,7 @@ export interface FileRoutesByTo {
   '/admin/obras/$id': typeof AuthenticatedAdminObrasIdRoute
   '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
+  '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -227,6 +243,7 @@ export interface FileRoutesById {
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/assinatura': typeof AuthenticatedAssinaturaRoute
   '/_authenticated/atividade': typeof AuthenticatedAtividadeRoute
   '/_authenticated/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
@@ -246,6 +263,7 @@ export interface FileRoutesById {
   '/_authenticated/admin_/obras/$id': typeof AuthenticatedAdminObrasIdRoute
   '/_authenticated/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
+  '/api/public/webhooks/asaas': typeof ApiPublicWebhooksAsaasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -255,6 +273,7 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/admin'
+    | '/assinatura'
     | '/atividade'
     | '/atualizacoes'
     | '/configuracoes'
@@ -274,6 +293,7 @@ export interface FileRouteTypes {
     | '/admin/obras/$id'
     | '/ler/$obra/$capitulo'
     | '/api/public/media/$'
+    | '/api/public/webhooks/asaas'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -281,6 +301,7 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/admin'
+    | '/assinatura'
     | '/atividade'
     | '/atualizacoes'
     | '/configuracoes'
@@ -300,6 +321,7 @@ export interface FileRouteTypes {
     | '/admin/obras/$id'
     | '/ler/$obra/$capitulo'
     | '/api/public/media/$'
+    | '/api/public/webhooks/asaas'
   id:
     | '__root__'
     | '/'
@@ -308,6 +330,7 @@ export interface FileRouteTypes {
     | '/convite'
     | '/login'
     | '/_authenticated/admin'
+    | '/_authenticated/assinatura'
     | '/_authenticated/atividade'
     | '/_authenticated/atualizacoes'
     | '/_authenticated/configuracoes'
@@ -327,6 +350,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin_/obras/$id'
     | '/_authenticated/ler/$obra/$capitulo'
     | '/api/public/media/$'
+    | '/api/public/webhooks/asaas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -336,6 +360,7 @@ export interface RootRouteChildren {
   ConviteRoute: typeof ConviteRoute
   LoginRoute: typeof LoginRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
+  ApiPublicWebhooksAsaasRoute: typeof ApiPublicWebhooksAsaasRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -380,6 +405,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/assinatura': {
+      id: '/_authenticated/assinatura'
+      path: '/assinatura'
+      fullPath: '/assinatura'
+      preLoaderRoute: typeof AuthenticatedAssinaturaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/atividade': {
@@ -515,11 +547,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/webhooks/asaas': {
+      id: '/api/public/webhooks/asaas'
+      path: '/api/public/webhooks/asaas'
+      fullPath: '/api/public/webhooks/asaas'
+      preLoaderRoute: typeof ApiPublicWebhooksAsaasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAssinaturaRoute: typeof AuthenticatedAssinaturaRoute
   AuthenticatedAtividadeRoute: typeof AuthenticatedAtividadeRoute
   AuthenticatedAtualizacoesRoute: typeof AuthenticatedAtualizacoesRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
@@ -542,6 +582,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAssinaturaRoute: AuthenticatedAssinaturaRoute,
   AuthenticatedAtividadeRoute: AuthenticatedAtividadeRoute,
   AuthenticatedAtualizacoesRoute: AuthenticatedAtualizacoesRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
@@ -572,6 +613,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConviteRoute: ConviteRoute,
   LoginRoute: LoginRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
+  ApiPublicWebhooksAsaasRoute: ApiPublicWebhooksAsaasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

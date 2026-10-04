@@ -41,10 +41,11 @@ export function Footer() {
             <li><Link to="/seja-parceiro" className="hover:text-foreground">Seja parceiro</Link></li>
             <li><Link to="/personalizar" className="hover:text-foreground">Personalizar</Link></li>
             <li><Link to="/planos" className="hover:text-foreground">Planos Eternal</Link></li>
+            <li><Link to="/assinatura" className="hover:text-foreground">Minha assinatura</Link></li>
             <li><Link to="/configuracoes" className="hover:text-foreground">Configurações</Link></li>
           </ul>
           <p className="text-sm text-muted-foreground">
-            Planos Eternal e Eternal Sunshine em breve, com personalizações exclusivas.
+            Planos Eternal e Eternal Sunshine com personalizações exclusivas.
           </p>
         </div>
       </div>

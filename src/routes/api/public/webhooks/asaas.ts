@@ -1,0 +1,26 @@
+import { createFileRoute } from "@tanstack/react-router";
+
+/** Webhook do Asaas: valida o token, registra o evento (idempotente) e aplica. */
+export const Route = createFileRoute("/api/public/webhooks/asaas")({
+  server: {
+    handlers: {
+      POST: async ({ request }) => {
+        const raw = await request.text();
+        if (raw.length > 200_000) return new Response("too large", { status: 413 });
+        const { asaasProvider } = await import("@/lib/billing/asaas.server");
+        const ev = asaasProvider().parseWebhook(request, raw);
+        if (!ev) return new Response("unauthorized", { status: 401 });
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { applyEvent } = await import("@/lib/billing/service.server");
+        try {
+          const r = await applyEvent(supabaseAdmin, "asaas", ev, JSON.parse(raw));
+          return Response.json({ ok: true, result: r });
+        } catch (e) {
+          console.error("asaas webhook failed", ev.rawType, (e as Error).message);
+          // 500 faz o Asaas reenviar; evento fica registrado com o erro
+          return new Response("error", { status: 500 });
+        }
+      },
+    },
+  },
+});
