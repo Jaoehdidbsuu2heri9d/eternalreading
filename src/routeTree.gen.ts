@@ -31,6 +31,7 @@ import { Route as AuthenticatedObraSlugRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
 import { Route as AuthenticatedScanSlugRouteImport } from './routes/_authenticated/scan.$slug'
 import { Route as AuthenticatedLerObraCapituloRouteImport } from './routes/_authenticated/ler.$obra.$capitulo'
+import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -147,6 +148,11 @@ const AuthenticatedLerObraCapituloRoute =
     path: '/ler/$obra/$capitulo',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
+  id: '/api/public/media/$',
+  path: '/api/public/media/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/scan/$slug': typeof AuthenticatedScanSlugRoute
   '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByTo {
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/scan/$slug': typeof AuthenticatedScanSlugRoute
   '/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -218,6 +226,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/_authenticated/scan/$slug': typeof AuthenticatedScanSlugRoute
   '/_authenticated/ler/$obra/$capitulo': typeof AuthenticatedLerObraCapituloRoute
+  '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/perfil/$username'
     | '/scan/$slug'
     | '/ler/$obra/$capitulo'
+    | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -266,6 +276,7 @@ export interface FileRouteTypes {
     | '/perfil/$username'
     | '/scan/$slug'
     | '/ler/$obra/$capitulo'
+    | '/api/public/media/$'
   id:
     | '__root__'
     | '/'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil/$username'
     | '/_authenticated/scan/$slug'
     | '/_authenticated/ler/$obra/$capitulo'
+    | '/api/public/media/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -298,6 +310,7 @@ export interface RootRouteChildren {
   CadastroRoute: typeof CadastroRoute
   ConviteRoute: typeof ConviteRoute
   LoginRoute: typeof LoginRoute
+  ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -456,6 +469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLerObraCapituloRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/media/$': {
+      id: '/api/public/media/$'
+      path: '/api/public/media/$'
+      fullPath: '/api/public/media/$'
+      preLoaderRoute: typeof ApiPublicMediaSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -508,6 +528,7 @@ const rootRouteChildren: RootRouteChildren = {
   CadastroRoute: CadastroRoute,
   ConviteRoute: ConviteRoute,
   LoginRoute: LoginRoute,
+  ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

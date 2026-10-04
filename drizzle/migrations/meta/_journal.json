@@ -43,6 +43,13 @@
       "when": 1791076374977,
       "tag": "0005_admin_hierarchy",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791077243576,
+      "tag": "0006_admin_catalog",
+      "breakpoints": true
     }
   ]
 }

@@ -106,27 +106,39 @@ export type Database = {
       chapters: {
         Row: {
           created_at: string
+          deleted_at: string | null
           id: string
           manga_id: string
           number: number
           published_at: string
+          scan_id: string | null
+          status: string
           title: string | null
+          volume: string | null
         }
         Insert: {
           created_at?: string
+          deleted_at?: string | null
           id?: string
           manga_id: string
           number: number
           published_at?: string
+          scan_id?: string | null
+          status?: string
           title?: string | null
+          volume?: string | null
         }
         Update: {
           created_at?: string
+          deleted_at?: string | null
           id?: string
           manga_id?: string
           number?: number
           published_at?: string
+          scan_id?: string | null
+          status?: string
           title?: string | null
+          volume?: string | null
         }
         Relationships: [
           {
@@ -134,6 +146,13 @@ export type Database = {
             columns: ["manga_id"]
             isOneToOne: false
             referencedRelation: "manga"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapters_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "scans"
             referencedColumns: ["id"]
           },
         ]
@@ -285,58 +304,73 @@ export type Database = {
       }
       manga: {
         Row: {
+          age_rating: string | null
           alt_title: string | null
           artist: string | null
           author: string | null
           banner_url: string | null
           cover_url: string | null
           created_at: string
+          deleted_at: string | null
           featured: boolean
           id: string
+          published: boolean
           scan_id: string | null
           slug: string
           status: Database["public"]["Enums"]["manga_status"]
           synopsis: string | null
+          tags: string[]
           title: string
           type: Database["public"]["Enums"]["manga_type"]
           updated_at: string
           views: number
+          year: number | null
         }
         Insert: {
+          age_rating?: string | null
           alt_title?: string | null
           artist?: string | null
           author?: string | null
           banner_url?: string | null
           cover_url?: string | null
           created_at?: string
+          deleted_at?: string | null
           featured?: boolean
           id?: string
+          published?: boolean
           scan_id?: string | null
           slug: string
           status?: Database["public"]["Enums"]["manga_status"]
           synopsis?: string | null
+          tags?: string[]
           title: string
           type?: Database["public"]["Enums"]["manga_type"]
           updated_at?: string
           views?: number
+          year?: number | null
         }
         Update: {
+          age_rating?: string | null
           alt_title?: string | null
           artist?: string | null
           author?: string | null
           banner_url?: string | null
           cover_url?: string | null
           created_at?: string
+          deleted_at?: string | null
           featured?: boolean
           id?: string
+          published?: boolean
           scan_id?: string | null
           slug?: string
           status?: Database["public"]["Enums"]["manga_status"]
           synopsis?: string | null
+          tags?: string[]
           title?: string
           type?: Database["public"]["Enums"]["manga_type"]
           updated_at?: string
           views?: number
+          year?: number | null
         }
         Relationships: [
           {
@@ -731,6 +765,10 @@ export type Database = {
           username: string
           xp: number
         }[]
+      }
+      admin_set_chapter_pages: {
+        Args: { p_chapter: string; p_urls: string[] }
+        Returns: undefined
       }
       admin_set_plan: {
         Args: {
