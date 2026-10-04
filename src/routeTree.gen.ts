@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as CadastroRouteImport } from './routes/cadastro'
 import { Route as ConviteRouteImport } from './routes/convite'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAtualizacoesRouteImport } from './routes/_authenticated/atualizacoes'
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticated/explorar'
@@ -51,6 +52,11 @@ const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAtualizacoesRoute =
   AuthenticatedAtualizacoesRouteImport.update({
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/cadastro': typeof CadastroRoute
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/explorar': typeof AuthenticatedExplorarRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/cadastro': typeof CadastroRoute
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/explorar': typeof AuthenticatedExplorarRoute
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/cadastro': typeof CadastroRoute
   '/convite': typeof ConviteRoute
   '/login': typeof LoginRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/atualizacoes': typeof AuthenticatedAtualizacoesRoute
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/explorar': typeof AuthenticatedExplorarRoute
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/convite'
     | '/login'
+    | '/admin'
     | '/atualizacoes'
     | '/configuracoes'
     | '/explorar'
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/convite'
     | '/login'
+    | '/admin'
     | '/atualizacoes'
     | '/configuracoes'
     | '/explorar'
@@ -228,6 +239,7 @@ export interface FileRouteTypes {
     | '/cadastro'
     | '/convite'
     | '/login'
+    | '/_authenticated/admin'
     | '/_authenticated/atualizacoes'
     | '/_authenticated/configuracoes'
     | '/_authenticated/explorar'
@@ -287,6 +299,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/atualizacoes': {
       id: '/_authenticated/atualizacoes'
@@ -383,6 +402,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedAtualizacoesRoute: typeof AuthenticatedAtualizacoesRoute
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedExplorarRoute: typeof AuthenticatedExplorarRoute
@@ -399,6 +419,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedAtualizacoesRoute: AuthenticatedAtualizacoesRoute,
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedExplorarRoute: AuthenticatedExplorarRoute,
