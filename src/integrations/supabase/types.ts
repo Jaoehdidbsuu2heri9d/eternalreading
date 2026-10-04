@@ -348,39 +348,69 @@ export type Database = {
       cosmetics: {
         Row: {
           active: boolean
+          animation: string
+          availability: string
+          coin_price: number | null
+          created_at: string
           description: string
+          ends_at: string | null
+          event_slug: string | null
           id: string
           kind: string
+          media_url: string | null
           name: string
           preview: string
           rarity: string
           required_level: number
           required_plan: Database["public"]["Enums"]["plan_tier"]
           slug: string
+          sort: number
+          starts_at: string | null
+          updated_at: string
         }
         Insert: {
           active?: boolean
+          animation?: string
+          availability?: string
+          coin_price?: number | null
+          created_at?: string
           description: string
+          ends_at?: string | null
+          event_slug?: string | null
           id?: string
           kind: string
+          media_url?: string | null
           name: string
           preview: string
           rarity?: string
           required_level?: number
           required_plan?: Database["public"]["Enums"]["plan_tier"]
           slug: string
+          sort?: number
+          starts_at?: string | null
+          updated_at?: string
         }
         Update: {
           active?: boolean
+          animation?: string
+          availability?: string
+          coin_price?: number | null
+          created_at?: string
           description?: string
+          ends_at?: string | null
+          event_slug?: string | null
           id?: string
           kind?: string
+          media_url?: string | null
           name?: string
           preview?: string
           rarity?: string
           required_level?: number
           required_plan?: Database["public"]["Enums"]["plan_tier"]
           slug?: string
+          sort?: number
+          starts_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -901,18 +931,21 @@ export type Database = {
           acquired_at: string
           cosmetic_id: string
           equipped: boolean
+          source: string
           user_id: string
         }
         Insert: {
           acquired_at?: string
           cosmetic_id: string
           equipped?: boolean
+          source?: string
           user_id: string
         }
         Update: {
           acquired_at?: string
           cosmetic_id?: string
           equipped?: boolean
+          source?: string
           user_id?: string
         }
         Relationships: [
@@ -952,6 +985,18 @@ export type Database = {
     }
     Functions: {
       add_xp: { Args: { p_amount: number }; Returns: undefined }
+      admin_cosmetic_stats: {
+        Args: never
+        Returns: {
+          cosmetic_id: string
+          equipped: number
+          owners: number
+        }[]
+      }
+      admin_grant_cosmetic: {
+        Args: { p_cosmetic: string; p_grant: boolean; p_user: string }
+        Returns: undefined
+      }
       admin_list_users: {
         Args: {
           p_plan?: Database["public"]["Enums"]["plan_tier"]
