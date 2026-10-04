@@ -53,7 +53,7 @@ function Composer({ initial = "", initialSpoiler = false, placeholder, submitLab
 }
 
 function CommentItem({ c, me, isAdmin, onChange, onReply }: {
-  c: Comment; me: string; isAdmin: boolean; onChange: () => void; onReply?: (body: string, spoiler: boolean) => Promise<void>;
+  c: Comment; me: string; isAdmin: boolean; onChange: () => void; onReply?: ((body: string, spoiler: boolean) => Promise<void>) | undefined;
 }) {
   const [editing, setEditing] = useState(false);
   const [replying, setReplying] = useState(false);
