@@ -5,7 +5,7 @@ import { Lock, Sparkles } from "lucide-react";
 import { Button } from "@/components/common/EButton";
 import { Badge } from "@/components/common/EBadge";
 import { supabase } from "@/integrations/supabase/client";
-import { uploadGifBanner, useSignedUrl, validateGif } from "@/lib/media";
+import { isVideoPath, uploadGifBanner, useSignedUrl, validateGif, validateVideo } from "@/lib/media";
 import type { Profile } from "@/lib/types";
 
 /** Banner GIF personalizado (Eternal e Eternal Sunshine). O banco confirma o plano. */
@@ -26,11 +26,11 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
     qc.invalidateQueries({ queryKey: ["profile-by-username"] });
   };
 
-  function pick(e: React.ChangeEvent<HTMLInputElement>) {
+  async function pick(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
     e.target.value = "";
     if (!f) return;
-    const err = validateGif(f);
+    const err = f.type.startsWith("video/") ? await validateVideo(f) : validateGif(f);
     if (err) return setMsg({ ok: false, text: err });
     setMsg(null);
     setFile(f);
@@ -45,7 +45,7 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
       setFile(null);
       setPreview(null);
       refresh();
-      setMsg({ ok: true, text: "Banner GIF salvo e equipado!" });
+      setMsg({ ok: true, text: "Banner animado salvo e equipado!" });
     } catch {
       setMsg({ ok: false, text: "Não foi possível salvar. Esse recurso exige plano Eternal." });
     } finally {
@@ -62,19 +62,24 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
   }
 
   const shown = preview ?? current;
+  const shownVideo = file ? file.type.startsWith("video/") : isVideoPath(profile.gif_banner_path);
 
   return (
     <section className="mb-8">
       <div className="mb-3 flex items-center gap-2">
-        <h2 className="text-lg font-semibold">Banner GIF animado</h2>
+        <h2 className="text-lg font-semibold">Banner animado (GIF ou vídeo)</h2>
         <Badge tone="eternal"><Sparkles className="mr-1 inline h-3 w-3" aria-hidden />Eternal</Badge>
       </div>
       <div className={`surface-panel overflow-hidden rounded-2xl ${profile.gif_banner_equipped ? "glow-ring" : ""}`}>
         <div className="flex h-32 items-center justify-center bg-surface-2 sm:h-40">
           {shown ? (
-            <img src={shown} alt="Pré-visualização do banner GIF" className="h-full w-full object-cover" />
+            shownVideo ? (
+              <video key={shown} src={shown} autoPlay muted loop playsInline className="h-full w-full object-cover" aria-label="Pré-visualização do banner em vídeo" />
+            ) : (
+              <img src={shown} alt="Pré-visualização do banner GIF" className="h-full w-full object-cover" />
+            )
           ) : (
-            <p className="text-sm text-muted-foreground">{allowed ? "Nenhum GIF enviado" : "Exclusivo para assinantes"}</p>
+            <p className="text-sm text-muted-foreground">{allowed ? "Nenhum banner enviado" : "Exclusivo para assinantes"}</p>
           )}
         </div>
         <div className="space-y-3 p-4">
@@ -84,8 +89,8 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
             </p>
           ) : (
             <>
-              <p className="text-xs text-muted-foreground">Somente GIF, até 8 MB. Quando equipado, substitui o banner normal.</p>
-              <input ref={input} type="file" accept="image/gif" className="sr-only" onChange={pick} aria-label="Escolher GIF" />
+              <p className="text-xs text-muted-foreground">GIF (até 8 MB) ou vídeo MP4/WebM (até 10 MB, 15 segundos, 1920×1080). Toca sem som e em loop. Quando equipado, substitui o banner normal.</p>
+              <input ref={input} type="file" accept="image/gif,video/mp4,video/webm" className="sr-only" onChange={pick} aria-label="Escolher GIF ou vídeo" />
               <div className="flex flex-wrap gap-2">
                 {file ? (
                   <>
@@ -94,7 +99,7 @@ export function GifBannerManager({ profile }: { profile: Profile }) {
                   </>
                 ) : (
                   <>
-                    <Button size="sm" onClick={() => input.current?.click()}>Adicionar banner GIF</Button>
+                    <Button size="sm" onClick={() => input.current?.click()}>Adicionar banner GIF ou vídeo</Button>
                     {profile.gif_banner_path && (
                       <Button size="sm" variant="secondary" onClick={toggle} disabled={busy}>
                         {profile.gif_banner_equipped ? "Desequipar" : "Equipar"}

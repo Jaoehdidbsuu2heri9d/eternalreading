@@ -10,7 +10,7 @@ export const AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const AVATAR_MAX_BYTES = 2 * 1024 * 1024;
 export const GIF_MAX_BYTES = 8 * 1024 * 1024;
 
-export type MediaBucket = "avatars" | "profile-banners";
+export type MediaBucket = "avatars" | "profile-banners" | "cosmetic-media";
 
 /** Link assinado (1h) com cache; null enquanto não houver caminho. */
 export function useSignedUrl(bucket: MediaBucket, path: string | null | undefined) {
@@ -40,6 +40,38 @@ export function validateGif(file: File): string | null {
   return null;
 }
 
+/** Limites de vídeo para banners: MP4/WebM, até 10 MB, 15 s e 1920×1080. */
+export const VIDEO_TYPES = ["video/mp4", "video/webm"];
+export const VIDEO_MAX_BYTES = 10 * 1024 * 1024;
+export const VIDEO_MAX_SECONDS = 15;
+export const VIDEO_MAX_W = 1920;
+export const VIDEO_MAX_H = 1080;
+export const isVideoPath = (p: string | null | undefined) => !!p && /\.(mp4|webm)$/i.test(p);
+
+/** Lê duração/resolução no navegador e recusa vídeos fora dos limites. */
+export async function validateVideo(file: File, maxBytes = VIDEO_MAX_BYTES): Promise<string | null> {
+  if (!VIDEO_TYPES.includes(file.type)) return "Envie um vídeo MP4 ou WebM.";
+  if (file.size > maxBytes) return `O vídeo deve ter no máximo ${Math.round(maxBytes / 1048576)} MB.`;
+  const url = URL.createObjectURL(file);
+  try {
+    const meta = await new Promise<{ d: number; w: number; h: number }>((res, rej) => {
+      const v = document.createElement("video");
+      v.preload = "metadata"; v.muted = true;
+      v.onloadedmetadata = () => res({ d: v.duration, w: v.videoWidth, h: v.videoHeight });
+      v.onerror = () => rej(new Error("bad"));
+      v.src = url;
+    });
+    if (!isFinite(meta.d) || meta.d > VIDEO_MAX_SECONDS + 0.5) return `O vídeo deve ter no máximo ${VIDEO_MAX_SECONDS} segundos.`;
+    const long = Math.max(meta.w, meta.h), short = Math.min(meta.w, meta.h);
+    if (long > VIDEO_MAX_W || short > VIDEO_MAX_H) return "Resolução máxima: 1920×1080.";
+    return null;
+  } catch {
+    return "Não foi possível ler esse vídeo. Tente outro arquivo.";
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
 /** Envia a foto, troca o caminho no perfil e apaga a antiga. */
 export async function uploadAvatar(userId: string, file: File, oldPath: string | null) {
   const path = `${userId}/${Date.now()}.${EXT[file.type]}`;
@@ -59,8 +91,9 @@ export async function removeAvatar(userId: string, oldPath: string | null) {
 
 /** Envia o GIF (o banco recusa quem não é assinante) e já equipa. */
 export async function uploadGifBanner(userId: string, file: File, oldPath: string | null) {
-  const path = `${userId}/${Date.now()}.gif`;
-  const up = await supabase.storage.from("profile-banners").upload(path, file, { contentType: "image/gif" });
+  const ext = file.type === "video/mp4" ? "mp4" : file.type === "video/webm" ? "webm" : "gif";
+  const path = `${userId}/${Date.now()}.${ext}`;
+  const up = await supabase.storage.from("profile-banners").upload(path, file, { contentType: file.type });
   if (up.error) throw up.error;
   const { error } = await supabase.rpc("set_gif_banner", { p_path: path, p_equipped: true });
   if (error) {
@@ -71,7 +104,7 @@ export async function uploadGifBanner(userId: string, file: File, oldPath: strin
 }
 
 /** Itens equipados de um usuário, agrupados por tipo. */
-export interface EquippedItem { id: string; name: string; kind: string; preview: string; rarity: string; animation: string; media_url: string | null }
+export interface EquippedItem { id: string; name: string; kind: string; preview: string; rarity: string; animation: string; media_url: string | null; media_path: string | null; media_type: string; effect: import("@/lib/cosmetics").CosmeticEffect | null }
 export function useEquipped(userId: string | undefined) {
   return useQuery({
     queryKey: ["equipped", userId],
@@ -79,7 +112,7 @@ export function useEquipped(userId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("user_cosmetics")
-        .select("cosmetic:cosmetics ( id, name, kind, preview, rarity, animation, media_url )")
+        .select("cosmetic:cosmetics ( id, name, kind, preview, rarity, animation, media_url, media_path, media_type, effect )")
         .eq("user_id", userId!)
         .eq("equipped", true);
       if (error) throw error;

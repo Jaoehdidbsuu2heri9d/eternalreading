@@ -14,6 +14,7 @@ import { AdminWorks } from "@/components/admin/AdminWorks";
 import { AdminModeration } from "@/components/admin/AdminModeration";
 import { AdminCosmetics } from "@/components/admin/AdminCosmetics";
 import { AdminBilling } from "@/components/admin/AdminBilling";
+import { AdminCoins } from "@/components/admin/AdminCoins";
 import { useSession } from "@/hooks/useAuth";
 import { useRoles } from "@/hooks/useRoles";
 
@@ -204,6 +205,7 @@ function AdminPage() {
       <AdminTeam isOwner={isOwner} />
       <AdminModeration />
       <AdminCosmetics />
+      <AdminCoins />
       <AdminBilling />
       <AdminLogs />
     </div>

@@ -223,6 +223,77 @@ export type Database = {
           },
         ]
       }
+      coin_transactions: {
+        Row: {
+          actor_id: string | null
+          amount: number
+          balance_after: number
+          cosmetic_id: string | null
+          created_at: string
+          id: string
+          reason: string | null
+          ref: string | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          amount: number
+          balance_after: number
+          cosmetic_id?: string | null
+          created_at?: string
+          id?: string
+          reason?: string | null
+          ref?: string | null
+          source: string
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          amount?: number
+          balance_after?: number
+          cosmetic_id?: string | null
+          created_at?: string
+          id?: string
+          reason?: string | null
+          ref?: string | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coin_transactions_cosmetic_id_fkey"
+            columns: ["cosmetic_id"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coin_wallets: {
+        Row: {
+          balance: number
+          earned: number
+          spent: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          earned?: number
+          spent?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          earned?: number
+          spent?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       comment_bans: {
         Row: {
           created_at: string
@@ -374,10 +445,14 @@ export type Database = {
           coin_price: number | null
           created_at: string
           description: string
+          effect: Json
           ends_at: string | null
           event_slug: string | null
           id: string
+          in_shop: boolean
           kind: string
+          media_path: string | null
+          media_type: string
           media_url: string | null
           name: string
           preview: string
@@ -385,8 +460,10 @@ export type Database = {
           required_level: number
           required_plan: Database["public"]["Enums"]["plan_tier"]
           slug: string
+          sold: number
           sort: number
           starts_at: string | null
+          stock: number | null
           updated_at: string
         }
         Insert: {
@@ -396,10 +473,14 @@ export type Database = {
           coin_price?: number | null
           created_at?: string
           description: string
+          effect?: Json
           ends_at?: string | null
           event_slug?: string | null
           id?: string
+          in_shop?: boolean
           kind: string
+          media_path?: string | null
+          media_type?: string
           media_url?: string | null
           name: string
           preview: string
@@ -407,8 +488,10 @@ export type Database = {
           required_level?: number
           required_plan?: Database["public"]["Enums"]["plan_tier"]
           slug: string
+          sold?: number
           sort?: number
           starts_at?: string | null
+          stock?: number | null
           updated_at?: string
         }
         Update: {
@@ -418,10 +501,14 @@ export type Database = {
           coin_price?: number | null
           created_at?: string
           description?: string
+          effect?: Json
           ends_at?: string | null
           event_slug?: string | null
           id?: string
+          in_shop?: boolean
           kind?: string
+          media_path?: string | null
+          media_type?: string
           media_url?: string | null
           name?: string
           preview?: string
@@ -429,8 +516,10 @@ export type Database = {
           required_level?: number
           required_plan?: Database["public"]["Enums"]["plan_tier"]
           slug?: string
+          sold?: number
           sort?: number
           starts_at?: string | null
+          stock?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -1128,6 +1217,10 @@ export type Database = {
     }
     Functions: {
       add_xp: { Args: { p_amount: number }; Returns: undefined }
+      admin_adjust_coins: {
+        Args: { p_amount: number; p_reason: string; p_user: string }
+        Returns: number
+      }
       admin_cosmetic_stats: {
         Args: never
         Returns: {
@@ -1179,7 +1272,28 @@ export type Database = {
         }
         Returns: undefined
       }
+      admin_shop_stats: {
+        Args: never
+        Returns: {
+          coins: number
+          cosmetic_id: string
+          purchases: number
+        }[]
+      }
+      buy_cosmetic: { Args: { p_cosmetic: string }; Returns: number }
       check_achievements: { Args: never; Returns: number }
+      coins_apply: {
+        Args: {
+          p_actor: string
+          p_amount: number
+          p_cosmetic: string
+          p_reason: string
+          p_ref: string
+          p_source: string
+          p_user: string
+        }
+        Returns: number
+      }
       equip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       expire_subscriptions: { Args: never; Returns: number }
       has_active_subscription: {

@@ -17,6 +17,7 @@ const LABEL: Record<string, string> = {
   chapter_created: "Capítulo criado", chapter_updated: "Capítulo editado", chapter_published: "Capítulo publicado", chapter_deleted: "Capítulo excluído",
   comment_hide: "Comentário ocultado", comment_unhide: "Comentário reexibido", comment_delete: "Comentário excluído", comment_dismiss: "Denúncia descartada",
   cosmetic_created: "Cosmético criado", cosmetic_updated: "Cosmético editado", cosmetic_activated: "Cosmético ativado", cosmetic_deactivated: "Cosmético desativado", cosmetic_deleted: "Cosmético excluído", cosmetic_granted: "Cosmético concedido", cosmetic_revoked: "Cosmético retirado",
+  coins_added: "Coins adicionadas", coins_removed: "Coins removidas",
   comment_ban: "Usuário bloqueado de comentar", comment_unban: "Usuário desbloqueado para comentar",
 };
 
@@ -42,8 +43,8 @@ export function AdminLogs() {
       ) : (
         <ul className="divide-y divide-border rounded-2xl border border-border">
           {logs.data!.map((l) => {
-            const d = l.details as { code?: string; scan?: string; from?: string; to?: string; work?: string; chapter?: number };
-            const extra = d.code ? ` ${d.code}` : d.scan ? ` (${d.scan})` : d.to ? `: ${d.from} → ${d.to}` : d.work ? `: ${d.work}${d.chapter != null ? ` — cap. ${d.chapter}` : ""}` : "";
+            const d = l.details as { code?: string; scan?: string; from?: string; to?: string; work?: string; chapter?: number; amount?: number; reason?: string };
+            const extra = d.amount != null ? `: ${d.amount} Coins — ${d.reason ?? ""}` : d.code ? ` ${d.code}` : d.scan ? ` (${d.scan})` : d.to ? `: ${d.from} → ${d.to}` : d.work ? `: ${d.work}${d.chapter != null ? ` — cap. ${d.chapter}` : ""}` : "";
             return (
               <li key={l.id} className="flex flex-wrap justify-between gap-2 p-3 text-sm">
                 <span><strong>{LABEL[l.action] ?? l.action}</strong>{extra}{l.target ? ` — @${l.target}` : ""}</span>
