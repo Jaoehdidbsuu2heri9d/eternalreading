@@ -4,6 +4,7 @@ import { LogOut, Search, User as UserIcon } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Logo } from "@/components/Logo";
+import { UserAvatar } from "@/components/UserAvatar";
 import { NotificationBell } from "@/components/NotificationBell";
 import { Button } from "@/components/common/EButton";
 import { supabase } from "@/integrations/supabase/client";
@@ -82,9 +83,7 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
             params={{ username: profile?.username ?? "" }}
             className="inline-flex h-10 items-center gap-2 rounded-xl px-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
           >
-            <span className="gradient-eternal flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold text-primary-foreground">
-              {(profile?.username ?? "?").charAt(0).toUpperCase()}
-            </span>
+            <UserAvatar userId={profile?.id} username={profile?.username ?? "?"} avatarPath={profile?.avatar_path} avatarUrl={profile?.avatar_url} size={28} />
             <span className="hidden sm:inline">{profile?.username ?? "Perfil"}</span>
           </Link>
           <Button variant="ghost" size="icon" aria-label="Sair" onClick={handleSignOut}>
