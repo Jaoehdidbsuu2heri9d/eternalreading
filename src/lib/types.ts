@@ -54,6 +54,9 @@ export interface Profile {
   display_name: string | null;
   bio: string | null;
   avatar_url: string | null;
+  avatar_path: string | null;
+  gif_banner_path: string | null;
+  gif_banner_equipped: boolean;
   banner_url: string | null;
   xp: number;
   level: number;

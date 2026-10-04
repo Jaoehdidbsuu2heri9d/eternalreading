@@ -383,11 +383,14 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_path: string | null
           avatar_url: string | null
           banner_url: string | null
           bio: string | null
           created_at: string
           display_name: string | null
+          gif_banner_equipped: boolean
+          gif_banner_path: string | null
           id: string
           level: number
           plan: Database["public"]["Enums"]["plan_tier"]
@@ -396,11 +399,14 @@ export type Database = {
           xp: number
         }
         Insert: {
+          avatar_path?: string | null
           avatar_url?: string | null
           banner_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          gif_banner_equipped?: boolean
+          gif_banner_path?: string | null
           id: string
           level?: number
           plan?: Database["public"]["Enums"]["plan_tier"]
@@ -409,11 +415,14 @@ export type Database = {
           xp?: number
         }
         Update: {
+          avatar_path?: string | null
           avatar_url?: string | null
           banner_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          gif_banner_equipped?: boolean
+          gif_banner_path?: string | null
           id?: string
           level?: number
           plan?: Database["public"]["Enums"]["plan_tier"]
@@ -686,6 +695,10 @@ export type Database = {
         Returns: boolean
       }
       redeem_invite_code: { Args: { p_code: string }; Returns: boolean }
+      set_gif_banner: {
+        Args: { p_equipped: boolean; p_path: string }
+        Returns: undefined
+      }
       unequip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       validate_invite_code: { Args: { p_code: string }; Returns: boolean }
     }

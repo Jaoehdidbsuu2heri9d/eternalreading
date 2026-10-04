@@ -22,6 +22,13 @@
       "when": 1791074018950,
       "tag": "0002_community_features",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791075218705,
+      "tag": "0003_profile_media",
+      "breakpoints": true
     }
   ]
 }

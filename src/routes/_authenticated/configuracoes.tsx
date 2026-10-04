@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { z } from "zod";
 
 import { Button } from "@/components/common/EButton";
+import { AvatarUploader } from "@/components/AvatarUploader";
 import { PageHeader } from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useSession } from "@/hooks/useAuth";
@@ -59,9 +60,9 @@ function SettingsPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 sm:py-8">
       <PageHeader title="Configurações" subtitle={profile ? `@${profile.username}` : ""} />
+      {profile && <AvatarUploader profile={profile} />}
       <form onSubmit={save} className="surface-panel space-y-4 rounded-2xl p-6">
         <label className="block space-y-1 text-sm"><span>Nome de exibição</span><input className={field} value={form.display_name} onChange={(e) => setForm({ ...form, display_name: e.target.value })} /></label>
-        <label className="block space-y-1 text-sm"><span>Link da foto de perfil</span><input className={field} value={form.avatar_url} onChange={(e) => setForm({ ...form, avatar_url: e.target.value })} /></label>
         <label className="block space-y-1 text-sm"><span>Biografia</span><textarea rows={4} className={field} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} /></label>
         {msg && <p role="status" className={msg.ok ? "text-sm text-success" : "text-sm text-destructive"}>{msg.text}</p>}
         <Button type="submit">Salvar</Button>
