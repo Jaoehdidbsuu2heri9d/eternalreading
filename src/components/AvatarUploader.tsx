@@ -67,7 +67,7 @@ export function AvatarUploader({ profile }: { profile: Profile }) {
   }
 
   return (
-    <div className="surface-panel mb-6 flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row">
+    <div id="foto" className="surface-panel mb-6 flex scroll-mt-24 flex-col items-center gap-4 rounded-2xl p-6 target:ring-2 target:ring-primary sm:flex-row">
       <UserAvatar userId={profile.id} username={profile.username} avatarPath={profile.avatar_path} avatarUrl={profile.avatar_url} previewSrc={preview} size={96} />
       <div className="flex-1 space-y-2 text-center sm:text-left">
         <p className="font-medium">Foto de perfil</p>

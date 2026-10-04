@@ -1,13 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { LogOut, Search, User as UserIcon } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { Search } from "lucide-react";
 
 import { Logo } from "@/components/Logo";
-import { UserAvatar } from "@/components/UserAvatar";
+import { UserMenu } from "@/components/UserMenu";
 import { NotificationBell } from "@/components/NotificationBell";
-import { Button } from "@/components/common/EButton";
-import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -24,15 +21,7 @@ const links = [
 /** Barra de navegação superior (desktop e tablet). */
 export function Navbar({ profile }: { profile?: Profile | null }) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [term, setTerm] = useState("");
-
-  async function handleSignOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/login", replace: true });
-  }
 
   function submitSearch(e: React.FormEvent) {
     e.preventDefault();
