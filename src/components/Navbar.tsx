@@ -14,6 +14,7 @@ const links = [
   { to: "/atualizacoes", label: "Atualizações" },
   { to: "/favoritos", label: "Favoritos" },
   { to: "/historico", label: "Histórico" },
+  { to: "/atividade", label: "Atividade" },
   { to: "/scans", label: "Scans" },
   { to: "/conquistas", label: "Conquistas" },
 ] as const;

@@ -13,6 +13,10 @@ const LABEL: Record<string, string> = {
   code_deleted: "Código excluído",
   request_approved: "Pedido de parceria aprovado",
   request_rejected: "Pedido de parceria recusado",
+  work_created: "Obra criada", work_updated: "Obra editada", work_deleted: "Obra excluída",
+  chapter_created: "Capítulo criado", chapter_updated: "Capítulo editado", chapter_published: "Capítulo publicado", chapter_deleted: "Capítulo excluído",
+  comment_hide: "Comentário ocultado", comment_unhide: "Comentário reexibido", comment_delete: "Comentário excluído", comment_dismiss: "Denúncia descartada",
+  comment_ban: "Usuário bloqueado de comentar", comment_unban: "Usuário desbloqueado para comentar",
 };
 
 /** Histórico administrativo: quem fez, o quê, em quem e quando. */
@@ -37,8 +41,8 @@ export function AdminLogs() {
       ) : (
         <ul className="divide-y divide-border rounded-2xl border border-border">
           {logs.data!.map((l) => {
-            const d = l.details as { code?: string; scan?: string; from?: string; to?: string };
-            const extra = d.code ? ` ${d.code}` : d.scan ? ` (${d.scan})` : d.to ? `: ${d.from} → ${d.to}` : "";
+            const d = l.details as { code?: string; scan?: string; from?: string; to?: string; work?: string; chapter?: number };
+            const extra = d.code ? ` ${d.code}` : d.scan ? ` (${d.scan})` : d.to ? `: ${d.from} → ${d.to}` : d.work ? `: ${d.work}${d.chapter != null ? ` — cap. ${d.chapter}` : ""}` : "";
             return (
               <li key={l.id} className="flex flex-wrap justify-between gap-2 p-3 text-sm">
                 <span><strong>{LABEL[l.action] ?? l.action}</strong>{extra}{l.target ? ` — @${l.target}` : ""}</span>

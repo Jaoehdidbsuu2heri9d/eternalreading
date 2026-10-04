@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 - Admin hierarchy: owner role always also holds admin; role/plan changes go only through SECURITY DEFINER RPCs (owner_add_admin, owner_remove_admin, admin_set_plan) that log to admin_logs — clients never write user_roles directly.
 - Catalog media: work/chapter images live in the private manga-media bucket and are served via /api/public/media/*; works and chapters use soft delete (deleted_at) so history/favorites survive.
+- Social: activities are written only by DB triggers (never by clients) and never include comment text, so spoilers can't leak; comment/follow/like/report limits live in DB triggers.
