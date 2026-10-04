@@ -8,6 +8,10 @@ import { Badge } from "@/components/common/EBadge";
 import { PageHeader } from "@/components/PageHeader";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate } from "@/lib/format";
+import { AdminTeam } from "@/components/admin/AdminTeam";
+import { AdminLogs } from "@/components/admin/AdminLogs";
+import { useSession } from "@/hooks/useAuth";
+import { useRoles } from "@/hooks/useRoles";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   // Acesso conferido no banco (has_role); as regras de segurança também bloqueiam os dados.
@@ -192,6 +196,8 @@ function AdminPage() {
           </ul>
         )}
       </section>
+      <AdminTeam isOwner={isOwner} />
+      <AdminLogs />
     </div>
   );
 }
