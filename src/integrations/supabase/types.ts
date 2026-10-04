@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          description: string
+          goal: number
+          icon: string
+          id: string
+          metric: string
+          name: string
+          slug: string
+          xp_reward: number
+        }
+        Insert: {
+          description: string
+          goal: number
+          icon?: string
+          id?: string
+          metric: string
+          name: string
+          slug: string
+          xp_reward?: number
+        }
+        Update: {
+          description?: string
+          goal?: number
+          icon?: string
+          id?: string
+          metric?: string
+          name?: string
+          slug?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       chapter_pages: {
         Row: {
           chapter_id: string
@@ -77,6 +110,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      cosmetics: {
+        Row: {
+          active: boolean
+          description: string
+          id: string
+          kind: string
+          name: string
+          preview: string
+          rarity: string
+          required_level: number
+          required_plan: Database["public"]["Enums"]["plan_tier"]
+          slug: string
+        }
+        Insert: {
+          active?: boolean
+          description: string
+          id?: string
+          kind: string
+          name: string
+          preview: string
+          rarity?: string
+          required_level?: number
+          required_plan?: Database["public"]["Enums"]["plan_tier"]
+          slug: string
+        }
+        Update: {
+          active?: boolean
+          description?: string
+          id?: string
+          kind?: string
+          name?: string
+          preview?: string
+          rarity?: string
+          required_level?: number
+          required_plan?: Database["public"]["Enums"]["plan_tier"]
+          slug?: string
+        }
+        Relationships: []
       }
       favorites: {
         Row: {
@@ -279,6 +351,36 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read: boolean
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read?: boolean
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -432,6 +534,33 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_plans: {
+        Row: {
+          id: Database["public"]["Enums"]["plan_tier"]
+          name: string
+          perks: string[]
+          price_label: string
+          sort: number
+          tagline: string
+        }
+        Insert: {
+          id: Database["public"]["Enums"]["plan_tier"]
+          name: string
+          perks?: string[]
+          price_label: string
+          sort?: number
+          tagline: string
+        }
+        Update: {
+          id?: Database["public"]["Enums"]["plan_tier"]
+          name?: string
+          perks?: string[]
+          price_label?: string
+          sort?: number
+          tagline?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           created_at: string
@@ -465,6 +594,61 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_cosmetics: {
+        Row: {
+          acquired_at: string
+          cosmetic_id: string
+          equipped: boolean
+          user_id: string
+        }
+        Insert: {
+          acquired_at?: string
+          cosmetic_id: string
+          equipped?: boolean
+          user_id: string
+        }
+        Update: {
+          acquired_at?: string
+          cosmetic_id?: string
+          equipped?: boolean
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_cosmetics_cosmetic_id_fkey"
+            columns: ["cosmetic_id"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -492,6 +676,8 @@ export type Database = {
     }
     Functions: {
       add_xp: { Args: { p_amount: number }; Returns: undefined }
+      check_achievements: { Args: never; Returns: number }
+      equip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -500,6 +686,7 @@ export type Database = {
         Returns: boolean
       }
       redeem_invite_code: { Args: { p_code: string }; Returns: boolean }
+      unequip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       validate_invite_code: { Args: { p_code: string }; Returns: boolean }
     }
     Enums: {
