@@ -16,6 +16,7 @@ const LABEL: Record<string, string> = {
   work_created: "Obra criada", work_updated: "Obra editada", work_deleted: "Obra excluída",
   chapter_created: "Capítulo criado", chapter_updated: "Capítulo editado", chapter_published: "Capítulo publicado", chapter_deleted: "Capítulo excluído",
   comment_hide: "Comentário ocultado", comment_unhide: "Comentário reexibido", comment_delete: "Comentário excluído", comment_dismiss: "Denúncia descartada",
+  cosmetic_created: "Cosmético criado", cosmetic_updated: "Cosmético editado", cosmetic_activated: "Cosmético ativado", cosmetic_deactivated: "Cosmético desativado", cosmetic_deleted: "Cosmético excluído", cosmetic_granted: "Cosmético concedido", cosmetic_revoked: "Cosmético retirado",
   comment_ban: "Usuário bloqueado de comentar", comment_unban: "Usuário desbloqueado para comentar",
 };
 
