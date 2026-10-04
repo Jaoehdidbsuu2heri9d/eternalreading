@@ -703,7 +703,7 @@ export type Database = {
       validate_invite_code: { Args: { p_code: string }; Returns: boolean }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "scan" | "user"
+      app_role: "admin" | "moderator" | "scan" | "user" | "owner"
       manga_status: "ongoing" | "completed" | "hiatus" | "cancelled"
       manga_type: "manhwa" | "manga" | "manhua" | "webtoon"
       plan_tier: "free" | "eternal" | "eternal_sunshine"
@@ -834,7 +834,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "scan", "user"],
+      app_role: ["admin", "moderator", "scan", "user", "owner"],
       manga_status: ["ongoing", "completed", "hiatus", "cancelled"],
       manga_type: ["manhwa", "manga", "manhua", "webtoon"],
       plan_tier: ["free", "eternal", "eternal_sunshine"],
