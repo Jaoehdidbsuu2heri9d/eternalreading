@@ -39,6 +39,8 @@ export function Footer() {
           <ul className="mb-3 space-y-2 text-sm text-muted-foreground">
             <li><Link to="/scans" className="hover:text-foreground">Scans parceiras</Link></li>
             <li><Link to="/seja-parceiro" className="hover:text-foreground">Seja parceiro</Link></li>
+            <li><Link to="/personalizar" className="hover:text-foreground">Personalizar</Link></li>
+            <li><Link to="/planos" className="hover:text-foreground">Planos Eternal</Link></li>
             <li><Link to="/configuracoes" className="hover:text-foreground">Configurações</Link></li>
           </ul>
           <p className="text-sm text-muted-foreground">

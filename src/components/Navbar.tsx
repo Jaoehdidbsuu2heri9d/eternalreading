@@ -1,9 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Bell, LogOut, Search, User as UserIcon } from "lucide-react";
+import { LogOut, Search, User as UserIcon } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { Logo } from "@/components/Logo";
+import { NotificationBell } from "@/components/NotificationBell";
 import { Button } from "@/components/common/EButton";
 import { supabase } from "@/integrations/supabase/client";
 import type { Profile } from "@/lib/types";
@@ -16,6 +17,7 @@ const links = [
   { to: "/favoritos", label: "Favoritos" },
   { to: "/historico", label: "Histórico" },
   { to: "/scans", label: "Scans" },
+  { to: "/conquistas", label: "Conquistas" },
 ] as const;
 
 /** Barra de navegação superior (desktop e tablet). */
@@ -74,9 +76,7 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
         </form>
 
         <div className={cn("flex items-center gap-1", "ml-auto lg:ml-0")}>
-          <Button variant="ghost" size="icon" aria-label="Notificações">
-            <Bell className="h-5 w-5" aria-hidden />
-          </Button>
+          <NotificationBell {...(profile ? { userId: profile.id } : {})} />
           <Link
             to="/perfil/$username"
             params={{ username: profile?.username ?? "" }}
