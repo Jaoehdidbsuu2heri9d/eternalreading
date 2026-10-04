@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+
 import { Lock, Trophy } from "lucide-react";
 
 import { PageHeader } from "@/components/PageHeader";
@@ -51,7 +51,6 @@ function AchievementsPage() {
     },
   });
 
-  useEffect(() => {}, []);
   const d = data.data;
   const value = (metric: string) =>
     metric === "favorites" ? d?.favorites ?? 0 : metric === "level" ? profile?.level ?? 1 : d?.reads ?? 0;
