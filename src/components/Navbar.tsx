@@ -12,6 +12,7 @@ const links = [
   { to: "/inicio", label: "Início" },
   { to: "/explorar", label: "Explorar" },
   { to: "/atualizacoes", label: "Atualizações" },
+  { to: "/ranking", label: "Ranking" },
   { to: "/favoritos", label: "Favoritos" },
   { to: "/historico", label: "Histórico" },
   { to: "/atividade", label: "Atividade" },

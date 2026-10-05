@@ -108,13 +108,21 @@ function ProfilePage() {
         {p.bio && <p className="mt-4 text-muted-foreground">{p.bio}</p>}
 
         <div className="surface-panel mt-6 rounded-2xl p-4">
-          <div className="mb-2 flex justify-between text-sm">
-            <span className="font-medium">Nível {p.level}</span>
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-sm">
+            <span className="flex items-center gap-2 font-medium">Nível {p.level}<TitleBadge level={p.level} /></span>
             <span className="text-muted-foreground">{p.xp} / {lv.next} XP</span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-surface-2">
             <div className="gradient-eternal h-full" style={{ width: `${lv.pct}%` }} />
           </div>
+          {nextT ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Próximo título: <span className="font-medium text-foreground">{nextT.name}</span> no nível {nextT.level_min}
+              {p.level < nextT.level_min ? ` (faltam ${nextT.level_min - p.level} níveis)` : ""}
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-muted-foreground">Título máximo alcançado.</p>
+          )}
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-3">
