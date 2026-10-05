@@ -30,6 +30,7 @@ import { Route as AuthenticatedLojaRouteImport } from './routes/_authenticated/l
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
 import { Route as AuthenticatedPersonalizarRouteImport } from './routes/_authenticated/personalizar'
 import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated/planos'
+import { Route as AuthenticatedRankingRouteImport } from './routes/_authenticated/ranking'
 import { Route as AuthenticatedScansRouteImport } from './routes/_authenticated/scans'
 import { Route as AuthenticatedSejaParceiroRouteImport } from './routes/_authenticated/seja-parceiro'
 import { Route as AuthenticatedObraSlugRouteImport } from './routes/_authenticated/obra.$slug'
@@ -147,6 +148,11 @@ const AuthenticatedPlanosRoute = AuthenticatedPlanosRouteImport.update({
   path: '/planos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRankingRoute = AuthenticatedRankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedScansRoute = AuthenticatedScansRouteImport.update({
   id: '/scans',
   path: '/scans',
@@ -218,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/me': typeof AuthenticatedMeRoute
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
+  '/ranking': typeof AuthenticatedRankingRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
@@ -249,6 +256,7 @@ export interface FileRoutesByTo {
   '/me': typeof AuthenticatedMeRoute
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
+  '/ranking': typeof AuthenticatedRankingRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
@@ -282,6 +290,7 @@ export interface FileRoutesById {
   '/_authenticated/me': typeof AuthenticatedMeRoute
   '/_authenticated/personalizar': typeof AuthenticatedPersonalizarRoute
   '/_authenticated/planos': typeof AuthenticatedPlanosRoute
+  '/_authenticated/ranking': typeof AuthenticatedRankingRoute
   '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/_authenticated/obra/$slug': typeof AuthenticatedObraSlugRoute
@@ -315,6 +324,7 @@ export interface FileRouteTypes {
     | '/me'
     | '/personalizar'
     | '/planos'
+    | '/ranking'
     | '/scans'
     | '/seja-parceiro'
     | '/obra/$slug'
@@ -346,6 +356,7 @@ export interface FileRouteTypes {
     | '/me'
     | '/personalizar'
     | '/planos'
+    | '/ranking'
     | '/scans'
     | '/seja-parceiro'
     | '/obra/$slug'
@@ -378,6 +389,7 @@ export interface FileRouteTypes {
     | '/_authenticated/me'
     | '/_authenticated/personalizar'
     | '/_authenticated/planos'
+    | '/_authenticated/ranking'
     | '/_authenticated/scans'
     | '/_authenticated/seja-parceiro'
     | '/_authenticated/obra/$slug'
@@ -550,6 +562,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPlanosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/ranking': {
+      id: '/_authenticated/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof AuthenticatedRankingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/scans': {
       id: '/_authenticated/scans'
       path: '/scans'
@@ -631,6 +650,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
   AuthenticatedPersonalizarRoute: typeof AuthenticatedPersonalizarRoute
   AuthenticatedPlanosRoute: typeof AuthenticatedPlanosRoute
+  AuthenticatedRankingRoute: typeof AuthenticatedRankingRoute
   AuthenticatedScansRoute: typeof AuthenticatedScansRoute
   AuthenticatedSejaParceiroRoute: typeof AuthenticatedSejaParceiroRoute
   AuthenticatedObraSlugRoute: typeof AuthenticatedObraSlugRoute
@@ -655,6 +675,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMeRoute: AuthenticatedMeRoute,
   AuthenticatedPersonalizarRoute: AuthenticatedPersonalizarRoute,
   AuthenticatedPlanosRoute: AuthenticatedPlanosRoute,
+  AuthenticatedRankingRoute: AuthenticatedRankingRoute,
   AuthenticatedScansRoute: AuthenticatedScansRoute,
   AuthenticatedSejaParceiroRoute: AuthenticatedSejaParceiroRoute,
   AuthenticatedObraSlugRoute: AuthenticatedObraSlugRoute,

@@ -1,8 +1,8 @@
 /** Recursos sociais: seguir, atividade, comentários, curtidas, denúncias. O banco valida cada ação. */
 import { supabase } from "@/integrations/supabase/client";
 
-export type MiniProfile = { id: string; username: string; display_name: string | null; avatar_path: string | null; avatar_url: string | null };
-const MINI = "id, username, display_name, avatar_path, avatar_url";
+export type MiniProfile = { id: string; username: string; display_name: string | null; avatar_path: string | null; avatar_url: string | null; level: number };
+const MINI = "id, username, display_name, avatar_path, avatar_url, level";
 
 async function profilesById(ids: string[]): Promise<Map<string, MiniProfile>> {
   const uniq = [...new Set(ids)];

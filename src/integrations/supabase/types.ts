@@ -928,6 +928,33 @@ export type Database = {
         }
         Relationships: []
       }
+      reader_titles: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          level_min: number
+          name: string
+          rarity: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          level_min: number
+          name: string
+          rarity: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          level_min?: number
+          name?: string
+          rarity?: string
+        }
+        Relationships: []
+      }
       reading_history: {
         Row: {
           chapter_id: string
@@ -1211,6 +1238,39 @@ export type Database = {
         }
         Relationships: []
       }
+      xp_history: {
+        Row: {
+          actor_id: string | null
+          amount: number
+          balance_after: number
+          created_at: string
+          id: string
+          reason: string | null
+          source: string
+          user_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          amount: number
+          balance_after: number
+          created_at?: string
+          id?: string
+          reason?: string | null
+          source: string
+          user_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          id?: string
+          reason?: string | null
+          source?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -1232,6 +1292,10 @@ export type Database = {
       admin_grant_cosmetic: {
         Args: { p_cosmetic: string; p_grant: boolean; p_user: string }
         Returns: undefined
+      }
+      admin_grant_xp: {
+        Args: { p_amount: number; p_reason: string; p_user: string }
+        Returns: number
       }
       admin_list_users: {
         Args: {
@@ -1313,6 +1377,36 @@ export type Database = {
       }
       owner_add_admin: { Args: { p_user: string }; Returns: undefined }
       owner_remove_admin: { Args: { p_user: string }; Returns: undefined }
+      reader_title: {
+        Args: { p_level: number }
+        Returns: {
+          created_at: string
+          description: string
+          id: string
+          level_min: number
+          name: string
+          rarity: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "reader_titles"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      reading_leaderboard: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_path: string
+          avatar_url: string
+          chapters_read: number
+          display_name: string
+          level: number
+          user_id: string
+          username: string
+          xp: number
+        }[]
+      }
       redeem_invite_code: { Args: { p_code: string }; Returns: boolean }
       set_gif_banner: {
         Args: { p_equipped: boolean; p_path: string }

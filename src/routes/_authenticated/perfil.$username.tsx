@@ -11,6 +11,8 @@ import { fetchFavorites } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { useEquipped, useSignedUrl } from "@/lib/media";
 import { levelProgress, PLAN_LABEL, type Profile } from "@/lib/types";
+import { nextTitle, useTitles } from "@/lib/titles";
+import { TitleBadge } from "@/components/TitleBadge";
 import { useSession } from "@/hooks/useAuth";
 import { animClass, useVisibleAnim } from "@/lib/cosmetics";
 import { cosmeticBackground, CosmeticSurface, useCosmeticMedia } from "@/components/cosmetics/CosmeticPreview";
@@ -63,9 +65,11 @@ function ProfilePage() {
   });
 
   const bgMedia = useCosmeticMedia(equipped?.["background"]?.media_path, equipped?.["background"]?.media_url);
+  const titlesQ = useTitles();
   if (profile.isLoading) return <div className="p-8 text-muted-foreground">Carregando…</div>;
   if (!p) return <div className="p-8">Perfil não encontrado.</div>;
   const lv = levelProgress(p.xp, p.level);
+  const nextT = nextTitle(titlesQ.data, p.level);
   const bannerItem = equipped?.["banner"];
   const bgItem = equipped?.["background"];
   const borderItem = equipped?.["border"];
@@ -108,13 +112,21 @@ function ProfilePage() {
         {p.bio && <p className="mt-4 text-muted-foreground">{p.bio}</p>}
 
         <div className="surface-panel mt-6 rounded-2xl p-4">
-          <div className="mb-2 flex justify-between text-sm">
-            <span className="font-medium">Nível {p.level}</span>
+          <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-sm">
+            <span className="flex items-center gap-2 font-medium">Nível {p.level}<TitleBadge level={p.level} /></span>
             <span className="text-muted-foreground">{p.xp} / {lv.next} XP</span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-surface-2">
             <div className="gradient-eternal h-full" style={{ width: `${lv.pct}%` }} />
           </div>
+          {nextT ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Próximo título: <span className="font-medium text-foreground">{nextT.name}</span> no nível {nextT.level_min}
+              {p.level < nextT.level_min ? ` (faltam ${nextT.level_min - p.level} níveis)` : ""}
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-muted-foreground">Título máximo alcançado.</p>
+          )}
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-3">
