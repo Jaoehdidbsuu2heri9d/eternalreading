@@ -65,11 +65,11 @@ function ProfilePage() {
   });
 
   const bgMedia = useCosmeticMedia(equipped?.["background"]?.media_path, equipped?.["background"]?.media_url);
+  const titlesQ = useTitles();
   if (profile.isLoading) return <div className="p-8 text-muted-foreground">Carregando…</div>;
   if (!p) return <div className="p-8">Perfil não encontrado.</div>;
   const lv = levelProgress(p.xp, p.level);
-  const { data: titles } = useTitles();
-  const nextT = nextTitle(titles, p.level);
+  const nextT = nextTitle(titlesQ.data, p.level);
   const bannerItem = equipped?.["banner"];
   const bgItem = equipped?.["background"];
   const borderItem = equipped?.["border"];
