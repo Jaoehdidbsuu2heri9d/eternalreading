@@ -11,6 +11,8 @@ import { fetchFavorites } from "@/lib/api";
 import { formatDate } from "@/lib/format";
 import { useEquipped, useSignedUrl } from "@/lib/media";
 import { levelProgress, PLAN_LABEL, type Profile } from "@/lib/types";
+import { nextTitle, useTitles } from "@/lib/titles";
+import { TitleBadge } from "@/components/TitleBadge";
 import { useSession } from "@/hooks/useAuth";
 import { animClass, useVisibleAnim } from "@/lib/cosmetics";
 import { cosmeticBackground, CosmeticSurface, useCosmeticMedia } from "@/components/cosmetics/CosmeticPreview";
@@ -66,6 +68,8 @@ function ProfilePage() {
   if (profile.isLoading) return <div className="p-8 text-muted-foreground">Carregando…</div>;
   if (!p) return <div className="p-8">Perfil não encontrado.</div>;
   const lv = levelProgress(p.xp, p.level);
+  const { data: titles } = useTitles();
+  const nextT = nextTitle(titles, p.level);
   const bannerItem = equipped?.["banner"];
   const bgItem = equipped?.["background"];
   const borderItem = equipped?.["border"];
