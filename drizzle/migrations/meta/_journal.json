@@ -92,6 +92,13 @@
       "when": 1791164318765,
       "tag": "0012_reader_titles",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1791164355953,
+      "tag": "0013_reading_leaderboard",
+      "breakpoints": true
     }
   ]
 }

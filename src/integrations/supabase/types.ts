@@ -1394,6 +1394,19 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      reading_leaderboard: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_path: string
+          avatar_url: string
+          chapters_read: number
+          display_name: string
+          level: number
+          user_id: string
+          username: string
+          xp: number
+        }[]
+      }
       redeem_invite_code: { Args: { p_code: string }; Returns: boolean }
       set_gif_banner: {
         Args: { p_equipped: boolean; p_path: string }
