@@ -5,6 +5,7 @@ import { Flag, Heart, MessageCircle, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/common/EButton";
 import { UserAvatar } from "@/components/UserAvatar";
+import { TitleBadge } from "@/components/TitleBadge";
 import { SpoilerText } from "@/components/social/SpoilerText";
 import { useRoles } from "@/hooks/useRoles";
 import { formatRelativeDate } from "@/lib/format";
@@ -72,6 +73,7 @@ function CommentItem({ c, me, isAdmin, onChange, onReply }: {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-baseline gap-x-2 text-sm">
           {c.author ? <Link to="/perfil/$username" params={{ username: c.author.username }} className="font-medium hover:underline">{name}</Link> : <span className="font-medium">{name}</span>}
+          {c.author && <TitleBadge level={c.author.level} />}
           <span className="text-xs text-muted-foreground">{formatRelativeDate(c.created_at)}{c.edited_at ? " · editado" : ""}</span>
           {c.hidden && <span className="text-xs text-destructive">Oculto pela moderação</span>}
         </div>
