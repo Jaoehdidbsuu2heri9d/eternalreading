@@ -1,12 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import { Clock, Compass, Heart, Home, User } from "lucide-react";
+import { Clock, Compass, Heart, Home, Trophy, User } from "lucide-react";
 
 const items = [
   { to: "/inicio", label: "Início", Icon: Home },
   { to: "/explorar", label: "Explorar", Icon: Compass },
   { to: "/atualizacoes", label: "Novos", Icon: Clock },
   { to: "/favoritos", label: "Favoritos", Icon: Heart },
+  { to: "/ranking", label: "Ranking", Icon: Trophy },
 ] as const;
+
 
 /** Navegação inferior fixa (mobile). */
 export function MobileNav({ username }: { username?: string }) {
