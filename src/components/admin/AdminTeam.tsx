@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Badge } from "@/components/common/EBadge";
 import { Button } from "@/components/common/EButton";
 import { UserAvatar } from "@/components/UserAvatar";
+import { TitleBadge } from "@/components/TitleBadge";
 import {
   AlertDialog,
   AlertDialogAction,
