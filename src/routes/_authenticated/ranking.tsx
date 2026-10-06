@@ -42,7 +42,7 @@ function RankingPage() {
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-8">
-      <PageHeader title="Ranking de leitores" description="Os membros mais dedicados do Eternal, por capítulos lidos." />
+      <PageHeader title="Ranking de leitores" subtitle="Os membros mais dedicados do Eternal, por capítulos lidos." />
 
       {isLoading ? (
         <p className="py-12 text-center text-muted-foreground">Carregando ranking…</p>
@@ -60,7 +60,7 @@ function RankingPage() {
                 <span className={`flex w-8 shrink-0 items-center justify-center text-lg font-bold ${medal[i] ?? "text-muted-foreground"}`}>
                   {i === 0 ? <Crown className="h-5 w-5" aria-label="1º lugar" /> : i === 1 ? <Trophy className="h-5 w-5" aria-label="2º lugar" /> : i === 2 ? <Medal className="h-5 w-5" aria-label="3º lugar" /> : `${i + 1}º`}
                 </span>
-                <UserAvatar profile={{ avatar_path: r.avatar_path, avatar_url: r.avatar_url, display_name: r.display_name, username: r.username }} size="md" />
+                <UserAvatar userId={r.user_id} username={r.username} avatarPath={r.avatar_path} avatarUrl={r.avatar_url} size={40} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-medium">{r.display_name || r.username}</p>
                   <div className="mt-0.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
