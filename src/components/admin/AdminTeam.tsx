@@ -98,6 +98,25 @@ export function AdminTeam({ isOwner }: { isOwner: boolean }) {
     });
   }
 
+  function askXp(u: AdminUser) {
+    const raw = prompt(`Quantidade de XP para ${name(u)} (use número negativo para remover):`);
+    if (raw === null) return;
+    const amount = Number(raw);
+    if (!Number.isInteger(amount) || amount === 0) return setMsg({ ok: false, text: "Quantidade inválida." });
+    const reason = prompt("Motivo (obrigatório, fica no histórico administrativo):");
+    if (!reason || reason.trim().length < 3) return setMsg({ ok: false, text: "Informe um motivo." });
+    setConfirm({
+      title: "Conceder XP",
+      text: `Confirmar ${amount > 0 ? "+" : ""}${amount} XP para ${name(u)}? Motivo: ${reason.trim()}`,
+      run: async () => {
+        const { error } = await supabase.rpc("admin_grant_xp", { p_user: u.id, p_amount: amount, p_reason: reason.trim() });
+        if (error) throw error;
+        setMsg({ ok: true, text: "XP atualizado e registrado no histórico." });
+      },
+    });
+  }
+
+
   return (
     <>
       {msg && <p role="status" className={`mt-6 text-sm ${msg.ok ? "text-success" : "text-destructive"}`}>{msg.text}</p>}
@@ -153,9 +172,10 @@ export function AdminTeam({ isOwner }: { isOwner: boolean }) {
             <li key={u.id} className="surface-panel flex flex-wrap items-center gap-3 rounded-2xl p-3">
               <UserAvatar userId={u.id} username={u.username} avatarPath={u.avatar_path} avatarUrl={u.avatar_url} size={36} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium">{name(u)} <span className="text-muted-foreground">@{u.username}</span></p>
+                <p className="truncate text-sm font-medium">{name(u)} <span className="text-muted-foreground">@{u.username}</span> <TitleBadge level={u.level} /></p>
                 <p className="truncate text-xs text-muted-foreground">{u.email} · Nível {u.level} · {u.xp} XP</p>
               </div>
+              <Button size="sm" variant="ghost" onClick={() => askXp(u)}>Dar XP</Button>
               <select className={field} value={u.plan} disabled={setPlanMut.isPending} aria-label={`Plano de ${u.username}`}
                 onChange={(e) => setPlanMut.mutate({ id: u.id, p: e.target.value as PlanTier })}>
                 {(Object.keys(PLAN_LABEL) as PlanTier[]).map((p) => <option key={p} value={p}>{PLAN_LABEL[p]}</option>)}
