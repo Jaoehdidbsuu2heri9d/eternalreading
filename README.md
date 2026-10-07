@@ -48,3 +48,14 @@ Publique pelo botão **Publish** no Lovable. O mesmo banco atende a prévia e o 
 - `src/components` — componentes reutilizáveis (`common/` = botões, campos, selos)
 - `src/lib` — acesso a dados (`api.ts`), tipos e formatação
 - `src/hooks` — sessão e perfil
+
+
+## Banco de dados e migrations
+
+As migrations atuais do projeto ficam em `drizzle/migrations`. Para aplicar migrations pendentes no banco configurado, use:
+
+```bash
+npm run db:migrate
+```
+
+A conexão usada pelo Drizzle é definida pela variável `LOVABLE_DB_MIGRATION_URL`. Nunca versione valores reais de `.env` ou chaves secretas.
