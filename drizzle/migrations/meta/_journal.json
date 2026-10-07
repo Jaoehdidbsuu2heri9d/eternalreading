@@ -99,6 +99,13 @@
       "when": 1791164355953,
       "tag": "0013_reading_leaderboard",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1791332884169,
+      "tag": "0014_achievements_v2",
+      "breakpoints": true
     }
   ]
 }

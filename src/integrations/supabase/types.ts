@@ -14,38 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievement_rewards: {
+        Row: {
+          achievement_id: string
+          granted_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          granted_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          granted_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "achievement_rewards_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       achievements: {
         Row: {
+          active: boolean
+          category: string
+          coin_reward: number
+          cosmetic_reward_id: string | null
+          created_at: string
           description: string
+          extra_reward: string | null
           goal: number
+          hint: string | null
           icon: string
           id: string
+          is_secret: boolean
           metric: string
+          metric_param: string | null
           name: string
+          rarity: string
           slug: string
+          sort: number
+          title_reward: string | null
+          unlock_text: string
+          updated_at: string
           xp_reward: number
         }
         Insert: {
+          active?: boolean
+          category?: string
+          coin_reward?: number
+          cosmetic_reward_id?: string | null
+          created_at?: string
           description: string
+          extra_reward?: string | null
           goal: number
+          hint?: string | null
           icon?: string
           id?: string
+          is_secret?: boolean
           metric: string
+          metric_param?: string | null
           name: string
+          rarity?: string
           slug: string
+          sort?: number
+          title_reward?: string | null
+          unlock_text?: string
+          updated_at?: string
           xp_reward?: number
         }
         Update: {
+          active?: boolean
+          category?: string
+          coin_reward?: number
+          cosmetic_reward_id?: string | null
+          created_at?: string
           description?: string
+          extra_reward?: string | null
           goal?: number
+          hint?: string | null
           icon?: string
           id?: string
+          is_secret?: boolean
           metric?: string
+          metric_param?: string | null
           name?: string
+          rarity?: string
           slug?: string
+          sort?: number
+          title_reward?: string | null
+          unlock_text?: string
+          updated_at?: string
           xp_reward?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "achievements_cosmetic_reward_id_fkey"
+            columns: ["cosmetic_reward_id"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       activities: {
         Row: {
@@ -165,6 +241,45 @@ export type Database = {
             columns: ["chapter_id"]
             isOneToOne: false
             referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapter_reads: {
+        Row: {
+          chapter_id: string
+          manga_id: string
+          read_at: string
+          read_on: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          manga_id: string
+          read_at?: string
+          read_on?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          manga_id?: string
+          read_at?: string
+          read_on?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_reads_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chapter_reads_manga_id_fkey"
+            columns: ["manga_id"]
+            isOneToOne: false
+            referencedRelation: "manga"
             referencedColumns: ["id"]
           },
         ]
@@ -524,6 +639,39 @@ export type Database = {
         }
         Relationships: []
       }
+      event_participations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_name: string
+          event_slug: string
+          id: string
+          rewards: number
+          user_id: string
+          won: boolean
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_name: string
+          event_slug: string
+          id?: string
+          rewards?: number
+          user_id: string
+          won?: boolean
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_name?: string
+          event_slug?: string
+          id?: string
+          rewards?: number
+          user_id?: string
+          won?: boolean
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           created_at: string
@@ -879,6 +1027,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          achievement_animations: boolean
           avatar_path: string | null
           avatar_url: string | null
           banner_url: string | null
@@ -895,6 +1044,7 @@ export type Database = {
           xp: number
         }
         Insert: {
+          achievement_animations?: boolean
           avatar_path?: string | null
           avatar_url?: string | null
           banner_url?: string | null
@@ -911,6 +1061,7 @@ export type Database = {
           xp?: number
         }
         Update: {
+          achievement_animations?: boolean
           avatar_path?: string | null
           avatar_url?: string | null
           banner_url?: string | null
@@ -1066,6 +1217,24 @@ export type Database = {
         }
         Relationships: []
       }
+      secret_discoveries: {
+        Row: {
+          discovered_at: string
+          key: string
+          user_id: string
+        }
+        Insert: {
+          discovered_at?: string
+          key: string
+          user_id: string
+        }
+        Update: {
+          discovered_at?: string
+          key?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           billing_interval: string
@@ -1162,16 +1331,25 @@ export type Database = {
       user_achievements: {
         Row: {
           achievement_id: string
+          featured: boolean
+          granted_by: string | null
+          source: string
           unlocked_at: string
           user_id: string
         }
         Insert: {
           achievement_id: string
+          featured?: boolean
+          granted_by?: string | null
+          source?: string
           unlocked_at?: string
           user_id: string
         }
         Update: {
           achievement_id?: string
+          featured?: boolean
+          granted_by?: string | null
+          source?: string
           unlocked_at?: string
           user_id?: string
         }
@@ -1276,6 +1454,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      achievement_goal: {
+        Args: { p_goal: number; p_metric: string }
+        Returns: number
+      }
+      achievement_metric: {
+        Args: { p_metric: string; p_param: string; p_user: string }
+        Returns: number
+      }
       add_xp: { Args: { p_amount: number }; Returns: undefined }
       admin_adjust_coins: {
         Args: { p_amount: number; p_reason: string; p_user: string }
@@ -1288,6 +1474,10 @@ export type Database = {
           equipped: number
           owners: number
         }[]
+      }
+      admin_grant_achievement: {
+        Args: { p_ach: string; p_reason: string; p_user: string }
+        Returns: boolean
       }
       admin_grant_cosmetic: {
         Args: { p_cosmetic: string; p_grant: boolean; p_user: string }
@@ -1321,6 +1511,20 @@ export type Database = {
         Args: { p_action: string; p_comment: string }
         Returns: undefined
       }
+      admin_record_event: {
+        Args: {
+          p_name: string
+          p_rewards: number
+          p_slug: string
+          p_user: string
+          p_won: boolean
+        }
+        Returns: undefined
+      }
+      admin_revoke_achievement: {
+        Args: { p_ach: string; p_reason: string; p_user: string }
+        Returns: boolean
+      }
       admin_set_chapter_pages: {
         Args: { p_chapter: string; p_urls: string[] }
         Returns: undefined
@@ -1344,6 +1548,15 @@ export type Database = {
           purchases: number
         }[]
       }
+      award_achievement: {
+        Args: {
+          p_ach: string
+          p_actor: string
+          p_source: string
+          p_user: string
+        }
+        Returns: boolean
+      }
       buy_cosmetic: { Args: { p_cosmetic: string }; Returns: number }
       check_achievements: { Args: never; Returns: number }
       coins_apply: {
@@ -1358,8 +1571,13 @@ export type Database = {
         }
         Returns: number
       }
+      discover_secret: { Args: { p_key: string }; Returns: boolean }
       ensure_profile: { Args: { p_username?: string }; Returns: undefined }
       equip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
+      evaluate_achievements: {
+        Args: { p_categories: string[]; p_user: string }
+        Returns: number
+      }
       expire_subscriptions: { Args: never; Returns: number }
       has_active_subscription: {
         Args: {
@@ -1375,8 +1593,46 @@ export type Database = {
         }
         Returns: boolean
       }
+      my_achievements: {
+        Args: never
+        Returns: {
+          category: string
+          coin_reward: number
+          cosmetic_name: string
+          description: string
+          extra_reward: string
+          featured: boolean
+          goal: number
+          hint: string
+          icon: string
+          id: string
+          is_secret: boolean
+          name: string
+          owners: number
+          owners_pct: number
+          progress: number
+          rarity: string
+          slug: string
+          title_reward: string
+          unlock_text: string
+          unlocked_at: string
+          xp_reward: number
+        }[]
+      }
       owner_add_admin: { Args: { p_user: string }; Returns: undefined }
       owner_remove_admin: { Args: { p_user: string }; Returns: undefined }
+      profile_achievements: {
+        Args: { p_user: string }
+        Returns: {
+          featured: boolean
+          icon: string
+          id: string
+          name: string
+          owners_pct: number
+          rarity: string
+          unlocked_at: string
+        }[]
+      }
       reader_title: {
         Args: { p_level: number }
         Returns: {
@@ -1407,7 +1663,19 @@ export type Database = {
           xp: number
         }[]
       }
+      reading_streak: {
+        Args: { p_user: string }
+        Returns: {
+          best_streak: number
+          current_streak: number
+        }[]
+      }
+      record_chapter_read: { Args: { p_chapter: string }; Returns: boolean }
       redeem_invite_code: { Args: { p_code: string }; Returns: boolean }
+      set_featured_achievements: {
+        Args: { p_ids: string[] }
+        Returns: undefined
+      }
       set_gif_banner: {
         Args: { p_equipped: boolean; p_path: string }
         Returns: undefined
