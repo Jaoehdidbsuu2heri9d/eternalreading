@@ -69,7 +69,7 @@ CREATE POLICY "members read own donation history" ON public.donations FOR SELECT
 -- Totals and identifiers from the payment provider are never returned.
 CREATE OR REPLACE FUNCTION public.hall_of_fame(p_limit integer DEFAULT 100)
 RETURNS TABLE(
-  position bigint, user_id uuid, username text, display_name text,
+  rank_position bigint, user_id uuid, username text, display_name text,
   avatar_url text, avatar_path text, level_slug text, level_name text,
   level_color text, level_icon text, donation_count bigint
 )
@@ -82,7 +82,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
     GROUP BY d.user_id
   ),
   leaderboard AS (
-    SELECT row_number() OVER (ORDER BY d.total DESC, d.donation_count DESC, p.username) AS position,
+    SELECT row_number() OVER (ORDER BY d.total DESC, d.donation_count DESC, p.username) AS rank_position,
       p.id AS user_id, p.username, p.display_name, p.avatar_url, p.avatar_path,
       l.slug AS level_slug, l.name AS level_name, l.color AS level_color,
       l.icon AS level_icon, d.donation_count
@@ -94,9 +94,9 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
       ORDER BY s.minimum_cents DESC LIMIT 1
     ) l ON true
   )
-  SELECT position,user_id,username,display_name,avatar_url,avatar_path,
+  SELECT rank_position,user_id,username,display_name,avatar_url,avatar_path,
          level_slug,level_name,level_color,level_icon,donation_count
-  FROM leaderboard ORDER BY position LIMIT LEAST(GREATEST(p_limit,1),100);
+  FROM leaderboard ORDER BY rank_position LIMIT LEAST(GREATEST(p_limit,1),100);
 $$;
 REVOKE ALL ON FUNCTION public.hall_of_fame(integer) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.hall_of_fame(integer) TO authenticated;
