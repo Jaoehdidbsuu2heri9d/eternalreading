@@ -11,7 +11,7 @@ const make = (id: string, name: string, progress: number, goal: number, rarity: 
   id, name, description: secret ? "Algumas histórias só aparecem para quem procura." : "Conquista de teste para visualizar o layout.",
   unlock_text: "Nova conquista!", icon: "trophy", category: secret ? "secreta" : "leitura",
   rarity, xp_reward: secret ? 0 : 250, coin_reward: secret ? 0 : 100,
-  title_reward: null, cosmetic_name: null, is_secret: secret, hint: secret ? "Observe os detalhes." : null,
+  title_reward: null, cosmetic_name: null, extra_reward: null, is_secret: secret, hint: secret ? "Observe os detalhes." : null,
   goal, progress, unlocked_at: progress >= goal && !secret ? new Date().toISOString() : null,
   featured: false, owners_pct: 12.5,
 });
