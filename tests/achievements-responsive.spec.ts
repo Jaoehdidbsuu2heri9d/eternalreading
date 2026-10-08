@@ -12,7 +12,7 @@ for (const width of widths) {
     await expect(page.locator("[role=progressbar]").first()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBeTruthy();
     const mobile = page.getByRole("navigation", { name: "Navegação inferior" });
-    if (width < 768) {
+    if (width < 1280) {
       await expect(mobile).toBeVisible();
       await expect(mobile.getByRole("link", { name: "Conquistas" })).toBeVisible();
       await mobile.getByRole("button", { name: "Mais" }).click();
