@@ -42,7 +42,7 @@ test("testa catálogo ampliado e segredos autenticados", () => {
 });
 test("conquistas aparecem no menu mobile e dados não vazam em segredo", () => {
   expect(nav).toContain('{ to: "/conquistas", label: "Conquistas"');
-  expect(nav).toContain('md:hidden');
+  expect(nav).toContain('xl:hidden');
   expect(page).toContain('a.is_secret && !done');
   expect(page).toContain("Filtrar por raridade");
   expect(page).toContain("Progresso geral");
