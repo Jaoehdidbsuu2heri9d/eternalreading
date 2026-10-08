@@ -148,8 +148,7 @@ export async function toggleFavorite(userId: string, mangaId: string, favorited:
   }
   const { error } = await supabase.from("favorites").insert({ user_id: userId, manga_id: mangaId });
   if (error) throw error;
-  await supabase.rpc("add_xp", { p_amount: 5 });
-  await supabase.rpc("check_achievements");
+  // O gatilho do banco avalia conquistas de favoritos; XP não vem do cliente.
   return true;
 }
 
@@ -181,7 +180,3 @@ export async function saveProgress(
   if (error) throw error;
 }
 
-export async function grantReadingXp() {
-  await supabase.rpc("add_xp", { p_amount: 10 });
-  await supabase.rpc("check_achievements");
-}
