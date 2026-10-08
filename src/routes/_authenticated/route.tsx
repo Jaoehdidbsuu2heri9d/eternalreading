@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect, useRouterState } from "@tanstack/react-router";
 
 import { Footer } from "@/components/Footer";
+import { AchievementUnlockToast } from "@/components/AchievementUnlockToast";
 import { MobileNav } from "@/components/MobileNav";
 import { Navbar } from "@/components/Navbar";
 import { useProfile, useSession } from "@/hooks/useAuth";
@@ -29,7 +30,7 @@ function AuthenticatedLayout() {
   // O leitor usa tela cheia, sem navegação em volta.
   const isReader = pathname.startsWith("/ler/");
 
-  if (isReader) return <Outlet />;
+  if (isReader) return <><Outlet /><AchievementUnlockToast userId={user?.id} profile={profile} /></>;
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -39,6 +40,7 @@ function AuthenticatedLayout() {
       </main>
       <Footer />
       <MobileNav {...(profile ? { username: profile.username } : {})} />
+      <AchievementUnlockToast userId={user?.id} profile={profile} />
     </div>
   );
 }
