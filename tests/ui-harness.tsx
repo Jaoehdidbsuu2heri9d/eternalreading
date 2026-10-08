@@ -31,9 +31,9 @@ const hallLevels: SupporterLevel[] = [
   { id: "d", slug: "eterno", name: "Eterno", description: "Reconhecimento máximo.", color: "#E4B84C", icon: "crown", minimum_cents: 50000, sort: 4, active: true },
 ];
 const hallPeople: Supporter[] = [
-  {rank_position:1,user_id:"11111111-1111-4111-8111-111111111111",username:"amora",display_name:"Amora",avatar_url:null,avatar_path:null,level_slug:"eterno",level_name:"Eterno",level_color:"#E4B84C",level_icon:"crown",donation_count:3},
-  {rank_position:2,user_id:"22222222-2222-4222-8222-222222222222",username:"davi",display_name:"Davi",avatar_url:null,avatar_path:null,level_slug:"lendario",level_name:"Lendário",level_color:"#A997F5",level_icon:"star",donation_count:2},
-  {rank_position:3,user_id:"33333333-3333-4333-8333-333333333333",username:"luana",display_name:"Luana",avatar_url:null,avatar_path:null,level_slug:"guardiao",level_name:"Guardião",level_color:"#72B6D2",level_icon:"shield",donation_count:1},
+  {rank_position:1,user_id:"11111111-1111-4111-8111-111111111111",username:"amora",display_name:"Amora",avatar_url:null,avatar_path:null,level_slug:"eterno",level_name:"Eterno",level_color:"#E4B84C",level_icon:"crown",donation_count:3,recognition_source:"payment"},
+  {rank_position:2,user_id:"22222222-2222-4222-8222-222222222222",username:"davi",display_name:"Davi",avatar_url:null,avatar_path:null,level_slug:"lendario",level_name:"Lendário",level_color:"#A997F5",level_icon:"star",donation_count:0,recognition_source:"manual"},
+  {rank_position:3,user_id:"33333333-3333-4333-8333-333333333333",username:"luana",display_name:"Luana",avatar_url:null,avatar_path:null,level_slug:"guardiao",level_name:"Guardião",level_color:"#72B6D2",level_icon:"shield",donation_count:1,recognition_source:"payment"},
 ];
 
 const rootRoute = createRootRoute({ component: () => (
