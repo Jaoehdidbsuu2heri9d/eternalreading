@@ -53,7 +53,7 @@ const pages = [
   createRoute({ getParentRoute: () => rootRoute, path: "/scans", component: () => <h1>Scans</h1> }),
   createRoute({ getParentRoute: () => rootRoute, path: "/perfil/$username", component: () => <h1>Perfil</h1> }),
 ];
-window.history.replaceState({}, "", "/conquistas");
+window.history.replaceState({}, "", new URLSearchParams(window.location.search).get("page") === "hall" ? "/hall-da-fama" : "/conquistas");
 const router = createRouter({ routeTree: rootRoute.addChildren(pages), context: {} });
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={new QueryClient()}><RouterProvider router={router} /></QueryClientProvider>,
