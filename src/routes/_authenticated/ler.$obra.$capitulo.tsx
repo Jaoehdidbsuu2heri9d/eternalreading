@@ -44,7 +44,7 @@ function ReaderPage() {
     queryFn: () => fetchChapterPages(chapter!.id),
   });
 
-  // Progresso: salvo ao rolar (com intervalo) e XP concedido uma vez ao chegar ao fim.
+  // Cada leitura é verificada no servidor e só pode premiar o capítulo uma vez.
   const xpGiven = useRef(false);
   useEffect(() => {
     xpGiven.current = false;
@@ -53,28 +53,56 @@ function ReaderPage() {
   useEffect(() => {
     if (!user || !manga.data || !chapter || !pages.isSuccess || pages.data.length === 0) return;
     let last = 0;
+    let opened = false;
+    let reachedEnd = false;
+    let inFlight = false;
+    let disposed = false;
+    let attempts = 0;
+    let retryHandle: number | undefined;
+    const chapterId = chapter.id;
+
+    const confirmRead = async () => {
+      if (!opened || !reachedEnd || xpGiven.current || disposed || inFlight) return;
+      inFlight = true;
+      const { data, error } = await supabase.rpc("record_chapter_read", { p_chapter: chapterId });
+      inFlight = false;
+      if (disposed) return;
+      if (data && !error) {
+        xpGiven.current = true;
+      } else if (!error && ++attempts < 5) {
+        // Leitura muito rápida: aguarda o tempo mínimo aferido pelo banco.
+        retryHandle = window.setTimeout(() => { void confirmRead(); }, 2500);
+      } else {
+        xpGiven.current = true;
+        if (error) console.error("Falha ao registrar leitura:", error);
+      }
+    };
+    void supabase.rpc("record_chapter_open", { p_chapter: chapterId }).then(({ data, error }) => {
+      if (disposed) return;
+      opened = !!data && !error;
+      if (error) console.error("Falha ao iniciar leitura:", error);
+      if (opened && reachedEnd) void confirmRead();
+    });
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const pct = max > 0 ? Math.round((window.scrollY / max) * 100) : 100;
       const now = Date.now();
       if (now - last > 3000 || pct >= 98) {
         last = now;
-        saveProgress(user.id, manga.data!.id, chapter.id, pct).catch(() => {});
+        saveProgress(user.id, manga.data!.id, chapterId, pct).catch(() => {});
       }
-      if (pct >= 95 && !xpGiven.current) {
-        xpGiven.current = true;
-        // O servidor valida o capítulo e registra apenas uma leitura por usuário.
-        supabase.rpc("record_chapter_read", { p_chapter: chapter.id }).then(({ error }) => {
-          if (error) {
-            xpGiven.current = false;
-            console.error("Falha ao registrar leitura:", error);
-          }
-        });
+      if (pct >= 95) {
+        reachedEnd = true;
+        void confirmRead();
       }
     };
-    saveProgress(user.id, manga.data.id, chapter.id, 0).catch(() => {});
+    saveProgress(user.id, manga.data.id, chapterId, 0).catch(() => {});
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      disposed = true;
+      if (retryHandle !== undefined) window.clearTimeout(retryHandle);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [user, manga.data, chapter, pages.isSuccess, pages.data]);
 
   const nav = (
