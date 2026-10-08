@@ -33,10 +33,8 @@ jobs:
             git commit -m 'chore(deps): synchronize Bun lockfile'
             git push origin HEAD:feat/achievements-completion-20261007 || echo 'Sem permissão de envio; revisão do lockfile necessária.'
           fi
-      - name: Checar TypeScript
-        run: bunx tsc --noEmit
       - name: Testes de regras e segurança
-        run: bun test tests/achievements-contract.test.ts
+        run: bun test tests/achievements-contract.test.ts tests/donor-hall.test.ts
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -46,12 +44,14 @@ jobs:
           python - <<'PY'
           from pglast import parse_sql
           from pathlib import Path
-          for name in ["drizzle/migrations/0014_achievements_v2.sql", "drizzle/migrations/0015_achievements_catalog.sql", "drizzle/migrations/0016_achievements_completion.sql"]:
+          for name in ["drizzle/migrations/0014_achievements_v2.sql", "drizzle/migrations/0015_achievements_catalog.sql", "drizzle/migrations/0016_achievements_completion.sql", "drizzle/migrations/0018_donor_hall_sandbox.sql"]:
               parse_sql(Path(name).read_text())
               print("SQL OK:", name)
           PY
-      - name: Compilar desktop e celular
+      - name: Compilar desktop e celular (gera as rotas tipadas)
         run: bun run build
+      - name: Checar TypeScript com rotas geradas
+        run: bunx tsc --noEmit
       - name: Preparar Playwright
         run: |
           npm install --no-save --package-lock=false --legacy-peer-deps @playwright/test

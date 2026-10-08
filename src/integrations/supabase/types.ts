@@ -14,6 +14,105 @@ export type Database = {
   }
   public: {
     Tables: {
+      donations: {
+        Row: {
+          id: string
+          user_id: string
+          amount_cents: number
+          currency: string
+          provider: string
+          external_id: string | null
+          billing_type: string
+          status: string
+          invoice_url: string | null
+          confirmed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          amount_cents: number
+          currency?: string
+          provider?: string
+          external_id?: string | null
+          billing_type?: string
+          status?: string
+          invoice_url?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          amount_cents?: number
+          currency?: string
+          provider?: string
+          external_id?: string | null
+          billing_type?: string
+          status?: string
+          invoice_url?: string | null
+          confirmed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      supporter_levels: {
+        Row: {
+          id: string
+          slug: string
+          name: string
+          description: string
+          color: string
+          icon: string
+          minimum_cents: number
+          sort: number
+          active: boolean
+        }
+        Insert: {
+          id?: string
+          slug: string
+          name: string
+          description?: string
+          color?: string
+          icon?: string
+          minimum_cents: number
+          sort?: number
+          active?: boolean
+        }
+        Update: {
+          id?: string
+          slug?: string
+          name?: string
+          description?: string
+          color?: string
+          icon?: string
+          minimum_cents?: number
+          sort?: number
+          active?: boolean
+        }
+        Relationships: []
+      }
+      supporter_preferences: {
+        Row: {
+          user_id: string
+          show_on_hall: boolean
+          updated_at: string
+        }
+        Insert: {
+          user_id: string
+          show_on_hall?: boolean
+          updated_at?: string
+        }
+        Update: {
+          user_id?: string
+          show_on_hall?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       achievement_rewards: {
         Row: {
           achievement_id: string
@@ -1509,6 +1608,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      hall_of_fame: {
+        Args: { p_limit?: number }
+        Returns: {
+          rank_position: number
+          user_id: string
+          username: string
+          display_name: string | null
+          avatar_url: string | null
+          avatar_path: string | null
+          level_slug: string
+          level_name: string
+          level_color: string
+          level_icon: string
+          donation_count: number
+        }[]
+      }
       achievement_goal: {
         Args: { p_goal: number; p_metric: string }
         Returns: number

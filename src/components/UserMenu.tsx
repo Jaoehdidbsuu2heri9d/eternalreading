@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Camera, LogOut, Palette, Settings, Shield, User } from "lucide-react";
+import { Camera, Crown, HeartHandshake, LogOut, Palette, Settings, Shield, User } from "lucide-react";
 import { Coins, CreditCard } from "lucide-react";
 
 import {
@@ -57,6 +57,8 @@ export function UserMenu({ profile }: { profile?: Profile | null }) {
           <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/personalizar" })}><Palette className="h-4 w-4" />Personalizar</DropdownMenuItem>
           <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/loja" })}><Coins className="h-4 w-4" />Loja de Cosméticos</DropdownMenuItem>
           <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/assinatura" })}><CreditCard className="h-4 w-4" />Minha assinatura</DropdownMenuItem>
+          <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/hall-da-fama" })}><Crown className="h-4 w-4 text-amber-300" />Hall da Fama</DropdownMenuItem>
+          <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/apoiar" })}><HeartHandshake className="h-4 w-4" />Minhas contribuições</DropdownMenuItem>
           <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/configuracoes" })}><Settings className="h-4 w-4" />Configurações</DropdownMenuItem>
         </DropdownMenuGroup>
         {isAdmin && (
