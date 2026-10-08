@@ -20,6 +20,7 @@ export type Achievement = {
   coin_reward: number;
   title_reward: string | null;
   cosmetic_name: string | null;
+  extra_reward: string | null;
   is_secret: boolean;
   hint: string | null;
   goal: number;
@@ -215,12 +216,13 @@ export function AchievementsPage({ previewData }: { previewData?: Achievement[] 
                         </div>
 
                         {!done && a.goal > a.progress && <p className="mt-1 text-xs text-muted-foreground">Faltam {a.goal - a.progress} para desbloquear.</p>}
-                        {(a.xp_reward > 0 || a.coin_reward > 0 || a.title_reward || a.cosmetic_name) && (
+                        {(a.xp_reward > 0 || a.coin_reward > 0 || a.title_reward || a.cosmetic_name || a.extra_reward) && (
                           <div className="mt-3 flex flex-wrap gap-2">
                             {a.xp_reward > 0 && <span className="rounded-lg bg-primary/10 px-2 py-1 text-xs text-primary">+{a.xp_reward} XP</span>}
                             {a.coin_reward > 0 && <span className="rounded-lg bg-primary/10 px-2 py-1 text-xs text-primary">+{a.coin_reward} Coins</span>}
                             {a.title_reward && <span className="rounded-lg bg-surface-2 px-2 py-1 text-xs">Título: {a.title_reward}</span>}
                             {a.cosmetic_name && <span className="rounded-lg bg-surface-2 px-2 py-1 text-xs">🎨 {a.cosmetic_name}</span>}
+                            {a.extra_reward && <span className="rounded-lg bg-surface-2 px-2 py-1 text-xs">🎁 {a.extra_reward}</span>}
                           </div>
                         )}
                       </>
