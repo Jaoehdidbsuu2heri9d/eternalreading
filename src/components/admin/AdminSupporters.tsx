@@ -52,7 +52,7 @@ export function AdminSupporters() {
     },
   });
   const levels = useQuery({
-    queryKey: ["supporter-levels"],
+    queryKey: ["admin-supporter-levels"],
     queryFn: async () => {
       const { data, error } = await supabase.from("supporter_levels").select("slug,name,active").eq("active",true).order("sort");
       if (error) throw error;
