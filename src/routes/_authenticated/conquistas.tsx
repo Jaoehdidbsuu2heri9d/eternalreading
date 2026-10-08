@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { BookOpen, Check, Coins, Crown, Filter, Flame, Gem, Heart, Lock, Search, Sparkles, Trophy } from "lucide-react";
 
 import { PageHeader } from "@/components/PageHeader";
+import { SecretDiscovery } from "@/components/SecretDiscovery";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useAuth";
 
@@ -105,7 +106,7 @@ function AchievementsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      <PageHeader title="Conquistas" subtitle={`${unlocked.length} de ${achievements.length} desbloqueadas`} />
+      <div className="flex flex-wrap items-center justify-between gap-2"><PageHeader title="Conquistas" subtitle={`${unlocked.length} de ${achievements.length} desbloqueadas`} /><SecretDiscovery kind="hidden_element" /></div>
 
       <section className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-3" aria-label="Resumo das conquistas">
         {[
