@@ -1611,7 +1611,7 @@ export type Database = {
       hall_of_fame: {
         Args: { p_limit?: number }
         Returns: {
-          position: number
+          rank_position: number
           user_id: string
           username: string
           display_name: string | null
