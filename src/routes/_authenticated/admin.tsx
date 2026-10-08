@@ -25,8 +25,8 @@ import { useRoles } from "@/hooks/useRoles";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   validateSearch: (search: Record<string, unknown>) => ({
-    area: typeof search["area"] === "string" ? search.area : undefined,
-    view: typeof search["view"] === "string" ? search.view : undefined,
+    area: typeof search["area"] === "string" ? search["area"] : undefined,
+    view: typeof search["view"] === "string" ? search["view"] : undefined,
   }),
   // Acesso conferido no banco (has_role); as regras de segurança também bloqueiam os dados.
   beforeLoad: async ({ context }) => {
