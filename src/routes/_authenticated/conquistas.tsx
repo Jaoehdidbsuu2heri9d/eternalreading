@@ -54,6 +54,16 @@ const RARITY_LABELS: Record<string, string> = {
   secreto: "🌟 Secreta",
 };
 
+const RARITY_STYLES: Record<string, string> = {
+  comum: "border-slate-500/40",
+  incomum: "border-emerald-500/40",
+  raro: "border-sky-500/50",
+  epico: "border-violet-500/60",
+  lendario: "border-amber-500/60 shadow-amber-900/20",
+  mitico: "border-rose-500/60 shadow-rose-900/20",
+  secreto: "border-primary/40",
+};
+
 export const Route = createFileRoute("/_authenticated/conquistas")({
   head: () => ({
     meta: [
@@ -175,7 +185,7 @@ export function AchievementsPage({ previewData }: { previewData?: Achievement[] 
             const hidden = a.is_secret && !done;
 
             return (
-              <article key={a.id} className={`surface-panel min-w-0 rounded-2xl border p-4 transition ${done ? "glow-ring border-primary/40" : "border-border opacity-90"}`}>
+              <article key={a.id} className={`surface-panel min-w-0 rounded-2xl border p-4 transition ${RARITY_STYLES[a.rarity] ?? "border-border"} ${done ? "glow-ring" : "opacity-90"}`}>
                 <div className="flex min-w-0 items-start gap-3">
                   <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${done ? "gradient-eternal text-primary-foreground" : "bg-surface-2 text-muted-foreground"}`}>
                     {hidden ? <Lock className="h-5 w-5" /> : a.category === "leitura" ? <BookOpen className="h-5 w-5" /> : a.category === "sequencia" ? <Flame className="h-5 w-5" /> : a.category === "favoritos" ? <Heart className="h-5 w-5" /> : a.category === "coins" ? <Coins className="h-5 w-5" /> : a.rarity === "lendario" || a.rarity === "mitico" ? <Crown className="h-5 w-5" /> : done ? <Trophy className="h-5 w-5" /> : <Gem className="h-5 w-5" />}
