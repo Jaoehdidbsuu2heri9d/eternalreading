@@ -59,7 +59,7 @@ GRANT EXECUTE ON FUNCTION public.record_chapter_read(uuid) TO authenticated;
 
 -- Segredos só são descobertos quando atividades verificadas no banco satisfazem os requisitos.
 CREATE OR REPLACE FUNCTION public.discover_secret(p_key text)
-RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $
+RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
 DECLARE uid uuid := auth.uid(); n integer; opened integer; favorites integer; posted integer; best integer; distinct_genres integer;
 BEGIN
  IF uid IS NULL THEN RAISE EXCEPTION 'not authenticated'; END IF;
@@ -82,7 +82,7 @@ BEGIN
  END IF;
  PERFORM evaluate_achievements(uid, ARRAY['secreta']);
  RETURN true;
-END $;
+END $$;
 REVOKE ALL ON FUNCTION public.discover_secret(text) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.discover_secret(text) TO authenticated;
 
@@ -231,11 +231,11 @@ ON CONFLICT(slug) DO NOTHING;
 -- Somas baseadas em lançamentos reais, não no valor editável do catálogo.
 CREATE OR REPLACE FUNCTION public.my_achievement_reward_totals()
 RETURNS TABLE(total_xp bigint, total_coins bigint)
-LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$
  SELECT
  COALESCE((SELECT sum(x.amount) FROM xp_history x WHERE x.user_id = auth.uid() AND x.source = 'achievement'), 0),
  COALESCE((SELECT sum(c.amount) FROM coin_transactions c WHERE c.user_id = auth.uid() AND c.source = 'achievement'), 0);
-$;
+$$;
 REVOKE ALL ON FUNCTION public.my_achievement_reward_totals() FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.my_achievement_reward_totals() TO authenticated;
 
