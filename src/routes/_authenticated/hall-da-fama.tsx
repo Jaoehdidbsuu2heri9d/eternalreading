@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_authenticated/hall-da-fama")({
 });
 
 export type Supporter = {
-  position: number;
+  rank_position: number;
   user_id: string;
   username: string;
   display_name: string | null;
@@ -48,7 +48,7 @@ function SupporterCard({ person, spotlight = false }: { person: Supporter; spotl
   return (
     <article className={`surface-panel relative flex min-w-0 items-center gap-4 overflow-hidden rounded-2xl border p-4 ${spotlight ? "border-primary/50 sm:flex-col sm:justify-center sm:p-7 sm:text-center" : "border-border"}`}>
       {spotlight && <div aria-hidden className="pointer-events-none absolute -top-16 left-1/4 h-32 w-32 rounded-full bg-amber-500/15 blur-3xl" />}
-      <span className={`relative shrink-0 text-lg font-black text-muted-foreground ${spotlight ? "sm:text-3xl" : ""}`}>#{person.position}</span>
+      <span className={`relative shrink-0 text-lg font-black text-muted-foreground ${spotlight ? "sm:text-3xl" : ""}`}>#{person.rank_position}</span>
       <UserAvatar username={person.username} userId={person.user_id} avatarPath={person.avatar_path} avatarUrl={person.avatar_url} size={spotlight ? 72 : 48} showFrame={false} />
       <div className="relative min-w-0 flex-1">
         <Link to="/perfil/$username" params={{ username: person.username }} className="block truncate font-semibold hover:text-primary">
