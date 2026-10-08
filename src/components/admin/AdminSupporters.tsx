@@ -16,7 +16,7 @@ const field = "min-w-0 w-full rounded-xl border border-border bg-input px-3 py-2
 
 /** Give actionable feedback when the Lovable Cloud database is behind the GitHub code. */
 function describeSupporterError(error: unknown, feature: "levels" | "manual" | "users"): string {
-  const detail = error && typeof error === "object" ? (error as { code?: string; message?: string }) : {};
+  const detail: { code?: string; message?: string } = error && typeof error === "object" ? (error as { code?: string; message?: string }) : {};
   const code = detail.code ?? "";
   const message = detail.message ?? (error instanceof Error ? error.message : String(error ?? ""));
   const missingTable = ["42P01", "PGRST205"].includes(code) || /could not find the table|relation .* does not exist/i.test(message);
