@@ -148,6 +148,13 @@
       "when": 1791530000000,
       "tag": "0020_supporter_privilege_hardening",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1791480275129,
+      "tag": "0021_frames_v2",
+      "breakpoints": true
     }
   ]
 }
