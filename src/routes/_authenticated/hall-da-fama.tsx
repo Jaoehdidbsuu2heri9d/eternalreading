@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/hall-da-fama")({
   component: HallDaFamaPage,
 });
 
-type Supporter = {
+export type Supporter = {
   position: number;
   user_id: string;
   username: string;
@@ -29,6 +29,11 @@ type Supporter = {
   level_color: string;
   level_icon: string;
   donation_count: number;
+};
+
+export type SupporterLevel = {
+  id: string;slug: string;name: string;description: string;color: string;icon: string;
+  minimum_cents: number;sort: number;active: boolean;
 };
 
 const icons: Record<string, typeof Crown> = {
@@ -59,10 +64,11 @@ function SupporterCard({ person, spotlight = false }: { person: Supporter; spotl
   );
 }
 
-export function HallDaFamaPage() {
+export function HallDaFamaPage({ previewData, previewLevels }: { previewData?: Supporter[]; previewLevels?: SupporterLevel[] }) {
   const [filter, setFilter] = useState("todos");
   const hall = useQuery({
     queryKey: ["hall-of-fame"],
+    enabled: !previewData,
     queryFn: async () => {
       const { data, error } = await supabase.rpc("hall_of_fame", { p_limit: 100 });
       if (error) throw error;
@@ -73,13 +79,15 @@ export function HallDaFamaPage() {
   });
   const levels = useQuery({
     queryKey: ["supporter-levels"],
+    enabled: !previewLevels,
     queryFn: async () => {
       const { data, error } = await supabase.from("supporter_levels").select("*").order("minimum_cents");
       if (error) throw error;
       return data ?? [];
     },
   });
-  const people = hall.data ?? [];
+  const people = previewData ?? hall.data ?? [];
+  const availableLevels = previewLevels ?? levels.data ?? [];
   const list = useMemo(() => filter === "todos" ? people : people.filter(p => p.level_slug === filter), [people, filter]);
 
   return (
@@ -102,7 +110,7 @@ export function HallDaFamaPage() {
 
       <PageHeader title="Níveis de reconhecimento" subtitle="Seu nível cresce com o apoio confirmado. Valores individuais nunca aparecem aqui." />
       <div className="mb-10 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Níveis de apoiador">
-        {(levels.data ?? []).map(level => {
+        {availableLevels.map(level => {
           const Icon = icons[level.slug] ?? Medal;
           return (
             <div className="surface-panel rounded-2xl border border-border p-4" key={level.id}>
@@ -122,8 +130,8 @@ export function HallDaFamaPage() {
         <Link to="/apoiar" className="text-sm font-semibold text-primary hover:underline">Minhas contribuições →</Link>
       </div>
 
-      {hall.isLoading ? <div className="surface-panel rounded-2xl p-8 text-center text-muted-foreground">Carregando apoiadores…</div>
-      : hall.isError ? <div role="alert" className="surface-panel rounded-2xl p-6 text-sm text-destructive">Não foi possível carregar o Hall. <button type="button" className="underline" onClick={() => hall.refetch()}>Tentar novamente</button></div>
+      {hall.isLoading && !previewData ? <div className="surface-panel rounded-2xl p-8 text-center text-muted-foreground">Carregando apoiadores…</div>
+      : hall.isError && !previewData ? <div role="alert" className="surface-panel rounded-2xl p-6 text-sm text-destructive">Não foi possível carregar o Hall. <button type="button" className="underline" onClick={() => hall.refetch()}>Tentar novamente</button></div>
       : people.length === 0 ? (
         <div className="surface-panel rounded-3xl border border-amber-400/20 p-10 text-center">
           <Sparkles className="mx-auto h-10 w-10 text-amber-300" />
@@ -138,7 +146,7 @@ export function HallDaFamaPage() {
           <div className="mb-5 flex flex-wrap gap-2" aria-label="Filtrar níveis de apoiador">
             <button type="button" onClick={() => setFilter("todos")} aria-pressed={filter === "todos"}
               className={`rounded-full border px-4 py-2 text-sm ${filter === "todos" ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>Todos</button>
-            {(levels.data ?? []).map(level => <button key={level.id} type="button" onClick={() => setFilter(level.slug)} aria-pressed={filter === level.slug}
+            {availableLevels.map(level => <button key={level.id} type="button" onClick={() => setFilter(level.slug)} aria-pressed={filter === level.slug}
               className={`rounded-full border px-4 py-2 text-sm ${filter === level.slug ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>{level.name}</button>)}
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
