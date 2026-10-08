@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Logo } from "@/components/Logo";
+import { SecretDiscovery } from "@/components/SecretDiscovery";
 
 const columns = [
   {
@@ -50,7 +51,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border px-4 py-5 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} Eternal. Todo o conteúdo pertence aos seus respectivos autores.
+        © {new Date().getFullYear()} Eternal. Todo o conteúdo pertence aos seus respectivos autores. <SecretDiscovery kind="hidden_area" />
       </div>
     </footer>
   );

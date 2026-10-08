@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { Trophy } from "lucide-react";
 
 import { Badge } from "@/components/common/EBadge";
@@ -38,6 +39,8 @@ export const Route = createFileRoute("/_authenticated/perfil/$username")({
 function ProfilePage() {
   const { username } = Route.useParams();
   const { user } = useSession();
+  const qc = useQueryClient();
+  const [selection, setSelection] = useState<string[] | null>(null);
   const profile = useQuery({
     queryKey: ["profile-by-username", username],
     queryFn: async () => {
@@ -56,11 +59,43 @@ function ProfilePage() {
     queryKey: ["profile-stats", p?.id],
     enabled: !!p,
     queryFn: async () => {
-      const [hist, ach] = await Promise.all([
+      const [hist, ach, streak] = await Promise.all([
         supabase.from("reading_history").select("manga_id", { count: "exact", head: true }).eq("user_id", p!.id),
         supabase.from("user_achievements").select("unlocked_at, achievement:achievements ( id, name, description )").eq("user_id", p!.id).order("unlocked_at", { ascending: false }),
+        supabase.rpc("reading_streak", { p_user: p!.id }),
       ]);
-      return { works: hist.count ?? 0, achievements: ach.data ?? [] };
+      return { works: hist.count ?? 0, achievements: ach.data ?? [], streak: streak.data?.[0]?.current_streak ?? 0, best: streak.data?.[0]?.best_streak ?? 0 };
+    },
+  });
+
+  const earnedTitles = useQuery({
+    queryKey: ["achievement-titles", p?.id],
+    enabled: !!p,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("user_achievement_titles")
+        .select("title, earned_at").eq("user_id", p!.id).order("earned_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const trophyQ = useQuery({
+    queryKey: ["profile-achievements", p?.id],
+    enabled: !!p,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("profile_achievements", { p_user: p!.id });
+      if (error) throw error;
+      return (data ?? []) as { id: string; name: string; icon: string | null; rarity: string; unlocked_at: string; featured: boolean; owners_pct: number }[];
+    },
+  });
+  const selected = selection ?? (trophyQ.data ?? []).filter((a) => a.featured).map((a) => a.id);
+  const saveFeatured = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.rpc("set_featured_achievements", { p_ids: selected });
+      if (error) throw error;
+    },
+    onSuccess: async () => {
+      setSelection(null);
+      await qc.invalidateQueries({ queryKey: ["profile-achievements", p?.id] });
     },
   });
 
@@ -129,8 +164,8 @@ function ProfilePage() {
           )}
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          {[["Obras lidas", stats.data?.works], ["Favoritos", favs.data?.length], ["Conquistas", stats.data?.achievements.length]].map(([l, v]) => (
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[["Obras lidas", stats.data?.works], ["Favoritos", favs.data?.length], ["Conquistas", stats.data?.achievements.length], ["Dias seguidos", stats.data?.streak]].map(([l, v]) => (
             <div key={l as string} className="surface-panel rounded-2xl p-3 text-center">
               <p className="text-xl font-bold">{v ?? "—"}</p>
               <p className="text-xs text-muted-foreground">{l}</p>
@@ -138,22 +173,74 @@ function ProfilePage() {
           ))}
         </div>
 
-        <h2 className="mb-3 mt-8 text-xl font-semibold">Conquistas</h2>
-        {(stats.data?.achievements ?? []).length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhuma conquista ainda.</p>
+        <div className="mb-3 mt-8 flex items-center justify-between gap-2">
+          <h2 className="text-xl font-semibold">Conquistas em destaque</h2>
+          {isMe && <Link to="/conquistas" className="text-sm text-primary hover:underline">Ver todas</Link>}
+        </div>
+        {(trophyQ.data ?? []).filter((a) => a.featured).length === 0 ? (
+          <p className="text-sm text-muted-foreground">Nenhuma conquista em destaque ainda.</p>
+        ) : (
+          <div className="grid gap-2 sm:grid-cols-2">
+            {(trophyQ.data ?? []).filter((a) => a.featured).slice(0, 5).map((a) => (
+              <div key={a.id} className="surface-panel rounded-xl p-3">
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-4 w-4 text-primary" aria-hidden />
+                  <span className="font-semibold">{a.name}</span>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">{a.rarity} · {formatDate(a.unlocked_at)}</p>
+              </div>
+            ))}
+          </div>
+        )}
+        {isMe && (
+          <div className="surface-panel mt-4 rounded-xl p-4">
+            <h3 className="font-semibold">Escolher destaques (até 5)</h3>
+            <p className="mt-1 text-xs text-muted-foreground">Selecione conquistas já desbloqueadas para aparecerem no seu perfil.</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {(trophyQ.data ?? []).map((a) => {
+                const checked = selected.includes(a.id);
+                return (
+                  <label key={a.id} className="flex cursor-pointer items-center gap-2 text-sm">
+                    <input type="checkbox" checked={checked}
+                      disabled={!checked && selected.length >= 5}
+                      onChange={(e) => setSelection(e.target.checked ? [...selected, a.id] : selected.filter((id) => id !== a.id))} />
+                    <span>{a.name}</span>
+                  </label>
+                );
+              })}
+            </div>
+            {saveFeatured.isError && <p role="alert" className="mt-2 text-sm text-destructive">Não foi possível salvar os destaques.</p>}
+            {saveFeatured.isSuccess && <p role="status" className="mt-2 text-sm text-success">Destaques salvos.</p>}
+            <button type="button" disabled={saveFeatured.isPending || trophyQ.isLoading}
+              className="mt-3 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+              onClick={() => saveFeatured.mutate()}>
+              {saveFeatured.isPending ? "Salvando…" : "Salvar destaques"}
+            </button>
+          </div>
+        )}
+        <h3 className="mb-3 mt-6 text-lg font-semibold">Conquistas recentes</h3>
+        {(trophyQ.data ?? []).length === 0 ? (
+          <p className="text-sm text-muted-foreground">Nenhuma conquista desbloqueada ainda.</p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {stats.data!.achievements.map((a) => {
-              const ach = a.achievement as { id: string; name: string; description: string } | null;
-              return ach ? (
-                <span key={ach.id} title={ach.description} className="surface-panel inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm">
-                  <Trophy className="h-3.5 w-3.5 text-primary" aria-hidden />{ach.name}
-                </span>
-              ) : null;
-            })}
+            {(trophyQ.data ?? []).slice(0, 5).map((a) => (
+              <span key={a.id} title={formatDate(a.unlocked_at)} className="surface-panel inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-sm">
+                <Trophy className="h-4 w-4 text-primary" aria-hidden />{a.name}
+              </span>
+            ))}
           </div>
         )}
 
+        {(earnedTitles.data ?? []).length > 0 && (
+          <section className="surface-panel mt-6 rounded-2xl p-4" aria-label="Títulos especiais">
+            <h3 className="text-lg font-semibold">Títulos especiais conquistados</h3>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(earnedTitles.data ?? []).map((t) => (
+                <span key={t.title + t.earned_at} className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-300" title={formatDate(t.earned_at)}>✦ {t.title}</span>
+              ))}
+            </div>
+          </section>
+        )}
         <h2 className="mb-3 mt-8 text-xl font-semibold">Favoritos</h2>
         {(favs.data ?? []).length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum favorito ainda.</p>

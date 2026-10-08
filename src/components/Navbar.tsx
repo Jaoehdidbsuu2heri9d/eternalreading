@@ -35,7 +35,7 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
         <Logo to="/inicio" />
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Navegação principal">
+        <nav className="hidden items-center gap-1 xl:flex" aria-label="Navegação principal">
           {links.map((l) => (
             <Link
               key={l.to}
@@ -48,7 +48,7 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
           ))}
         </nav>
 
-        <form onSubmit={submitSearch} className="ml-auto hidden lg:block" role="search">
+        <form onSubmit={submitSearch} className="ml-auto hidden 2xl:block" role="search">
           <label htmlFor="busca-topo" className="sr-only">
             Pesquisar obras
           </label>

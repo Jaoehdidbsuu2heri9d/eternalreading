@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "@/components/common/EButton";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { PageHeader } from "@/components/PageHeader";
+import { SecretDiscovery } from "@/components/SecretDiscovery";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useSession } from "@/hooks/useAuth";
 
@@ -36,9 +37,13 @@ function SettingsPage() {
   const qc = useQueryClient();
   const [form, setForm] = useState({ display_name: "", bio: "", avatar_url: "" });
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [animations, setAnimations] = useState(true);
 
   useEffect(() => {
-    if (profile) setForm({ display_name: profile.display_name ?? "", bio: profile.bio ?? "", avatar_url: profile.avatar_url ?? "" });
+    if (profile) {
+      setForm({ display_name: profile.display_name ?? "", bio: profile.bio ?? "", avatar_url: profile.avatar_url ?? "" });
+      setAnimations((profile as typeof profile & { achievement_animations?: boolean }).achievement_animations ?? true);
+    }
   }, [profile]);
 
   // Atalho "Alterar foto" do menu: rola até a área da foto.
@@ -57,6 +62,7 @@ function SettingsPage() {
       display_name: parsed.data.display_name || null,
       bio: parsed.data.bio || null,
       avatar_url: parsed.data.avatar_url || null,
+      achievement_animations: animations,
     }).eq("id", user.id);
     if (error) return setMsg({ ok: false, text: "Não foi possível salvar." });
     qc.invalidateQueries({ queryKey: ["profile"] });
@@ -71,10 +77,14 @@ function SettingsPage() {
       <form onSubmit={save} className="surface-panel space-y-4 rounded-2xl p-6">
         <label className="block space-y-1 text-sm"><span>Nome de exibição</span><input className={field} value={form.display_name} onChange={(e) => setForm({ ...form, display_name: e.target.value })} /></label>
         <label className="block space-y-1 text-sm"><span>Biografia</span><textarea rows={4} className={field} value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} /></label>
+        <label className="flex items-start gap-3 rounded-xl border border-border p-3 text-sm">
+          <input type="checkbox" className="mt-1" checked={animations} onChange={(e) => setAnimations(e.target.checked)} />
+          <span><strong className="block">Animações de conquistas</strong><span className="text-muted-foreground">Ativar efeitos visuais ao desbloquear conquistas.</span></span>
+        </label>
         {msg && <p role="status" className={msg.ok ? "text-sm text-success" : "text-sm text-destructive"}>{msg.text}</p>}
         <Button type="submit">Salvar</Button>
       </form>
-      <p className="mt-4 text-xs text-muted-foreground">E-mail da conta: {user?.email}</p>
+      <p className="mt-4 text-xs text-muted-foreground">E-mail da conta: {user?.email} <SecretDiscovery kind="easter_egg" /></p>
     </div>
   );
 }
