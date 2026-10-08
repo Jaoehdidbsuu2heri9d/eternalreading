@@ -14,6 +14,14 @@ export type Database = {
   }
   public: {
     Tables: {
+      user_achievement_titles: {
+        Row: { user_id: string; achievement_id: string; title: string; earned_at: string }
+        Insert: { user_id: string; achievement_id: string; title: string; earned_at?: string }
+        Update: { user_id?: string; achievement_id?: string; title?: string; earned_at?: string }
+        Relationships: [
+          { foreignKeyName: "user_achievement_titles_achievement_id_fkey"; columns: ["achievement_id"]; isOneToOne: false; referencedRelation: "achievements"; referencedColumns: ["id"] },
+        ]
+      }
       achievement_rewards: {
         Row: {
           achievement_id: string
@@ -1454,6 +1462,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      my_achievement_reward_totals: { Args: never; Returns: { total_xp: number; total_coins: number }[] }
       admin_achievement_stats: {
         Args: never
         Returns: { achievement_id: string; owners: number }[]
