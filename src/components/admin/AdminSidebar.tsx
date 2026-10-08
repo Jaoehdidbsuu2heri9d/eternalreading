@@ -11,7 +11,7 @@ export function AdminSidebar({area,view,compact,counts,favorites,onToggleFavorit
   return (
     <nav aria-label="Menu administrativo" className="space-y-1.5 pb-8">
       {ADMIN_GROUPS.map((group,index)=>(
-        <details key={group.id} defaultOpen={group.id===area} className="group rounded-xl" data-active={group.id===area}>
+        <details key={group.id} open={group.id===area ? true : undefined} className="group rounded-xl" data-active={group.id===area}>
           <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold text-foreground hover:bg-white/5 [&::-webkit-details-marker]:hidden">
             <span className="flex min-w-0 items-center gap-2.5">
               <span aria-hidden="true">{emojis[index]}</span>
