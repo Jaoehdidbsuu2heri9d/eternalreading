@@ -78,7 +78,7 @@ export function AdminSupporters() {
     mutationFn: async (data: { userId: string; levelSlug: string | null; reason: string }) => {
       const { error } = await supabase.rpc("admin_set_manual_supporter", {
         p_user: data.userId, p_level_slug: data.levelSlug, p_reason: data.reason,
-      });
+      } as never);
       if (error) throw error;
     },
     onSuccess: (_, input) => {
