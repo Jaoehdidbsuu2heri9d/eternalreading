@@ -1,0 +1,1 @@
+COMMENT ON TABLE public.chapter_read_sessions IS 'Server-side chapter open times used to validate reading progress.';
