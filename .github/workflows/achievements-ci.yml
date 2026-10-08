@@ -25,6 +25,19 @@ jobs:
         run: bunx tsc --noEmit
       - name: Testes de regras e segurança
         run: bun test tests/achievements-contract.test.ts
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validar SQL PostgreSQL
+        run: |
+          python -m pip install pglast
+          python - <<'PY'
+          from pglast import parse_sql
+          from pathlib import Path
+          for name in ["drizzle/migrations/0014_achievements_v2.sql", "drizzle/migrations/0015_achievements_catalog.sql", "drizzle/migrations/0016_achievements_completion.sql"]:
+              parse_sql(Path(name).read_text())
+              print("SQL OK:", name)
+          PY
       - name: Compilar desktop e celular
         run: bun run build
       - name: Preparar Playwright
