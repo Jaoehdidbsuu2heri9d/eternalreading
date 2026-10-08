@@ -16,6 +16,7 @@ import { AdminCosmetics } from "@/components/admin/AdminCosmetics";
 import { AdminBilling } from "@/components/admin/AdminBilling";
 import { AdminCoins } from "@/components/admin/AdminCoins";
 import { AdminAchievements } from "@/components/admin/AdminAchievements";
+import { AdminSupporters } from "@/components/admin/AdminSupporters";
 import { useSession } from "@/hooks/useAuth";
 import { useRoles } from "@/hooks/useRoles";
 
@@ -210,6 +211,7 @@ function AdminPage() {
       <AdminCosmetics />
       <AdminCoins />
       <AdminAchievements />
+      <AdminSupporters />
       <AdminBilling />
       <AdminLogs />
     </div>

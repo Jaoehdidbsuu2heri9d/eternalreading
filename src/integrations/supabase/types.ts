@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      supporter_manual_grants: {
+        Row: {
+          user_id: string
+          level_slug: string
+          reason: string
+          granted_by: string
+          granted_at: string
+          revoked_at: string | null
+        }
+        Insert: {
+          user_id: string
+          level_slug: string
+          reason: string
+          granted_by: string
+          granted_at?: string
+          revoked_at?: string | null
+        }
+        Update: {
+          user_id?: string
+          level_slug?: string
+          reason?: string
+          granted_by?: string
+          granted_at?: string
+          revoked_at?: string | null
+        }
+        Relationships: []
+      }
       donations: {
         Row: {
           id: string
@@ -1608,6 +1635,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_set_manual_supporter: {
+        Args: { p_user: string; p_level_slug: string | null; p_reason: string }
+        Returns: undefined
+      }
+      admin_list_manual_supporters: {
+        Args: never
+        Returns: {
+          user_id: string
+          username: string
+          display_name: string | null
+          level_slug: string
+          level_name: string
+          reason: string
+          granted_at: string
+          granted_by: string
+        }[]
+      }
       hall_of_fame: {
         Args: { p_limit?: number }
         Returns: {
@@ -1622,6 +1666,7 @@ export type Database = {
           level_color: string
           level_icon: string
           donation_count: number
+          recognition_source: string
         }[]
       }
       achievement_goal: {

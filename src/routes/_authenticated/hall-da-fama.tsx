@@ -29,6 +29,7 @@ export type Supporter = {
   level_color: string;
   level_icon: string;
   donation_count: number;
+  recognition_source?: "manual" | "payment";
 };
 
 export type SupporterLevel = {
@@ -59,6 +60,7 @@ function SupporterCard({ person, spotlight = false }: { person: Supporter; spotl
           style={{ borderColor: `${person.level_color}88`, color: person.level_color }}>
           <Icon className="h-3.5 w-3.5" aria-hidden /> {person.level_name}
         </div>
+        {person.recognition_source === "manual" && <p className="mt-1 text-xs text-amber-300">Reconhecimento honorário da equipe • não é doação paga</p>}
       </div>
     </article>
   );
@@ -125,7 +127,7 @@ export function HallDaFamaPage({ previewData, previewLevels }: { previewData?: S
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="flex items-center gap-2 text-xl font-bold"><Users className="h-5 w-5 text-amber-400" /> Nossos apoiadores</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Somente doações confirmadas e membros que autorizaram aparecer.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Doações confirmadas ou reconhecimentos honorários da equipe. A exibição depende da autorização do membro.</p>
         </div>
         <Link to="/apoiar" className="text-sm font-semibold text-primary hover:underline">Minhas contribuições →</Link>
       </div>

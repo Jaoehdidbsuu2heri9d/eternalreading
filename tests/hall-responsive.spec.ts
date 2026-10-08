@@ -33,3 +33,10 @@ test("Hall permite filtrar nível sem expor valor individual", async ({page})=>{
   await expect(section.getByRole("link",{name:"Amora"})).toHaveCount(0);
   await expect(page.getByText(/total doado por/i)).toHaveCount(0);
 });
+
+test("Hall identifica reconhecimento manual sem simular pagamento", async ({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto("/tests/ui-harness.html?page=hall");
+  await expect(page.getByText("Reconhecimento honorário da equipe • não é doação paga")).toHaveCount(2);
+  await expect(page.getByRole("link",{name:"Davi"})).toHaveCount(2);
+});

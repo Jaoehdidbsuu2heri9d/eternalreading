@@ -134,6 +134,13 @@
       "when": 1791500000000,
       "tag": "0018_donor_hall_sandbox",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1791520000000,
+      "tag": "0019_admin_manual_supporters",
+      "breakpoints": true
     }
   ]
 }
