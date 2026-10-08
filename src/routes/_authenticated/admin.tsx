@@ -1,11 +1,14 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { z } from "zod";
 
 import { Button } from "@/components/common/EButton";
 import { Badge } from "@/components/common/EBadge";
-import { PageHeader } from "@/components/PageHeader";
+import { AdminControlCenter } from "@/components/admin/AdminControlCenter";
+import { AdminInsights } from "@/components/admin/AdminInsights";
+import { AdminDonorContributions } from "@/components/admin/AdminDonorContributions";
+import { getAdminSection } from "@/components/admin/adminNavigation";
 import { supabase } from "@/integrations/supabase/client";
 import { formatDate } from "@/lib/format";
 import { AdminTeam } from "@/components/admin/AdminTeam";
@@ -21,6 +24,10 @@ import { useSession } from "@/hooks/useAuth";
 import { useRoles } from "@/hooks/useRoles";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    area: typeof search.area === "string" ? search.area : "visao-geral",
+    view: typeof search.view === "string" ? search.view : "dashboard",
+  }),
   // Acesso conferido no banco (has_role); as regras de segurança também bloqueiam os dados.
   beforeLoad: async ({ context }) => {
     const userId = (context as { user?: { id: string } }).user?.id;
@@ -53,19 +60,12 @@ const field = "rounded-xl border border-border bg-input px-3 py-2 text-sm focus:
 /** Painel admin: números gerais, códigos de convite e pedidos de parceria. */
 function AdminPage() {
   const qc = useQueryClient();
-
-  const stats = useQuery({
-    queryKey: ["admin-stats"],
-    queryFn: async () => {
-      const count = async (t: "profiles" | "manga" | "chapters" | "scans") =>
-        (await supabase.from(t).select("*", { count: "exact", head: true })).count ?? 0;
-      const [users, manga, chapters, scans] = await Promise.all([count("profiles"), count("manga"), count("chapters"), count("scans")]);
-      return { users, manga, chapters, scans };
-    },
-  });
+  const { area, view } = Route.useSearch();
+  const is = (g: string, v: string) => area === g && view === v;
 
   const codes = useQuery({
     queryKey: ["admin-codes"],
+    enabled: is("scans-parcerias","convites"),
     queryFn: async () => {
       const { data, error } = await supabase.from("invite_codes").select("*").order("created_at", { ascending: false });
       if (error) throw error;
@@ -75,6 +75,7 @@ function AdminPage() {
 
   const requests = useQuery({
     queryKey: ["admin-requests"],
+    enabled: is("scans-parcerias","solicitacoes"),
     queryFn: async () => {
       const { data, error } = await supabase.from("scan_requests").select("*").order("created_at", { ascending: false });
       if (error) throw error;
@@ -129,24 +130,16 @@ function AdminPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-requests"] }),
   });
 
-  const s = stats.data;
   const { user } = useSession();
   const { isOwner } = useRoles(user?.id);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      <PageHeader title="Administração" subtitle={isOwner ? "Você é o Dono da plataforma." : "Visão geral da plataforma."} />
+    <AdminControlCenter area={area} view={view}>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {[["Membros", s?.users], ["Obras", s?.manga], ["Capítulos", s?.chapters], ["Scans", s?.scans]].map(([label, v]) => (
-          <div key={label as string} className="surface-panel rounded-2xl p-4">
-            <p className="text-sm text-muted-foreground">{label}</p>
-            <p className="text-2xl font-bold">{v ?? "—"}</p>
-          </div>
-        ))}
-      </div>
+      {is("visao-geral","dashboard") && <AdminInsights mode="dashboard" />}
+      {is("visao-geral","alertas") && <AdminInsights mode="alertas" />}
 
-      <section className="mt-10">
+      {is("scans-parcerias","convites") && <section>
         <h2 className="mb-3 text-xl font-semibold">Códigos de convite</h2>
         <form onSubmit={(e) => { e.preventDefault(); createCode.mutate(); }} className="surface-panel mb-4 flex flex-wrap items-end gap-3 rounded-2xl p-4">
           <label className="space-y-1 text-sm"><span className="block">Código</span><input className={field} value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} /></label>
@@ -176,9 +169,9 @@ function AdminPage() {
             </tbody>
           </table>
         </div>
-      </section>
+      </section>}
 
-      <section className="mt-10">
+      {is("scans-parcerias","solicitacoes") && <section>
         <h2 className="mb-3 text-xl font-semibold">Pedidos de parceria</h2>
         {(requests.data ?? []).length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum pedido.</p>
