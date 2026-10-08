@@ -57,6 +57,21 @@ export function AdminInsights({mode}:{mode:"dashboard"|"alertas"}) {
     <div><h2 className="flex items-center gap-2 text-lg font-semibold"><BarChart3 className="h-5 w-5 text-primary"/>Visão operacional</h2>
      <p className="mt-1 text-sm text-muted-foreground">Indicadores disponíveis no banco atual. “—” significa falta de permissão ou indisponibilidade.</p></div>
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{main.map(render)}</div>
+    <div className="surface-panel rounded-2xl border border-border p-5" aria-label="Gráfico de métricas da plataforma">
+      <h3 className="mb-4 text-sm font-semibold">Panorama de cadastros e publicações</h3>
+      <div className="space-y-3">
+        {main.slice(0,4).map(m => {
+          const maximum=Math.max(1,...main.slice(0,4).map(x=>x.value??0));
+          const width=m.value===null?0:Math.round((m.value/maximum)*100);
+          return <div key={m.label}>
+            <div className="mb-1 flex justify-between text-xs"><span>{m.label}</span><strong>{m.value??"—"}</strong></div>
+            <div className="h-2 overflow-hidden rounded-full bg-white/5">
+              <div className="h-full rounded-full bg-amber-400/75" style={{width:`${width}%`}} />
+            </div>
+          </div>;
+        })}
+      </div>
+    </div>
   </>}
   <div><h2 className="flex items-center gap-2 text-lg font-semibold"><AlertTriangle className="h-5 w-5 text-amber-300"/>Atenção e pendências</h2>
   <p className="mt-1 text-sm text-muted-foreground">Abra um indicador para acessar a área responsável. Dados atualizados aproximadamente a cada minuto.</p></div>
