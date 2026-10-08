@@ -18,6 +18,7 @@ const links = [
   { to: "/atividade", label: "Atividade" },
   { to: "/scans", label: "Scans" },
   { to: "/conquistas", label: "Conquistas" },
+  { to: "/hall-da-fama", label: "Hall da Fama" },
 ] as const;
 
 /** Barra de navegação superior (desktop e tablet). */
@@ -40,7 +41,7 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
             <Link
               key={l.to}
               to={l.to}
-              className="rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+              className="rounded-lg px-2 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
               activeProps={{ className: "bg-secondary text-foreground" }}
             >
               {l.label}
