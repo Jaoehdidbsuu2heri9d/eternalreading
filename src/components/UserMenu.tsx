@@ -65,7 +65,7 @@ export function UserMenu({ profile }: { profile?: Profile | null }) {
           <>
             <DropdownMenuSeparator />
             <DropdownMenuLabel className="px-3 text-xs uppercase tracking-wide text-muted-foreground">Administrativo</DropdownMenuLabel>
-            <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/admin" })}><Shield className="h-4 w-4 text-primary" />Administração</DropdownMenuItem>
+            <DropdownMenuItem className={item} onSelect={() => navigate({ to: "/admin", search: {area:"visao-geral",view:"dashboard"} })}><Shield className="h-4 w-4 text-primary" />Administração</DropdownMenuItem>
           </>
         )}
         <DropdownMenuSeparator />
