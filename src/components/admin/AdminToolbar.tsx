@@ -37,6 +37,22 @@ export function AdminToolbar({favorites,count,onSelect}:Props){
    return r.data??[];
   },
  });
+ const scans=useQuery({
+  queryKey:["admin-search-scans",q],enabled:open&&q.length>=2,
+  queryFn:async()=>{
+   const r=await supabase.from("scans").select("id,name,slug").ilike("name",`%${q}%`).limit(5);
+   if(r.error)throw r.error;
+   return r.data??[];
+  },
+ });
+ const chapters=useQuery({
+  queryKey:["admin-search-chapters",q],enabled:open&&q.length>=2,
+  queryFn:async()=>{
+   const r=await supabase.from("chapters").select("id,title,manga_id").ilike("title",`%${q}%`).limit(5);
+   if(r.error)throw r.error;
+   return r.data??[];
+  },
+ });
  const sections=ADMIN_GROUPS.flatMap(g=>g.items.map(item=>({...item,group:g})));
  const filtered=sections.filter(x=>!q||(`${x.group.label} ${x.label}`).toLocaleLowerCase("pt-BR").includes(q.toLocaleLowerCase("pt-BR"))).slice(0,10);
  const pin=sections.filter(x=>favorites.includes(adminSectionPath(x.group.id,x.id)));
