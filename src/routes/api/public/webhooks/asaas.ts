@@ -12,8 +12,11 @@ export const Route = createFileRoute("/api/public/webhooks/asaas")({
         if (!ev) return new Response("unauthorized", { status: 401 });
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { applyEvent } = await import("@/lib/billing/service.server");
+        const { applyDonationEvent } = await import("@/lib/donations/service.server");
         try {
-          const r = await applyEvent(supabaseAdmin, "asaas", ev, JSON.parse(raw));
+          const body = JSON.parse(raw);
+          const donorResult = await applyDonationEvent(supabaseAdmin, "asaas", ev, body);
+          const r = donorResult ?? await applyEvent(supabaseAdmin, "asaas", ev, body);
           return Response.json({ ok: true, result: r });
         } catch (e) {
           console.error("asaas webhook failed", ev.rawType, (e as Error).message);
