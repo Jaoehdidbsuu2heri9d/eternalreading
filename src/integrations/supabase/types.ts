@@ -14,132 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      supporter_manual_grants: {
-        Row: {
-          user_id: string
-          level_slug: string
-          reason: string
-          granted_by: string
-          granted_at: string
-          revoked_at: string | null
-        }
-        Insert: {
-          user_id: string
-          level_slug: string
-          reason: string
-          granted_by: string
-          granted_at?: string
-          revoked_at?: string | null
-        }
-        Update: {
-          user_id?: string
-          level_slug?: string
-          reason?: string
-          granted_by?: string
-          granted_at?: string
-          revoked_at?: string | null
-        }
-        Relationships: []
-      }
-      donations: {
-        Row: {
-          id: string
-          user_id: string
-          amount_cents: number
-          currency: string
-          provider: string
-          external_id: string | null
-          billing_type: string
-          status: string
-          invoice_url: string | null
-          confirmed_at: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          user_id: string
-          amount_cents: number
-          currency?: string
-          provider?: string
-          external_id?: string | null
-          billing_type?: string
-          status?: string
-          invoice_url?: string | null
-          confirmed_at?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          user_id?: string
-          amount_cents?: number
-          currency?: string
-          provider?: string
-          external_id?: string | null
-          billing_type?: string
-          status?: string
-          invoice_url?: string | null
-          confirmed_at?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      supporter_levels: {
-        Row: {
-          id: string
-          slug: string
-          name: string
-          description: string
-          color: string
-          icon: string
-          minimum_cents: number
-          sort: number
-          active: boolean
-        }
-        Insert: {
-          id?: string
-          slug: string
-          name: string
-          description?: string
-          color?: string
-          icon?: string
-          minimum_cents: number
-          sort?: number
-          active?: boolean
-        }
-        Update: {
-          id?: string
-          slug?: string
-          name?: string
-          description?: string
-          color?: string
-          icon?: string
-          minimum_cents?: number
-          sort?: number
-          active?: boolean
-        }
-        Relationships: []
-      }
-      supporter_preferences: {
-        Row: {
-          user_id: string
-          show_on_hall: boolean
-          updated_at: string
-        }
-        Insert: {
-          user_id: string
-          show_on_hall?: boolean
-          updated_at?: string
-        }
-        Update: {
-          user_id?: string
-          show_on_hall?: boolean
-          updated_at?: string
-        }
-        Relationships: []
-      }
       achievement_rewards: {
         Row: {
           achievement_id: string
@@ -788,6 +662,51 @@ export type Database = {
           starts_at?: string | null
           stock?: number | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      donations: {
+        Row: {
+          amount_cents: number
+          billing_type: string
+          confirmed_at: string | null
+          created_at: string
+          currency: string
+          external_id: string | null
+          id: string
+          invoice_url: string | null
+          provider: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          billing_type?: string
+          confirmed_at?: string | null
+          created_at?: string
+          currency?: string
+          external_id?: string | null
+          id?: string
+          invoice_url?: string | null
+          provider?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          billing_type?: string
+          confirmed_at?: string | null
+          created_at?: string
+          currency?: string
+          external_id?: string | null
+          id?: string
+          invoice_url?: string | null
+          provider?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -1480,6 +1399,95 @@ export type Database = {
         }
         Relationships: []
       }
+      supporter_levels: {
+        Row: {
+          active: boolean
+          color: string
+          description: string
+          icon: string
+          id: string
+          minimum_cents: number
+          name: string
+          slug: string
+          sort: number
+        }
+        Insert: {
+          active?: boolean
+          color?: string
+          description?: string
+          icon?: string
+          id?: string
+          minimum_cents: number
+          name: string
+          slug: string
+          sort?: number
+        }
+        Update: {
+          active?: boolean
+          color?: string
+          description?: string
+          icon?: string
+          id?: string
+          minimum_cents?: number
+          name?: string
+          slug?: string
+          sort?: number
+        }
+        Relationships: []
+      }
+      supporter_manual_grants: {
+        Row: {
+          granted_at: string
+          granted_by: string
+          level_slug: string
+          reason: string
+          revoked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          granted_at?: string
+          granted_by: string
+          level_slug: string
+          reason: string
+          revoked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          granted_at?: string
+          granted_by?: string
+          level_slug?: string
+          reason?: string
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supporter_manual_grants_level_slug_fkey"
+            columns: ["level_slug"]
+            isOneToOne: false
+            referencedRelation: "supporter_levels"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      supporter_preferences: {
+        Row: {
+          show_on_hall: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          show_on_hall?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          show_on_hall?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_achievement_titles: {
         Row: {
           achievement_id: string
@@ -1635,40 +1643,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      admin_set_manual_supporter: {
-        Args: { p_user: string; p_level_slug: string | null; p_reason: string }
-        Returns: undefined
-      }
-      admin_list_manual_supporters: {
-        Args: never
-        Returns: {
-          user_id: string
-          username: string
-          display_name: string | null
-          level_slug: string
-          level_name: string
-          reason: string
-          granted_at: string
-          granted_by: string
-        }[]
-      }
-      hall_of_fame: {
-        Args: { p_limit?: number }
-        Returns: {
-          rank_position: number
-          user_id: string
-          username: string
-          display_name: string | null
-          avatar_url: string | null
-          avatar_path: string | null
-          level_slug: string
-          level_name: string
-          level_color: string
-          level_icon: string
-          donation_count: number
-          recognition_source: string
-        }[]
-      }
       achievement_goal: {
         Args: { p_goal: number; p_metric: string }
         Returns: number
@@ -1708,6 +1682,19 @@ export type Database = {
       admin_grant_xp: {
         Args: { p_amount: number; p_reason: string; p_user: string }
         Returns: number
+      }
+      admin_list_manual_supporters: {
+        Args: never
+        Returns: {
+          display_name: string
+          granted_at: string
+          granted_by: string
+          level_name: string
+          level_slug: string
+          reason: string
+          user_id: string
+          username: string
+        }[]
       }
       admin_list_users: {
         Args: {
@@ -1779,6 +1766,10 @@ export type Database = {
         Args: { p_banned: boolean; p_reason?: string; p_user: string }
         Returns: undefined
       }
+      admin_set_manual_supporter: {
+        Args: { p_level_slug: string; p_reason: string; p_user: string }
+        Returns: undefined
+      }
       admin_set_plan: {
         Args: {
           p_plan: Database["public"]["Enums"]["plan_tier"]
@@ -1825,6 +1816,23 @@ export type Database = {
         Returns: number
       }
       expire_subscriptions: { Args: never; Returns: number }
+      hall_of_fame: {
+        Args: { p_limit?: number }
+        Returns: {
+          avatar_path: string
+          avatar_url: string
+          display_name: string
+          donation_count: number
+          level_color: string
+          level_icon: string
+          level_name: string
+          level_slug: string
+          rank_position: number
+          recognition_source: string
+          user_id: string
+          username: string
+        }[]
+      }
       has_active_subscription: {
         Args: {
           p_plan: Database["public"]["Enums"]["plan_tier"]
