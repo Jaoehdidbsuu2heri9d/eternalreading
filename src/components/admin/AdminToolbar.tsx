@@ -50,7 +50,7 @@ export function AdminToolbar({favorites,count,onSelect}:Props){
     <Bell className="h-4 w-4"/>{count>0&&<span className="absolute -right-1 -top-2 rounded-full bg-destructive px-1.5 text-[10px] text-white">{count}</span>}
    </button>
   </div>
-  {pin.length>0&&<div className="flex max-w-full flex-wrap items-center gap-2" aria-label="Atalhos rápidos">
+  {pin.length>0&&<div role="region" className="flex max-w-full flex-wrap items-center gap-2" aria-label="Atalhos rápidos">
    <Star className="h-3.5 w-3.5 text-amber-300"/>{pin.slice(0,4).map(x=><button key={x.id+x.group.id} type="button" onClick={()=>navigate(x.group.id,x.id)} className="rounded-lg border border-border px-2.5 py-1.5 text-xs hover:text-primary">{x.label}</button>)}
   </div>}
   {open&&<div className="fixed inset-0 z-[90] flex items-start justify-center bg-black/75 p-4 pt-[10vh]" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setOpen(false)}}>
