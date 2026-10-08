@@ -165,7 +165,7 @@ export function AdminAchievements() {
         p_cosmetic_reward_id: value.cosmetic_reward_id || null,
         p_title_reward: value.title_reward.trim() || null,
         p_extra_reward: value.extra_reward.trim() || null,
-      });
+      } as never);
       if (error) throw error;
     },
     onSuccess: () => {

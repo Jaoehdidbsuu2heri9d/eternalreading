@@ -14,14 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      user_achievement_titles: {
-        Row: { user_id: string; achievement_id: string; title: string; earned_at: string }
-        Insert: { user_id: string; achievement_id: string; title: string; earned_at?: string }
-        Update: { user_id?: string; achievement_id?: string; title?: string; earned_at?: string }
-        Relationships: [
-          { foreignKeyName: "user_achievement_titles_achievement_id_fkey"; columns: ["achievement_id"]; isOneToOne: false; referencedRelation: "achievements"; referencedColumns: ["id"] },
-        ]
-      }
       achievement_rewards: {
         Row: {
           achievement_id: string
@@ -246,6 +238,32 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "chapter_pages_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      chapter_read_sessions: {
+        Row: {
+          chapter_id: string
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id: string
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chapter_read_sessions_chapter_id_fkey"
             columns: ["chapter_id"]
             isOneToOne: false
             referencedRelation: "chapters"
@@ -1336,6 +1354,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievement_titles: {
+        Row: {
+          achievement_id: string
+          earned_at: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          earned_at?: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          earned_at?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievement_titles_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_achievements: {
         Row: {
           achievement_id: string
@@ -1462,35 +1509,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      my_achievement_reward_totals: { Args: never; Returns: { total_xp: number; total_coins: number }[] }
-      admin_achievement_stats: {
-        Args: never
-        Returns: { achievement_id: string; owners: number }[]
-      }
-      admin_save_achievement: {
-        Args: {
-          p_id: string | null
-          p_slug: string
-          p_name: string
-          p_description: string
-          p_unlock_text: string
-          p_icon: string
-          p_category: string
-          p_rarity: string
-          p_metric: string
-          p_metric_param: string | null
-          p_goal: number
-          p_xp_reward: number
-          p_coin_reward: number
-          p_is_secret: boolean
-          p_hint: string | null
-          p_active: boolean
-          p_cosmetic_reward_id: string | null
-          p_title_reward: string | null
-          p_extra_reward: string | null
-        }
-        Returns: string
-      }
       achievement_goal: {
         Args: { p_goal: number; p_metric: string }
         Returns: number
@@ -1500,6 +1518,13 @@ export type Database = {
         Returns: number
       }
       add_xp: { Args: { p_amount: number }; Returns: undefined }
+      admin_achievement_stats: {
+        Args: never
+        Returns: {
+          achievement_id: string
+          owners: number
+        }[]
+      }
       admin_adjust_coins: {
         Args: { p_amount: number; p_reason: string; p_user: string }
         Returns: number
@@ -1561,6 +1586,30 @@ export type Database = {
       admin_revoke_achievement: {
         Args: { p_ach: string; p_reason: string; p_user: string }
         Returns: boolean
+      }
+      admin_save_achievement: {
+        Args: {
+          p_active: boolean
+          p_category: string
+          p_coin_reward: number
+          p_cosmetic_reward_id: string
+          p_description: string
+          p_extra_reward: string
+          p_goal: number
+          p_hint: string
+          p_icon: string
+          p_id: string
+          p_is_secret: boolean
+          p_metric: string
+          p_metric_param: string
+          p_name: string
+          p_rarity: string
+          p_slug: string
+          p_title_reward: string
+          p_unlock_text: string
+          p_xp_reward: number
+        }
+        Returns: string
       }
       admin_set_chapter_pages: {
         Args: { p_chapter: string; p_urls: string[] }
@@ -1629,6 +1678,13 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      my_achievement_reward_totals: {
+        Args: never
+        Returns: {
+          total_coins: number
+          total_xp: number
+        }[]
       }
       my_achievements: {
         Args: never
