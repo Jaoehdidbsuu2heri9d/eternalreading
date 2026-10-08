@@ -44,7 +44,7 @@ function useUsers(search: string, plan: PlanTier | "") {
 type Confirm = { title: string; text: string; run: () => Promise<void> } | null;
 
 /** Usuários e planos (toda a equipe) + administradores (só o Dono gerencia). */
-export function AdminTeam({ isOwner }: { isOwner: boolean }) {
+export function AdminTeam({ isOwner, mode = "all" }: { isOwner: boolean; mode?: "all" | "people" | "administrators" }) {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
   const [plan, setPlan] = useState<PlanTier | "">("");
@@ -122,7 +122,7 @@ export function AdminTeam({ isOwner }: { isOwner: boolean }) {
     <>
       {msg && <p role="status" className={`mt-6 text-sm ${msg.ok ? "text-success" : "text-destructive"}`}>{msg.text}</p>}
 
-      <section className="mt-10">
+      {mode !== "people" && <section className="mt-10">
         <h2 className="mb-3 text-xl font-semibold">Administradores</h2>
         {isOwner && (
           <div className="surface-panel mb-4 rounded-2xl p-4">
@@ -157,9 +157,9 @@ export function AdminTeam({ isOwner }: { isOwner: boolean }) {
             </li>
           ))}
         </ul>
-      </section>
+      </section>}
 
-      <section className="mt-10">
+      {mode !== "administrators" && <section className="mt-10">
         <h2 className="mb-3 text-xl font-semibold">Usuários e planos</h2>
         <div className="mb-3 flex flex-wrap gap-2">
           <input className={`${field} min-w-0 flex-1`} placeholder="Pesquisar por nome ou e-mail…" value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Pesquisar usuários" />
@@ -185,7 +185,7 @@ export function AdminTeam({ isOwner }: { isOwner: boolean }) {
           ))}
           {users.data?.length === 0 && <li className="text-sm text-muted-foreground">Nenhum usuário encontrado.</li>}
         </ul>
-      </section>
+      </section>}
 
       <AlertDialog open={!!confirm} onOpenChange={(o) => !o && setConfirm(null)}>
         <AlertDialogContent>
