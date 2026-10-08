@@ -161,7 +161,10 @@ CREATE TABLE IF NOT EXISTS public.user_achievement_titles (
 GRANT SELECT ON public.user_achievement_titles TO authenticated;
 GRANT ALL ON public.user_achievement_titles TO service_role;
 ALTER TABLE public.user_achievement_titles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "achievement titles read" ON public.user_achievement_titles FOR SELECT TO authenticated USING (true);
+CREATE POLICY "achievement titles read" ON public.user_achievement_titles FOR SELECT TO authenticated USING (
+ user_id = auth.uid() OR public.has_role(auth.uid(),'admin')
+ OR EXISTS (SELECT 1 FROM public.achievements a WHERE a.id = achievement_id AND NOT a.is_secret)
+);
 INSERT INTO public.user_achievement_titles(user_id,achievement_id,title,earned_at)
  SELECT ua.user_id,a.id,a.title_reward,ua.unlocked_at FROM user_achievements ua JOIN achievements a ON a.id=ua.achievement_id
  WHERE a.title_reward IS NOT NULL ON CONFLICT DO NOTHING;
