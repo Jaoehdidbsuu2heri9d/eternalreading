@@ -197,16 +197,38 @@ function AdminPage() {
             ))}
           </ul>
         )}
-      </section>
-      <AdminWorks />
-      <AdminTeam isOwner={isOwner} />
-      <AdminModeration />
-      <AdminCosmetics />
-      <AdminCoins />
-      <AdminAchievements />
-      <AdminSupporters />
-      <AdminBilling />
-      <AdminLogs />
-    </div>
+      </section>}
+      {(is("conteudo","obras") || is("conteudo","capitulos")) && <>
+        {is("conteudo","capitulos") && <p className="rounded-xl border border-border p-4 text-sm text-muted-foreground">Os capítulos são organizados dentro de cada obra. Selecione <strong>Capítulos</strong> na obra desejada para abrir o editor completo, preservado em sua rota original.</p>}
+        <AdminWorks />
+      </>}
+      {(is("usuarios","todos") || is("gamificacao","niveis-xp")) && <AdminTeam isOwner={isOwner} mode="people" />}
+      {(is("usuarios","administradores") || is("seguranca","equipe")) && <AdminTeam isOwner={isOwner} mode="administrators" />}
+      {(is("comunidade","denuncias") || is("comunidade","bloqueios")) && <AdminModeration />}
+      {is("personalizacao","cosmeticos") && <AdminCosmetics />}
+      {is("gamificacao","coins") && <AdminCoins />}
+      {is("gamificacao","conquistas") && <AdminAchievements />}
+      {is("apoiadores","reconhecimentos") && <AdminSupporters />}
+      {is("apoiadores","contribuicoes") && <AdminDonorContributions />}
+      {(is("assinaturas","assinaturas") || is("assinaturas","pagamentos") || is("sistema","webhooks")) &&
+        <AdminBilling initialTab={is("assinaturas","pagamentos")?"pays":is("sistema","webhooks")?"events":"subs"} />}
+      {(is("visao-geral","atividade") || is("sistema","auditoria") || is("seguranca","logs")) && <AdminLogs />}
+      {is("scans-parcerias","scans") && <section className="space-y-4 rounded-2xl border border-border p-5">
+        <h2 className="text-lg font-bold">Scans parceiros</h2>
+        <p className="text-sm text-muted-foreground">O cadastro e a exposição de scans permanecem nas rotas existentes. Consulte o diretório atual; as solicitações e convites são gerenciados nas seções ao lado.</p>
+        <Link to="/scans" className="inline-block rounded-xl border border-primary px-4 py-2 text-sm text-primary">Abrir diretório de scans →</Link>
+      </section>}
+      {is("apoiadores","hall") && <section className="space-y-4 rounded-2xl border border-border p-5">
+        <h2 className="text-lg font-bold">Hall da Fama dos Apoiadores</h2>
+        <p className="text-sm text-muted-foreground">O Hall público e suas regras de privacidade continuam no sistema original. Para conceder um nível honorário, use Reconhecimentos.</p>
+        <Link to="/hall-da-fama" className="inline-block rounded-xl border border-primary px-4 py-2 text-sm text-primary">Ver Hall da Fama →</Link>
+      </section>}
+      {is("comunicacao","notificacoes") && <section className="space-y-3 rounded-2xl border border-border p-5">
+        <h2 className="text-lg font-bold">Comunicação</h2>
+        <p className="text-sm text-muted-foreground">O sistema atual entrega notificações individuais. Um editor administrativo para anúncios em massa e segmentação por plano ainda não existe; esta seção não envia mensagens automaticamente.</p>
+        <Link to="/atualizacoes" className="inline-block rounded-xl border border-primary px-4 py-2 text-sm text-primary">Ver atualizações existentes →</Link>
+      </section>}
+      {!getAdminSection(area,view) && <section role="alert" className="rounded-xl border border-border p-5 text-sm">Seção não encontrada. Volte ao Dashboard pelo menu administrativo.</section>}
+    </AdminControlCenter>
   );
 }
