@@ -8,7 +8,7 @@ import { SecretDiscovery } from "@/components/SecretDiscovery";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useAuth";
 
-type Achievement = {
+export type Achievement = {
   id: string;
   name: string;
   description: string;
@@ -64,7 +64,7 @@ export const Route = createFileRoute("/_authenticated/conquistas")({
   component: AchievementsPage,
 });
 
-function AchievementsPage() {
+export function AchievementsPage({ previewData }: { previewData?: Achievement[] }) {
   const { user } = useSession();
   const [category, setCategory] = useState("todas");
   const [rarity, setRarity] = useState("todas");
@@ -82,7 +82,7 @@ function AchievementsPage() {
     },
   });
 
-  const achievements = query.data ?? [];
+  const achievements = previewData ?? query.data ?? [];
   const unlocked = achievements.filter((a) => !!a.unlocked_at);
   const totalXp = unlocked.reduce((sum, a) => sum + a.xp_reward, 0);
   const totalCoins = unlocked.reduce((sum, a) => sum + a.coin_reward, 0);
@@ -158,9 +158,9 @@ function AchievementsPage() {
         </div>
       </section>
 
-      {query.isLoading ? (
+      {query.isLoading && !previewData ? (
         <div className="grid gap-4 sm:grid-cols-2">{[1, 2, 3, 4].map((i) => <div key={i} className="surface-panel h-44 animate-pulse rounded-2xl" />)}</div>
-      ) : query.isError ? (
+      ) : query.isError && !previewData ? (
         <div className="surface-panel rounded-2xl p-6 text-sm text-destructive">Não foi possível carregar as conquistas. <button type="button" className="underline" onClick={() => query.refetch()}>Tentar novamente</button></div>
       ) : filtered.length === 0 ? (
         <div className="surface-panel rounded-2xl p-10 text-center">
