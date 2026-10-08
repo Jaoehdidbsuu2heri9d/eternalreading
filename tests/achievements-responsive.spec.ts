@@ -8,7 +8,7 @@ for (const width of widths) {
     await page.goto("/tests/ui-harness.html");
     await expect(page.getByRole("heading", { name: "Conquistas" })).toBeVisible();
     await expect(page.locator("article")).toHaveCount(5);
-    await expect(page.getByText("Primeiro Capítulo")).toBeVisible();
+    await expect(page.locator("article").getByRole("heading", { name: "Primeiro Capítulo", exact: true })).toBeVisible();
     await expect(page.locator("[role=progressbar]").first()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBeTruthy();
     const mobile = page.getByRole("navigation", { name: "Navegação inferior" });
