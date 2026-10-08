@@ -225,6 +225,17 @@ SELECT 'entidade-eterna','Entidade Eterna','Conquista especial concedida pela eq
 FROM cosmetics c WHERE c.slug='entidade-eterna-moldura'
 ON CONFLICT(slug) DO NOTHING;
 
+-- Somas baseadas em lançamentos reais, não no valor editável do catálogo.
+CREATE OR REPLACE FUNCTION public.my_achievement_reward_totals()
+RETURNS TABLE(total_xp bigint, total_coins bigint)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $
+ SELECT
+ COALESCE((SELECT sum(x.amount) FROM xp_history x WHERE x.user_id = auth.uid() AND x.source = 'achievement'), 0),
+ COALESCE((SELECT sum(c.amount) FROM coin_transactions c WHERE c.user_id = auth.uid() AND c.source = 'achievement'), 0);
+$;
+REVOKE ALL ON FUNCTION public.my_achievement_reward_totals() FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.my_achievement_reward_totals() TO authenticated;
+
 -- Estatísticas do painel, com validação do papel no servidor.
 CREATE OR REPLACE FUNCTION public.admin_achievement_stats()
 RETURNS TABLE(achievement_id uuid, owners bigint) LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = public AS $$
