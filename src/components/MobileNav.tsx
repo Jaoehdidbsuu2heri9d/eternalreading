@@ -20,7 +20,7 @@ const secondary = [
 export function MobileNav({ username }: { username?: string }) {
   const [more, setMore] = useState(false);
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-xl md:hidden" aria-label="Navegação inferior">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-xl xl:hidden" aria-label="Navegação inferior">
       {more && (
         <div id="mobile-more" className="absolute inset-x-0 bottom-full border-t border-border bg-background p-4 shadow-2xl" aria-label="Mais páginas">
           <div className="mx-auto mb-3 flex max-w-lg items-center justify-between">
