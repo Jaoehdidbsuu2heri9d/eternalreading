@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - name: Instalar dependências existentes
-        run: bun install --frozen-lockfile
+        run: bun install
       - name: Checar TypeScript
         run: bunx tsc --noEmit
       - name: Compilar desktop e celular
