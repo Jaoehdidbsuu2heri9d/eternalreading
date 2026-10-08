@@ -93,10 +93,20 @@ export function AchievementsPage({ previewData }: { previewData?: Achievement[] 
     },
   });
 
+  const earned = useQuery({
+    queryKey: ["achievement-reward-totals", user?.id],
+    enabled: !!user && !previewData,
+    staleTime: 30_000,
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc("my_achievement_reward_totals");
+      if (error) throw error;
+      return data?.[0];
+    },
+  });
   const achievements = previewData ?? query.data ?? [];
   const unlocked = achievements.filter((a) => !!a.unlocked_at);
-  const totalXp = unlocked.reduce((sum, a) => sum + a.xp_reward, 0);
-  const totalCoins = unlocked.reduce((sum, a) => sum + a.coin_reward, 0);
+  const totalXp = earned.data?.total_xp ?? unlocked.reduce((sum, a) => sum + a.xp_reward, 0);
+  const totalCoins = earned.data?.total_coins ?? unlocked.reduce((sum, a) => sum + a.coin_reward, 0);
   const secretsFound = unlocked.filter((a) => a.is_secret).length;
   const overallPct = achievements.length ? Math.round(unlocked.length / achievements.length * 100) : 0;
   const rarest = [...unlocked].sort((a, b) => a.owners_pct - b.owners_pct)[0];
