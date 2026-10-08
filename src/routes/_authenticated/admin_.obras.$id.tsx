@@ -55,7 +55,7 @@ function ChaptersAdmin() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:py-8">
-      <Link to="/admin" className="text-sm text-muted-foreground hover:text-foreground">← Administração</Link>
+      <Link to="/admin" search={{area:"conteudo",view:"obras"}} className="text-sm text-muted-foreground hover:text-foreground">← Administração</Link>
       <div className="mb-6 mt-2 flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Capítulos — {w?.title ?? "…"}</h1>
         <Button size="sm" onClick={() => setEditing(null)}>+ Adicionar capítulo</Button>
