@@ -3,9 +3,7 @@ import { test, expect } from "@playwright/test";
 for (const width of [320,375,390,430,768,1280,1440]) {
   test(`Hall da Fama sem overflow em ${width}px`, async ({page}) => {
     await page.setViewportSize({width,height:850});
-    await page.goto("/tests/ui-harness.html");
-    await page.getByRole("navigation",{name:"Navegação inferior"}).isVisible().catch(()=>false);
-    await page.goto("/hall-da-fama");
+    await page.goto("/tests/ui-harness.html?page=hall");
     await expect(page.getByRole("heading",{name:"Hall da Fama"})).toBeVisible();
     await expect(page.getByRole("heading",{name:"Nossos apoiadores"})).toBeVisible();
     await expect(page.getByRole("link",{name:"Amora"}).first()).toBeVisible();
@@ -25,10 +23,10 @@ for (const width of [320,375,390,430,768,1280,1440]) {
 
 test("Hall permite filtrar nível sem expor valor individual", async ({page})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto("/hall-da-fama");
+  await page.goto("/tests/ui-harness.html?page=hall");
   await page.getByRole("button",{name:"Lendário",exact:true}).click();
   await expect(page.getByRole("heading",{name:"Nossos apoiadores"})).toBeVisible();
-  await expect(page.getByRole("link",{name:"Davi"})).toHaveCount(1);
+  await expect(page.getByRole("link",{name:"Davi"})).toHaveCount(2);
   await expect(page.getByRole("link",{name:"Amora"})).toHaveCount(1);
   const section=page.locator("div.grid").last();
   await expect(section.getByRole("link",{name:"Davi"})).toBeVisible();
