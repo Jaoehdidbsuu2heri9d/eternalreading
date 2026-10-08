@@ -68,6 +68,16 @@ function ProfilePage() {
     },
   });
 
+  const earnedTitles = useQuery({
+    queryKey: ["achievement-titles", p?.id],
+    enabled: !!p,
+    queryFn: async () => {
+      const { data, error } = await supabase.from("user_achievement_titles")
+        .select("title, earned_at").eq("user_id", p!.id).order("earned_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
   const trophyQ = useQuery({
     queryKey: ["profile-achievements", p?.id],
     enabled: !!p,
@@ -221,6 +231,16 @@ function ProfilePage() {
           </div>
         )}
 
+        {(earnedTitles.data ?? []).length > 0 && (
+          <section className="surface-panel mt-6 rounded-2xl p-4" aria-label="Títulos especiais">
+            <h3 className="text-lg font-semibold">Títulos especiais conquistados</h3>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(earnedTitles.data ?? []).map((t) => (
+                <span key={t.title + t.earned_at} className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold text-amber-300" title={formatDate(t.earned_at)}>✦ {t.title}</span>
+              ))}
+            </div>
+          </section>
+        )}
         <h2 className="mb-3 mt-8 text-xl font-semibold">Favoritos</h2>
         {(favs.data ?? []).length === 0 ? (
           <p className="text-sm text-muted-foreground">Nenhum favorito ainda.</p>
