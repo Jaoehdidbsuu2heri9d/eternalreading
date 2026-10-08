@@ -25,8 +25,8 @@ import { useRoles } from "@/hooks/useRoles";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   validateSearch: (search: Record<string, unknown>) => ({
-    area: typeof search.area === "string" ? search.area : "visao-geral",
-    view: typeof search.view === "string" ? search.view : "dashboard",
+    area: typeof search.area === "string" ? search.area : undefined,
+    view: typeof search.view === "string" ? search.view : undefined,
   }),
   // Acesso conferido no banco (has_role); as regras de segurança também bloqueiam os dados.
   beforeLoad: async ({ context }) => {
@@ -60,7 +60,9 @@ const field = "rounded-xl border border-border bg-input px-3 py-2 text-sm focus:
 /** Painel admin: números gerais, códigos de convite e pedidos de parceria. */
 function AdminPage() {
   const qc = useQueryClient();
-  const { area, view } = Route.useSearch();
+  const { area: currentArea, view: currentView } = Route.useSearch();
+  const area = currentArea ?? "visao-geral";
+  const view = currentView ?? "dashboard";
   const is = (g: string, v: string) => area === g && view === v;
 
   const codes = useQuery({
