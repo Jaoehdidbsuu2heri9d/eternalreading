@@ -46,3 +46,14 @@ test("admin gives explicit diagnostics and retry for missing Lovable Cloud donor
   expect(admin).toContain("Tentar novamente");
   expect(admin).toContain("levels.isError || !levels.data?.length");
 });
+
+test("database hardening rejects direct grants and donation changes while preserving preference editing",()=>{
+  const grants = readFileSync("drizzle/migrations/0020_supporter_privilege_hardening.sql","utf8");
+  expect(grants).toContain("REVOKE ALL PRIVILEGES ON TABLE public.supporter_manual_grants");
+  expect(grants).toContain("REVOKE ALL PRIVILEGES ON TABLE public.donations");
+  expect(grants).toContain("GRANT SELECT ON TABLE public.donations TO authenticated");
+  expect(grants).toContain("REVOKE ALL PRIVILEGES ON TABLE public.supporter_levels");
+  expect(grants).toContain("GRANT SELECT ON TABLE public.supporter_levels TO authenticated");
+  expect(grants).toContain("GRANT SELECT, INSERT, UPDATE ON TABLE public.supporter_preferences TO authenticated");
+  expect(grants).not.toContain("DELETE FROM public.");
+});
