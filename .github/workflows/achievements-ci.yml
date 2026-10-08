@@ -4,6 +4,9 @@ on:
     branches: [main, feat/achievements-completion-20261007]
   pull_request:
     branches: [main]
+concurrency:
+  group: achievements-ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   frontend:
     runs-on: ubuntu-latest
