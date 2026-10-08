@@ -56,9 +56,35 @@ END $$;
 REVOKE ALL ON FUNCTION public.record_chapter_read(uuid) FROM PUBLIC,anon;
 GRANT EXECUTE ON FUNCTION public.record_chapter_read(uuid) TO authenticated;
 
--- Oculta qualquer conquista secreta por padrão; não existe RPC pública de desbloqueio arbitrário.
-REVOKE ALL ON FUNCTION public.discover_secret(text) FROM PUBLIC,anon,authenticated;
-GRANT EXECUTE ON FUNCTION public.discover_secret(text) TO service_role;
+
+-- Segredos só são descobertos quando atividades verificadas no banco satisfazem os requisitos.
+CREATE OR REPLACE FUNCTION public.discover_secret(p_key text)
+RETURNS boolean LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $
+DECLARE uid uuid := auth.uid(); n integer; opened integer; favorites integer; posted integer; best integer; distinct_genres integer;
+BEGIN
+ IF uid IS NULL THEN RAISE EXCEPTION 'not authenticated'; END IF;
+ IF p_key NOT IN ('hidden_area','hidden_element','easter_egg') THEN RETURN false; END IF;
+ SELECT count(*) INTO opened FROM chapter_reads WHERE user_id = uid;
+ SELECT count(*) INTO favorites FROM favorites f WHERE f.user_id = uid;
+ SELECT count(*) INTO posted FROM comments c WHERE c.user_id = uid AND NOT c.hidden;
+ SELECT s.best_streak INTO best FROM reading_streak(uid) s;
+ SELECT count(DISTINCT mg.genre_id) INTO distinct_genres
+ FROM chapter_reads cr JOIN manga_genres mg ON mg.manga_id = cr.manga_id WHERE cr.user_id = uid;
+ IF (p_key = 'hidden_area' AND opened < 5)
+    OR (p_key = 'hidden_element' AND (favorites < 3 OR posted < 3))
+    OR (p_key = 'easter_egg' AND (best < 7 OR distinct_genres < 5))
+ THEN RETURN false; END IF;
+ INSERT INTO secret_discoveries(user_id,key) VALUES (uid,p_key) ON CONFLICT DO NOTHING;
+ GET DIAGNOSTICS n = ROW_COUNT;
+ IF n = 0 THEN RETURN false; END IF;
+ IF p_key = 'hidden_area' AND (SELECT count(*) FROM secret_discoveries WHERE key = 'hidden_area') <= 10 THEN
+   INSERT INTO secret_discoveries(user_id,key) VALUES (uid,'first_discoverer') ON CONFLICT DO NOTHING;
+ END IF;
+ PERFORM evaluate_achievements(uid, ARRAY['secreta']);
+ RETURN true;
+END $;
+REVOKE ALL ON FUNCTION public.discover_secret(text) FROM PUBLIC,anon;
+GRANT EXECUTE ON FUNCTION public.discover_secret(text) TO authenticated;
 
 -- Catálogo adicional sem duplicação e sem apagar/conceder novamente conquistas antigas.
 INSERT INTO public.achievements(slug,name,description,unlock_text,icon,category,rarity,xp_reward,coin_reward,metric,goal,sort)
