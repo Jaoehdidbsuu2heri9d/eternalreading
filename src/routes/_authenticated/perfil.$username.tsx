@@ -59,11 +59,12 @@ function ProfilePage() {
     queryKey: ["profile-stats", p?.id],
     enabled: !!p,
     queryFn: async () => {
-      const [hist, ach] = await Promise.all([
+      const [hist, ach, streak] = await Promise.all([
         supabase.from("reading_history").select("manga_id", { count: "exact", head: true }).eq("user_id", p!.id),
         supabase.from("user_achievements").select("unlocked_at, achievement:achievements ( id, name, description )").eq("user_id", p!.id).order("unlocked_at", { ascending: false }),
+        supabase.rpc("reading_streak", { p_user: p!.id }),
       ]);
-      return { works: hist.count ?? 0, achievements: ach.data ?? [] };
+      return { works: hist.count ?? 0, achievements: ach.data ?? [], streak: streak.data?.[0]?.current_streak ?? 0, best: streak.data?.[0]?.best_streak ?? 0 };
     },
   });
 
@@ -153,8 +154,8 @@ function ProfilePage() {
           )}
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-3">
-          {[["Obras lidas", stats.data?.works], ["Favoritos", favs.data?.length], ["Conquistas", stats.data?.achievements.length]].map(([l, v]) => (
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[["Obras lidas", stats.data?.works], ["Favoritos", favs.data?.length], ["Conquistas", stats.data?.achievements.length], ["Dias seguidos", stats.data?.streak]].map(([l, v]) => (
             <div key={l as string} className="surface-panel rounded-2xl p-3 text-center">
               <p className="text-xl font-bold">{v ?? "—"}</p>
               <p className="text-xs text-muted-foreground">{l}</p>
