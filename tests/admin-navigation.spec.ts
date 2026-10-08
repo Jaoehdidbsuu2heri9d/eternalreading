@@ -25,7 +25,7 @@ test("mobile: drawer, submenus, busca Ctrl+K e alertas",async({page})=>{
  const menu=page.getByRole("navigation",{name:"Menu administrativo"});
  await expect(menu).toBeVisible();
  await menu.locator("summary").filter({hasText:"Comunidade"}).click();
- await menu.getByRole("button",{name:"Denúncias e moderação"}).click();
+ await menu.getByRole("button",{name:"Denúncias e moderação",exact:true}).click();
  await expect(page).toHaveURL(/area=comunidade.*view=denuncias/);
  await page.keyboard.press("Control+k");
  const dialog=page.getByRole("dialog",{name:"Busca do painel administrativo"});
