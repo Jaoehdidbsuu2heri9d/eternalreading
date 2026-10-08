@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { Menu, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
-import { ADMIN_GROUPS, adminSectionPath, getAdminSection } from "@/components/admin/adminNavigation";
+import { getAdminSection } from "@/components/admin/adminNavigation";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminToolbar } from "@/components/admin/AdminToolbar";
 import { supabase } from "@/integrations/supabase/client";
