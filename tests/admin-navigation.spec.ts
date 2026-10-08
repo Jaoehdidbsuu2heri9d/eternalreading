@@ -37,3 +37,20 @@ test("mobile: drawer, submenus, busca Ctrl+K e alertas",async({page})=>{
  await expect(page).toHaveURL(/area=visao-geral.*view=alertas/);
  expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth+1)).toBe(true);
 });
+
+for (const width of [320,375,390,430,768,1280,1440]) {
+  test(`Painel administrativo sem overflow em ${width}px`, async ({page}) => {
+    await page.setViewportSize({width,height:860});
+    await page.goto("/tests/ui-harness.html?page=admin");
+    await expect(page.getByRole("heading",{name:"Dashboard"})).toBeVisible();
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth+1)).toBe(true);
+    if(width < 1280) {
+      await expect(page.getByRole("button",{name:"Abrir menu administrativo"})).toBeVisible();
+      await page.getByRole("button",{name:"Abrir menu administrativo"}).click();
+      await expect(page.getByRole("navigation",{name:"Menu administrativo"})).toBeVisible();
+    }else{
+      await expect(page.getByRole("navigation",{name:"Menu administrativo"})).toBeVisible();
+      await expect(page.getByRole("button",{name:"Abrir menu administrativo"})).toBeHidden();
+    }
+  });
+}
