@@ -20,7 +20,7 @@ jobs:
         run: bun install
       - name: Checar TypeScript
         run: bunx tsc --noEmit
-      - name: Compilar desktop e celular
+      - name: Testes de regras e segurança\n        run: bun test tests/achievements-contract.test.ts\n      - name: Compilar desktop e celular
         run: bun run build
       - name: Preparar Playwright
         run: |
