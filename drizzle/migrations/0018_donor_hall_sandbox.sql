@@ -96,7 +96,7 @@ LANGUAGE sql STABLE SECURITY DEFINER SET search_path = '' AS $$
   )
   SELECT rank_position,user_id,username,display_name,avatar_url,avatar_path,
          level_slug,level_name,level_color,level_icon,donation_count
-  FROM leaderboard ORDER BY rank_position LIMIT LEAST(GREATEST(p_limit,1),100);
+  FROM leaderboard ORDER BY rank_position LIMIT LEAST(GREATEST(COALESCE(p_limit,100),1),100);
 $$;
 REVOKE ALL ON FUNCTION public.hall_of_fame(integer) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.hall_of_fame(integer) TO authenticated;
