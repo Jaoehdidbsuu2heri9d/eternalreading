@@ -127,6 +127,13 @@
       "when": 1791425879632,
       "tag": "0017_noop_after_achievements_completion",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1791500000000,
+      "tag": "0018_donor_hall_sandbox",
+      "breakpoints": true
     }
   ]
 }
