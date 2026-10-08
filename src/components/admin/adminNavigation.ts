@@ -1,0 +1,1 @@
+// Eternal administrative navigation registry.
