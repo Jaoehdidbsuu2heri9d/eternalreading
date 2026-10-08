@@ -13,7 +13,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   webServer: {
-    command: "bun run dev --host 127.0.0.1 --port 8080",
+    command: "bunx vite --config tests/vite.config.ts --host 127.0.0.1 --port 8080",
     url: "http://127.0.0.1:8080/tests/ui-harness.html",
     reuseExistingServer: false,
     timeout: 120_000,
