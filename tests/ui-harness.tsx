@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRootRoute, createRoute, createRouter, Outlet, RouterProvider } from "@tanstack/react-router";
 import { Navbar } from "../src/components/Navbar";
+import { AdminControlCenter } from "../src/components/admin/AdminControlCenter";
 import { MobileNav } from "../src/components/MobileNav";
 import { AchievementsPage, type Achievement } from "../src/routes/_authenticated/conquistas";
 import { HallDaFamaPage, type Supporter, type SupporterLevel } from "../src/routes/_authenticated/hall-da-fama";
@@ -39,7 +40,21 @@ const hallPeople: Supporter[] = [
 const rootRoute = createRootRoute({ component: () => (
   <><Navbar profile={null} /><main className="min-h-screen pb-24 md:pb-0"><Outlet /></main><MobileNav username="tester" /></>
 )});
-const pages = [
+const adminPreviewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/admin",
+  validateSearch: (s: Record<string,unknown>) => ({
+    area: typeof s.area === "string" ? s.area : undefined,
+    view: typeof s.view === "string" ? s.view : undefined,
+  }),
+  component: () => {
+    const {area,view}=adminPreviewRoute.useSearch();
+    return <AdminControlCenter area={area??"visao-geral"} view={view??"dashboard"}>
+      <p role="status">Painel administrativo de teste · {area??"visao-geral"} · {view??"dashboard"}</p>
+    </AdminControlCenter>;
+  },
+});
+const pages = [adminPreviewRoute,
   createRoute({ getParentRoute: () => rootRoute, path: "/conquistas", component: () => <AchievementsPage previewData={preview} /> }),
   createRoute({ getParentRoute: () => rootRoute, path: "/hall-da-fama", component: () => <HallDaFamaPage previewData={hallPeople} previewLevels={hallLevels} /> }),
   createRoute({ getParentRoute: () => rootRoute, path: "/apoiar", component: () => <h1>Minhas contribuições</h1> }),
@@ -53,7 +68,8 @@ const pages = [
   createRoute({ getParentRoute: () => rootRoute, path: "/scans", component: () => <h1>Scans</h1> }),
   createRoute({ getParentRoute: () => rootRoute, path: "/perfil/$username", component: () => <h1>Perfil</h1> }),
 ];
-window.history.replaceState({}, "", new URLSearchParams(window.location.search).get("page") === "hall" ? "/hall-da-fama" : "/conquistas");
+const page = new URLSearchParams(window.location.search).get("page");
+window.history.replaceState({}, "", page === "hall" ? "/hall-da-fama" : page === "admin" ? "/admin" : "/conquistas");
 const router = createRouter({ routeTree: rootRoute.addChildren(pages), context: {} });
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={new QueryClient()}><RouterProvider router={router} /></QueryClientProvider>,
