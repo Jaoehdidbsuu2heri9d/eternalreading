@@ -5,9 +5,10 @@ import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/common/EButton";
 import { Comments } from "@/components/social/Comments";
-import { fetchChapterPages, fetchChapters, fetchMangaBySlug, grantReadingXp, saveProgress } from "@/lib/api";
+import { fetchChapterPages, fetchChapters, fetchMangaBySlug, saveProgress } from "@/lib/api";
 import { formatChapterNumber } from "@/lib/format";
 import { useSession } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/ler/$obra/$capitulo")({
   head: () => ({
@@ -50,7 +51,7 @@ function ReaderPage() {
     window.scrollTo(0, 0);
   }, [chapter?.id]);
   useEffect(() => {
-    if (!user || !manga.data || !chapter) return;
+    if (!user || !manga.data || !chapter || !pages.isSuccess || pages.data.length === 0) return;
     let last = 0;
     const onScroll = () => {
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -62,13 +63,19 @@ function ReaderPage() {
       }
       if (pct >= 95 && !xpGiven.current) {
         xpGiven.current = true;
-        grantReadingXp();
+        // O servidor valida o capítulo e registra apenas uma leitura por usuário.
+        supabase.rpc("record_chapter_read", { p_chapter: chapter.id }).then(({ error }) => {
+          if (error) {
+            xpGiven.current = false;
+            console.error("Falha ao registrar leitura:", error);
+          }
+        });
       }
     };
     saveProgress(user.id, manga.data.id, chapter.id, 0).catch(() => {});
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [user, manga.data, chapter]);
+  }, [user, manga.data, chapter, pages.isSuccess, pages.data]);
 
   const nav = (
     <div className="flex items-center justify-between gap-2">
