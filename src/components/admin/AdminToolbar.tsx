@@ -81,6 +81,8 @@ export function AdminToolbar({favorites,count,onSelect}:Props){
       <p className="px-3 text-xs font-semibold text-muted-foreground">Usuários e obras</p>
       {(users.data??[]).map(u=><Link key={u.id} to="/perfil/$username" params={{username:u.username}} onClick={()=>setOpen(false)} className="block rounded-lg px-3 py-2 hover:bg-surface-2">👤 @{u.username}</Link>)}
       {(works.data??[]).map(w=><Link key={w.id} to="/admin/obras/$id" params={{id:w.id}} onClick={()=>setOpen(false)} className="block rounded-lg px-3 py-2 hover:bg-surface-2">📚 {w.title}</Link>)}
+      {(chapters.data??[]).map(c=><Link key={c.id} to="/admin/obras/$id" params={{id:c.manga_id}} onClick={()=>setOpen(false)} className="block rounded-lg px-3 py-2 hover:bg-surface-2">📖 Capítulo: {c.title}</Link>)}
+      {(scans.data??[]).map(scan=><Link key={scan.id} to="/scan/$slug" params={{slug:scan.slug}} onClick={()=>setOpen(false)} className="block rounded-lg px-3 py-2 hover:bg-surface-2">🤝 Scan: {scan.name}</Link>)}
       {(users.isError||works.isError)&&<p role="alert" className="px-3 text-xs text-destructive">Busca parcial indisponível. Verifique as permissões.</p>}
      </div>}
      {!filtered.length&&q.length<2&&<p className="px-3 text-xs text-muted-foreground">Digite para encontrar uma seção.</p>}
