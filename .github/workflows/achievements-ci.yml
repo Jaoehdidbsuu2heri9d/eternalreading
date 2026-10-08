@@ -1,0 +1,37 @@
+name: Conquistas - build e layouts
+on:
+  push:
+    branches: [main, feat/achievements-completion-20261007]
+  pull_request:
+    branches: [main]
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_SUPABASE_URL: https://test.supabase.co
+      VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_test_only
+      SUPABASE_URL: https://test.supabase.co
+      SUPABASE_PUBLISHABLE_KEY: sb_publishable_test_only
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Instalar dependências existentes
+        run: bun install --frozen-lockfile
+      - name: Checar TypeScript
+        run: bunx tsc --noEmit
+      - name: Compilar desktop e celular
+        run: bun run build
+      - name: Preparar Playwright
+        run: |
+          npm install --no-save --package-lock=false --legacy-peer-deps @playwright/test
+          npx playwright install --with-deps chromium
+      - name: Testar layouts responsivos
+        run: npx playwright test
+      - name: Guardar capturas e erros
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testes-conquistas
+          path: test-results/
+          if-no-files-found: ignore
