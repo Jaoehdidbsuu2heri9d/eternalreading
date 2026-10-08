@@ -17,6 +17,7 @@ import { Route as EsqueciSenhaRouteImport } from './routes/esqueci-senha'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as RedefinirSenhaRouteImport } from './routes/redefinir-senha'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedApoiarRouteImport } from './routes/_authenticated/apoiar'
 import { Route as AuthenticatedAssinaturaRouteImport } from './routes/_authenticated/assinatura'
 import { Route as AuthenticatedAtividadeRouteImport } from './routes/_authenticated/atividade'
 import { Route as AuthenticatedAtualizacoesRouteImport } from './routes/_authenticated/atualizacoes'
@@ -24,6 +25,7 @@ import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authen
 import { Route as AuthenticatedConquistasRouteImport } from './routes/_authenticated/conquistas'
 import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticated/explorar'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
+import { Route as AuthenticatedHallDaFamaRouteImport } from './routes/_authenticated/hall-da-fama'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedInicioRouteImport } from './routes/_authenticated/inicio'
 import { Route as AuthenticatedLojaRouteImport } from './routes/_authenticated/loja'
@@ -80,6 +82,11 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedApoiarRoute = AuthenticatedApoiarRouteImport.update({
+  id: '/apoiar',
+  path: '/apoiar',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAssinaturaRoute = AuthenticatedAssinaturaRouteImport.update({
   id: '/assinatura',
   path: '/assinatura',
@@ -115,6 +122,11 @@ const AuthenticatedExplorarRoute = AuthenticatedExplorarRouteImport.update({
 const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedHallDaFamaRoute = AuthenticatedHallDaFamaRouteImport.update({
+  id: '/hall-da-fama',
+  path: '/hall-da-fama',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedHistoricoRoute = AuthenticatedHistoricoRouteImport.update({
@@ -211,6 +223,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/apoiar': typeof AuthenticatedApoiarRoute
   '/assinatura': typeof AuthenticatedAssinaturaRoute
   '/atividade': typeof AuthenticatedAtividadeRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
@@ -218,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/conquistas': typeof AuthenticatedConquistasRoute
   '/explorar': typeof AuthenticatedExplorarRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
+  '/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
   '/loja': typeof AuthenticatedLojaRoute
@@ -243,6 +257,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/admin': typeof AuthenticatedAdminRoute
+  '/apoiar': typeof AuthenticatedApoiarRoute
   '/assinatura': typeof AuthenticatedAssinaturaRoute
   '/atividade': typeof AuthenticatedAtividadeRoute
   '/atualizacoes': typeof AuthenticatedAtualizacoesRoute
@@ -250,6 +265,7 @@ export interface FileRoutesByTo {
   '/conquistas': typeof AuthenticatedConquistasRoute
   '/explorar': typeof AuthenticatedExplorarRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
+  '/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
   '/loja': typeof AuthenticatedLojaRoute
@@ -277,6 +293,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/redefinir-senha': typeof RedefinirSenhaRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/apoiar': typeof AuthenticatedApoiarRoute
   '/_authenticated/assinatura': typeof AuthenticatedAssinaturaRoute
   '/_authenticated/atividade': typeof AuthenticatedAtividadeRoute
   '/_authenticated/atualizacoes': typeof AuthenticatedAtualizacoesRoute
@@ -284,6 +301,7 @@ export interface FileRoutesById {
   '/_authenticated/conquistas': typeof AuthenticatedConquistasRoute
   '/_authenticated/explorar': typeof AuthenticatedExplorarRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
+  '/_authenticated/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/inicio': typeof AuthenticatedInicioRoute
   '/_authenticated/loja': typeof AuthenticatedLojaRoute
@@ -311,6 +329,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/redefinir-senha'
     | '/admin'
+    | '/apoiar'
     | '/assinatura'
     | '/atividade'
     | '/atualizacoes'
@@ -318,6 +337,7 @@ export interface FileRouteTypes {
     | '/conquistas'
     | '/explorar'
     | '/favoritos'
+    | '/hall-da-fama'
     | '/historico'
     | '/inicio'
     | '/loja'
@@ -343,6 +363,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/redefinir-senha'
     | '/admin'
+    | '/apoiar'
     | '/assinatura'
     | '/atividade'
     | '/atualizacoes'
@@ -350,6 +371,7 @@ export interface FileRouteTypes {
     | '/conquistas'
     | '/explorar'
     | '/favoritos'
+    | '/hall-da-fama'
     | '/historico'
     | '/inicio'
     | '/loja'
@@ -376,6 +398,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/redefinir-senha'
     | '/_authenticated/admin'
+    | '/_authenticated/apoiar'
     | '/_authenticated/assinatura'
     | '/_authenticated/atividade'
     | '/_authenticated/atualizacoes'
@@ -383,6 +406,7 @@ export interface FileRouteTypes {
     | '/_authenticated/conquistas'
     | '/_authenticated/explorar'
     | '/_authenticated/favoritos'
+    | '/_authenticated/hall-da-fama'
     | '/_authenticated/historico'
     | '/_authenticated/inicio'
     | '/_authenticated/loja'
@@ -471,6 +495,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/apoiar': {
+      id: '/_authenticated/apoiar'
+      path: '/apoiar'
+      fullPath: '/apoiar'
+      preLoaderRoute: typeof AuthenticatedApoiarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/assinatura': {
       id: '/_authenticated/assinatura'
       path: '/assinatura'
@@ -518,6 +549,13 @@ declare module '@tanstack/react-router' {
       path: '/favoritos'
       fullPath: '/favoritos'
       preLoaderRoute: typeof AuthenticatedFavoritosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/hall-da-fama': {
+      id: '/_authenticated/hall-da-fama'
+      path: '/hall-da-fama'
+      fullPath: '/hall-da-fama'
+      preLoaderRoute: typeof AuthenticatedHallDaFamaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/historico': {
@@ -637,6 +675,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedApoiarRoute: typeof AuthenticatedApoiarRoute
   AuthenticatedAssinaturaRoute: typeof AuthenticatedAssinaturaRoute
   AuthenticatedAtividadeRoute: typeof AuthenticatedAtividadeRoute
   AuthenticatedAtualizacoesRoute: typeof AuthenticatedAtualizacoesRoute
@@ -644,6 +683,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedConquistasRoute: typeof AuthenticatedConquistasRoute
   AuthenticatedExplorarRoute: typeof AuthenticatedExplorarRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
+  AuthenticatedHallDaFamaRoute: typeof AuthenticatedHallDaFamaRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedInicioRoute: typeof AuthenticatedInicioRoute
   AuthenticatedLojaRoute: typeof AuthenticatedLojaRoute
@@ -662,6 +702,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedApoiarRoute: AuthenticatedApoiarRoute,
   AuthenticatedAssinaturaRoute: AuthenticatedAssinaturaRoute,
   AuthenticatedAtividadeRoute: AuthenticatedAtividadeRoute,
   AuthenticatedAtualizacoesRoute: AuthenticatedAtualizacoesRoute,
@@ -669,6 +710,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedConquistasRoute: AuthenticatedConquistasRoute,
   AuthenticatedExplorarRoute: AuthenticatedExplorarRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
+  AuthenticatedHallDaFamaRoute: AuthenticatedHallDaFamaRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedInicioRoute: AuthenticatedInicioRoute,
   AuthenticatedLojaRoute: AuthenticatedLojaRoute,
