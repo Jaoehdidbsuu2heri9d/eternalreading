@@ -8,7 +8,7 @@ import type { Profile } from "@/lib/types";
 type Unlocked = { id: string; name: string; rarity: string; xp_reward: number; coin_reward: number; cosmetic_name: string | null; unlock_text: string | null };
 
 /** Um evento de desbloqueio real do banco, nunca calculado ou concedido pelo cliente. */
-export function AchievementUnlockToast({ userId, profile }: { userId?: string; profile?: Profile | null }) {
+export function AchievementUnlockToast({ userId, profile }: { userId?: string | undefined; profile?: Profile | null | undefined }) {
   const qc = useQueryClient();
   const [shown, setShown] = useState<Unlocked | null>(null);
   const handled = useRef(new Set<string>());
