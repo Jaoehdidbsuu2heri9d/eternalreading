@@ -50,7 +50,8 @@ export const startDonationCheckout = createServerFn({ method: "POST" })
       .select("username,display_name").eq("id", context.userId).single();
     if (profileError) throw profileError;
 
-    const provider = "asaas";
+    // Sandbox customers must never reuse production subscription customer IDs.
+    const provider = "asaas_sandbox";
     const { data: customer, error: customerError } = await db.from("billing_customers")
       .select("external_customer_id").eq("user_id", context.userId).eq("provider", provider).maybeSingle();
     if (customerError) throw customerError;
