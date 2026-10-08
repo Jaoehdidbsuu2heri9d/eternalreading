@@ -34,3 +34,15 @@ test("Hall keeps opt-in privacy and labels honorary source",()=>{
   expect(admin).toContain("admin_set_manual_supporter");
   expect(admin).toContain("Retirar");
 });
+
+test("admin gives explicit diagnostics and retry for missing Lovable Cloud donor schema",()=>{
+  expect(admin).toContain("0018_donor_hall_sandbox");
+  expect(admin).toContain("0019_admin_manual_supporters");
+  expect(admin).toContain("PGRST205");
+  expect(admin).toContain("PGRST202");
+  expect(admin).toContain('describeSupporterError(levels.error, "levels")');
+  expect(admin).toContain('describeSupporterError(error, "manual")');
+  expect(admin).toContain("Nenhum nível disponível");
+  expect(admin).toContain("Tentar novamente");
+  expect(admin).toContain("levels.isError || !levels.data?.length");
+});
