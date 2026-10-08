@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Button } from "@/components/common/EButton";
 import { AvatarUploader } from "@/components/AvatarUploader";
 import { PageHeader } from "@/components/PageHeader";
+import { SecretDiscovery } from "@/components/SecretDiscovery";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useSession } from "@/hooks/useAuth";
 
@@ -83,7 +84,7 @@ function SettingsPage() {
         {msg && <p role="status" className={msg.ok ? "text-sm text-success" : "text-sm text-destructive"}>{msg.text}</p>}
         <Button type="submit">Salvar</Button>
       </form>
-      <p className="mt-4 text-xs text-muted-foreground">E-mail da conta: {user?.email}</p>
+      <p className="mt-4 text-xs text-muted-foreground">E-mail da conta: {user?.email} <SecretDiscovery kind="easter_egg" /></p>
     </div>
   );
 }
