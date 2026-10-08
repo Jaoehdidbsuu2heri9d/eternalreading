@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Input } from "@/components/common/EInput";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,8 +8,9 @@ import { formatDate } from "@/lib/format";
 import { PLAN_LABEL } from "@/lib/types";
 
 /** Assinaturas, pagamentos e webhooks — somente leitura (alterações manuais de plano passam pelo histórico). */
-export function AdminBilling() {
-  const [tab, setTab] = useState<"subs" | "pays" | "events">("subs");
+export function AdminBilling({ initialTab = "subs" }: { initialTab?: "subs" | "pays" | "events" }) {
+  const [tab, setTab] = useState<"subs" | "pays" | "events">(initialTab);
+  useEffect(() => setTab(initialTab), [initialTab]);
   const [q, setQ] = useState("");
 
   const data = useQuery({
