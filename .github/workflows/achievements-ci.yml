@@ -34,7 +34,7 @@ jobs:
             git push origin HEAD:feat/achievements-completion-20261007 || echo 'Sem permissão de envio; revisão do lockfile necessária.'
           fi
       - name: Testes de regras e segurança
-        run: bun test tests/achievements-contract.test.ts
+        run: bun test tests/achievements-contract.test.ts tests/donor-hall.test.ts
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
