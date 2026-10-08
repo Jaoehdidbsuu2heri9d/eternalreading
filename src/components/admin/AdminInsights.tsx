@@ -17,7 +17,7 @@ export function AdminInsights({mode}:{mode:"dashboard"|"alertas"}) {
     supabase.from("scans").select("id",{count:"exact",head:true}),
     supabase.from("subscriptions").select("id",{count:"exact",head:true}).eq("status","active"),
     supabase.from("supporter_manual_grants").select("user_id",{count:"exact",head:true}).is("revoked_at",null),
-    supabase.from("user_achievements").select("id",{count:"exact",head:true}),
+    supabase.from("user_achievements").select("*",{count:"exact",head:true}),
     supabase.from("comment_reports").select("id",{count:"exact",head:true}).eq("status","pending"),
     supabase.from("scan_requests").select("id",{count:"exact",head:true}).eq("status","pending"),
     supabase.from("payment_events").select("id",{count:"exact",head:true}).not("error","is",null),
