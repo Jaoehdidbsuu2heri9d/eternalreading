@@ -162,6 +162,13 @@
       "when": 1791507887796,
       "tag": "0022_noop_after_frames_v2",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1791600000000,
+      "tag": "0023_frames_shop_expansion",
+      "breakpoints": true
     }
   ]
 }
