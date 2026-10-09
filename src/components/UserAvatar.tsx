@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useSignedUrl, useEquipped } from "@/lib/media";
 import { cn } from "@/lib/utils";
-import { animClass, hasEffect, useVisibleAnim, type CosmeticEffect } from "@/lib/cosmetics";
+import { hasEffect, useVisibleAnim, type CosmeticEffect } from "@/lib/cosmetics";
 import { AuraEffect } from "@/components/cosmetics/AuraEffect";
 import { FrameArtwork } from "@/components/cosmetics/FrameArtwork";
 import { useCosmeticMedia } from "@/components/cosmetics/CosmeticPreview";
