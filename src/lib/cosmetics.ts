@@ -10,13 +10,13 @@ export const KIND_LABEL: Record<string, string> = {
 };
 export const MAIN_KINDS = ["border", "frame", "background", "banner"] as const;
 
-export const RARITIES = ["common", "uncommon", "rare", "epic", "legendary", "mythic"] as const;
+export const RARITIES = ["common", "uncommon", "rare", "epic", "legendary", "mythic", "secret"] as const;
 export const RARITY_LABEL: Record<string, string> = {
-  common: "Comum", uncommon: "Incomum", rare: "Raro", epic: "Épico", legendary: "Lendário", mythic: "Mítico",
+  common: "Comum", uncommon: "Incomum", rare: "Raro", epic: "Épico", legendary: "Lendário", mythic: "Mítico", secret: "Secreto",
 };
 /** Cor de destaque por raridade (discreta; só itens altos ganham brilho). */
 export const RARITY_COLOR: Record<string, string> = {
-  common: "#94a3b8", uncommon: "#34d399", rare: "#38bdf8", epic: "#a855f7", legendary: "#f59e0b", mythic: "#f0abfc",
+  common: "#94a3b8", uncommon: "#34d399", rare: "#38bdf8", epic: "#a855f7", legendary: "#f59e0b", mythic: "#f0abfc", secret: "#f43f9e",
 };
 export const ANIMATIONS = ["none", "pulse", "spin", "shimmer", "glow", "drift"] as const;
 export const ANIMATION_LABEL: Record<string, string> = {
