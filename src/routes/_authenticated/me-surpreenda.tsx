@@ -122,7 +122,8 @@ function MeSurpreendaPage() {
     const recentFeedback = new Set((feedback.data ?? []).filter((f) => Date.now() - new Date(f.created_at).getTime() < 30 * 24 * 60 * 60 * 1000).map((f) => f.manga_id));
     const liked = new Set((feedback.data ?? []).filter((f) => f.feedback === "liked").map((f) => f.manga_id));
     const referenceIds = new Set(preferenceData.reference_manga_ids);
-    const availableIds = publishedChapters.data ?? new Set<string>();\n    const available = all.filter((m) => availableIds.has(m.id) && m.id && m.slug && m.title && m.cover_url && (m.synopsis?.trim() || m.genres?.length) &&
+    const availableIds = publishedChapters.data ?? new Set<string>();
+    const available = all.filter((m) => availableIds.has(m.id) && m.id && m.slug && m.title && m.cover_url && (m.synopsis?.trim() || m.genres?.length) &&
       !favIds.has(m.id) && !readIds.has(m.id) && !recentFeedback.has(m.id) && !referenceIds.has(m.id));
     return available.map((m): Candidate => {
       let score = 0;
@@ -135,7 +136,8 @@ function MeSurpreendaPage() {
       if (m.featured) score += 0.5;
       if (m.status === "ongoing") score += 0.25;
       if (liked.has(m.id)) { score += 2; reasons.push("Você já gostou de uma recomendação relacionada"); }
-      if (genrePenalty > 0) reasons.push("Priorizamos outros temas após seu feedback anterior");\n      if (!reasons.length) reasons.push("Uma descoberta para ampliar seu repertório");
+
+      if (!reasons.length) reasons.push("Uma descoberta para ampliar seu repertório");
       const compatibility = activeGenres.length
         ? Math.round(100 * (m.genres ?? []).filter((g) => activeGenres.includes(g.slug)).length / activeGenres.length)
         : null;
@@ -221,7 +223,8 @@ function MeSurpreendaPage() {
             <div className="flex flex-wrap gap-2"><Badge tone="primary">{TYPE_LABEL[current.manga.type]}</Badge><Badge>{STATUS_LABEL[current.manga.status]}</Badge>{current.compatibility !== null && <Badge tone="eternal">{current.compatibility}% compatível por gêneros</Badge>}</div>
             <h2 className="mt-3 text-2xl font-bold sm:text-3xl">{current.manga.title}</h2>
             <div className="mt-3 flex flex-wrap gap-2">{(current.manga.genres ?? []).map((g) => <Badge key={g.id} tone="muted">{g.name}</Badge>)}</div>
-            {current.manga.synopsis && <p className="mt-4 whitespace-pre-line leading-relaxed text-muted-foreground">{current.manga.synopsis}</p>}\n            <p className="mt-3 text-sm text-muted-foreground">Capítulos publicados: {chapterCount.isLoading ? "consultando…" : chapterCount.data ?? "—"}</p>
+            {current.manga.synopsis && <p className="mt-4 whitespace-pre-line leading-relaxed text-muted-foreground">{current.manga.synopsis}</p>}
+            <p className="mt-3 text-sm text-muted-foreground">Capítulos publicados: {chapterCount.isLoading ? "consultando…" : chapterCount.data ?? "—"}</p>
             <div className="mt-5 rounded-xl border border-border bg-background/60 p-4"><p className="text-sm font-semibold"><Sparkles className="mr-2 inline h-4 w-4 text-primary" />Por que recomendamos</p><ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-muted-foreground">{current.reasons.map((r) => <li key={r}>{r}</li>)}</ul><p className="mt-2 text-xs text-muted-foreground">Compatibilidade = gêneros escolhidos que aparecem nesta obra ÷ total de gêneros escolhidos. Não é uma nota nem avaliação da obra.</p></div>
             <div className="mt-5 flex flex-wrap gap-2">
               <Link to="/obra/$slug" params={{ slug: current.manga.slug }}><Button><BookOpen className="h-4 w-4" />Abrir obra</Button></Link>
