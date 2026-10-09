@@ -169,6 +169,13 @@
       "when": 1791600000000,
       "tag": "0023_frames_shop_expansion",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1791700000000,
+      "tag": "0024_featured_frame_collection",
+      "breakpoints": true
     }
   ]
 }
