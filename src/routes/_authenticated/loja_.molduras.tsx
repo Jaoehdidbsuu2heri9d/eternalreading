@@ -219,7 +219,7 @@ function FramesShop() {
                 style={{ borderTop: `2px solid ${color}`, boxShadow: high ? `0 0 28px -12px ${color}` : undefined }}>
                 <button onClick={() => { setSel(c); setTryOn(false); }} aria-label={`Ver ${c.name}`}
                   className="relative flex h-40 w-full items-center justify-center bg-surface-2/40">
-                  <UserAvatar username="Eternal" size={84} showFrame={false} previewFrame={c} />
+                  <UserAvatar username="Eternal" size={84} showFrame={false} previewFrame={{ ...c, media_path: null, media_url: null }} />
                   {c.featured && <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-background/70 px-2 py-0.5 text-xs"><Sparkles className="h-3 w-3" aria-hidden />Destaque</span>}
                   <span className="absolute right-3 top-3 rounded-full bg-background/70 px-2 py-0.5 text-[10px] font-semibold tracking-wide">{s.state}</span>
                 </button>
