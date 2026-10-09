@@ -45,7 +45,8 @@ export function CosmeticPreview({
 }) {
   const { ref, pausedClass } = useVisibleAnim<HTMLDivElement>();
   const anim = animClass(animation);
-  const frameMedia = kind === "frame" ? useCosmeticMedia(mediaPath, mediaUrl) : null;
+  const resolvedMedia = useCosmeticMedia(mediaPath, mediaUrl);
+  const frameMedia = kind === "frame" ? resolvedMedia : null;
 
   if (kind === "banner" || kind === "background") {
     return <CosmeticSurface preview={preview} animation={animation} mediaUrl={mediaUrl} mediaPath={mediaPath} mediaType={mediaType} className={cn("h-24 w-full", className)} />;
