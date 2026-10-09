@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { to: "/inicio", label: "Início" },
   { to: "/explorar", label: "Explorar" },
+  { to: "/me-surpreenda", label: "Me Surpreenda" },
   { to: "/atualizacoes", label: "Atualizações" },
   { to: "/ranking", label: "Ranking" },
   { to: "/favoritos", label: "Favoritos" },
