@@ -162,3 +162,10 @@
 @media (prefers-reduced-motion: reduce) {
   .aura-spin, .aura-rev, .aura-dash, .aura-flicker, .aura-hue, .aura-breathe, .aura-flame { animation: none !important; }
 }
+
+/* Remove o widget de branding do Lovable por completo em todas as rotas. */
+#lovable-badge {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
