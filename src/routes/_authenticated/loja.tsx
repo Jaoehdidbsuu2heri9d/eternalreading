@@ -40,6 +40,8 @@ function ShopPage() {
   const [tab, setTab] = useState<"shop" | "history">("shop");
   const [kind, setKind] = useState("all");
   const [rarity, setRarity] = useState("all");
+  const [price, setPrice] = useState("all");
+  const [theme, setTheme] = useState("all");
   const [q, setQ] = useState("");
   const [sel, setSel] = useState<CosmeticRow | null>(null);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -93,7 +95,9 @@ function ShopPage() {
 
   const list = useMemo(() => (items.data?.all ?? []).filter((c) =>
     (kind === "all" || c.kind === kind) && (rarity === "all" || c.rarity === rarity) &&
-    (!q.trim() || c.name.toLowerCase().includes(q.trim().toLowerCase()))), [items.data, kind, rarity, q]);
+    (theme === "all" || c.frame_category === theme) &&
+    (price === "all" || (price === "low" ? (c.coin_price ?? 0) < 300 : price === "mid" ? (c.coin_price ?? 0) >= 300 && (c.coin_price ?? 0) <= 700 : (c.coin_price ?? 0) > 700)) &&
+    (!q.trim() || c.name.toLowerCase().includes(q.trim().toLowerCase()) || c.description.toLowerCase().includes(q.trim().toLowerCase()))), [items.data, kind, rarity, price, theme, q]);
 
   const ActionButtons = ({ c }: { c: CosmeticRow }) => {
     const s = status(c);
@@ -104,7 +108,11 @@ function ShopPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:py-8">
-      <PageHeader title="Loja de Cosméticos" subtitle="Use suas Eternal Coins para personalizar o seu perfil." />
+      <div className="relative mb-6 overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-violet-950/80 via-background to-slate-950 p-5 shadow-[0_20px_70px_-35px_rgba(168,85,247,.6)] sm:p-7">
+        <div className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-fuchsia-500/10 blur-3xl" />
+        <PageHeader title="Loja de Cosméticos" subtitle="Relíquias animadas, efeitos raros e identidade visual para sua jornada na Eternal." />
+        <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-amber-300/20 bg-black/25 px-4 py-2 text-sm"><Coins className="h-4 w-4 text-amber-300" aria-hidden /><span className="text-muted-foreground">Sua carteira</span><strong className="text-amber-200">{formatCoins(balance)} EC</strong></div>
+      </div>
 
       <div className="surface-panel mb-6 grid gap-3 rounded-2xl p-4 sm:grid-cols-3">
         <div className="flex items-center gap-3">
@@ -149,7 +157,7 @@ function ShopPage() {
         </div>
       ) : (
         <>
-          <div className="mb-6 grid gap-3 sm:grid-cols-3">
+          <div className="mb-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             <Input placeholder="Pesquisar item…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Pesquisar item" />
             <Select value={kind} onChange={(e) => setKind(e.target.value)} aria-label="Filtrar por categoria">
               <option value="all">Todas as categorias</option>
@@ -158,6 +166,13 @@ function ShopPage() {
             <Select value={rarity} onChange={(e) => setRarity(e.target.value)} aria-label="Filtrar por raridade">
               <option value="all">Todas as raridades</option>
               {RARITIES.map((r) => <option key={r} value={r}>{RARITY_LABEL[r]}</option>)}
+            </Select>
+            <Select value={price} onChange={(e) => setPrice(e.target.value)} aria-label="Filtrar por faixa de preço">
+              <option value="all">Todos os preços</option><option value="low">Até 299 EC</option><option value="mid">300–700 EC</option><option value="high">Acima de 700 EC</option>
+            </Select>
+            <Select value={theme} onChange={(e) => setTheme(e.target.value)} aria-label="Filtrar por tema">
+              <option value="all">Todos os temas</option>
+              {Array.from(new Set((items.data?.all ?? []).map((item) => item.frame_category).filter((v): v is string => !!v))).sort().map((v) => <option key={v} value={v}>{v[0].toUpperCase()+v.slice(1)}</option>)}
             </Select>
           </div>
           {items.isLoading ? <p className="text-sm text-muted-foreground">Carregando…</p> : list.length === 0 ? <p className="text-sm text-muted-foreground">Nenhum item à venda com esses filtros.</p> : (
