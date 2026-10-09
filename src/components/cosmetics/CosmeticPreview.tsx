@@ -41,7 +41,7 @@ export function CosmeticPreview({
   kind, preview, animation, mediaUrl, mediaPath, mediaType, effect, slug, frameCategory, rarity, className,
 }: {
   kind: string; preview: string; animation: string; mediaUrl?: string | null | undefined; mediaPath?: string | null | undefined;
-  mediaType?: string | null | undefined; effect?: CosmeticEffect | null | undefined; slug?: string | null; frameCategory?: string | null; rarity?: string | null; className?: string;
+  mediaType?: string | null | undefined; effect?: CosmeticEffect | null | undefined; slug?: string | null | undefined; frameCategory?: string | null | undefined; rarity?: string | null | undefined; className?: string | undefined;
 }) {
   const { ref, pausedClass } = useVisibleAnim<HTMLDivElement>();
   const anim = animClass(animation);
