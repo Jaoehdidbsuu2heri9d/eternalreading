@@ -207,6 +207,7 @@ function AdminPage() {
       {(is("usuarios","todos") || is("gamificacao","niveis-xp")) && <AdminTeam isOwner={isOwner} mode="people" />}
       {(is("usuarios","administradores") || is("seguranca","equipe")) && <AdminTeam isOwner={isOwner} mode="administrators" />}
       {(is("comunidade","denuncias") || is("comunidade","bloqueios")) && <AdminModeration />}
+      {is("personalizacao","molduras") && <AdminCosmetics framesOnly />}
       {is("personalizacao","cosmeticos") && <AdminCosmetics />}
       {is("gamificacao","coins") && <AdminCoins />}
       {is("gamificacao","conquistas") && <AdminAchievements />}
