@@ -45,6 +45,7 @@ export function CosmeticPreview({
 }) {
   const { ref, pausedClass } = useVisibleAnim<HTMLDivElement>();
   const anim = animClass(animation);
+  const frameMedia = kind === "frame" ? useCosmeticMedia(mediaPath, mediaUrl) : null;
 
   if (kind === "banner" || kind === "background") {
     return <CosmeticSurface preview={preview} animation={animation} mediaUrl={mediaUrl} mediaPath={mediaPath} mediaType={mediaType} className={cn("h-24 w-full", className)} />;
@@ -62,7 +63,7 @@ export function CosmeticPreview({
     inner = (
       <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-full">
         <span className="gradient-eternal relative h-14 w-14 rounded-full border-2 border-background" />
-        <FrameArtwork size={56} rarity={rarity} color={preview} animation={animation} slug={slug} category={frameCategory} />
+        {frameMedia ? (mediaType === "video" ? <video aria-hidden src={frameMedia} autoPlay muted loop playsInline preload="metadata" className="pointer-events-none absolute -inset-[11px] h-[78px] w-[78px] object-contain" /> : <img aria-hidden src={frameMedia} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute -inset-[11px] h-[78px] w-[78px] object-contain" />) : hasEffect(effect) ? <><AuraEffect effect={effect} color={preview} avatarSize={56} /><FrameArtwork size={56} rarity={rarity} color={preview} animation={animation} slug={slug} category={frameCategory} /></> : <FrameArtwork size={56} rarity={rarity} color={preview} animation={animation} slug={slug} category={frameCategory} />}
       </span>
     );
   } else if (kind === "border") {
