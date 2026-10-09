@@ -4,11 +4,12 @@ import { useSignedUrl, useEquipped } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import { animClass, hasEffect, useVisibleAnim, type CosmeticEffect } from "@/lib/cosmetics";
 import { AuraEffect } from "@/components/cosmetics/AuraEffect";
+import { FrameArtwork } from "@/components/cosmetics/FrameArtwork";
 import { useCosmeticMedia } from "@/components/cosmetics/CosmeticPreview";
 
 /** Moldura mínima usada para desenhar/visualizar (equipada ou em prévia). */
 export interface FrameLike {
-  preview: string; animation: string; effect?: CosmeticEffect | null;
+  preview: string; animation: string; rarity?: string | null; effect?: CosmeticEffect | null;
   media_url?: string | null; media_path?: string | null; media_type?: string | null;
 }
 
@@ -93,16 +94,11 @@ function FrameLayer({ frame, size, reducedMotion, visible }: { frame: FrameLike;
       </>
     );
   }
-  const solid = frame.preview.startsWith("#") ? frame.preview : undefined;
   return (
-    <span aria-hidden
-      className={cn("pointer-events-none absolute rounded-full", animClass(frame.animation))}
-      style={{
-        inset: -ring,
-        ["--cos-color" as string]: solid,
-        ...(solid
-          ? { boxShadow: `0 0 0 ${ring}px ${solid}, 0 0 ${ring * 4}px ${solid}` }
-          : { background: frame.preview, WebkitMask: `radial-gradient(circle, transparent ${size / 2}px, #000 ${size / 2 + 0.5}px)`, mask: `radial-gradient(circle, transparent ${size / 2}px, #000 ${size / 2 + 0.5}px)` }),
-      }} />
+    <>
+      <span aria-hidden className={cn("pointer-events-none absolute rounded-full", animClass(frame.animation))}
+        style={{ inset: -ring, boxShadow: `0 0 0 ${ring}px ${frame.preview.startsWith("#") ? frame.preview : "#a855f7"}, 0 0 ${ring * 3}px ${frame.preview.startsWith("#") ? frame.preview : "#a855f7"}` }} />
+      <FrameArtwork size={size} rarity={frame.rarity} color={frame.preview} animation={frame.animation} />
+    </>
   );
 }
