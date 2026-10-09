@@ -99,7 +99,7 @@ function FrameLayer({ frame, size, reducedMotion, visible }: { frame: FrameLike;
     <>
       <span aria-hidden className={cn("pointer-events-none absolute rounded-full", animClass(frame.animation))}
         style={{ inset: -ring, boxShadow: `0 0 0 ${ring}px ${frame.preview.startsWith("#") ? frame.preview : "#a855f7"}, 0 0 ${ring * 3}px ${frame.preview.startsWith("#") ? frame.preview : "#a855f7"}` }} />
-      <FrameArtwork size={size} rarity={frame.rarity} color={frame.preview} animation={frame.animation} />
+      <FrameArtwork size={size} rarity={frame.rarity} color={frame.preview} animation={frame.animation} slug={frame.slug} category={frame.frame_category} />
     </>
   );
 }
