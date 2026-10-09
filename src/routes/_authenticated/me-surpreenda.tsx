@@ -5,7 +5,6 @@ import { BookOpen, Check, Heart, RefreshCw, Sparkles, ThumbsDown, WandSparkles }
 
 import { Badge } from "@/components/common/EBadge";
 import { Button } from "@/components/common/EButton";
-import { PageHeader } from "@/components/PageHeader";
 import { fetchCatalog, fetchFavorites, fetchGenres, fetchHistory } from "@/lib/api";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/useAuth";
@@ -170,7 +169,7 @@ function MeSurpreendaPage() {
     setSelectedGenres((old) => old.includes(slug) ? old.filter((g) => g !== slug) : old.length < 20 ? [...old, slug] : old);
   }
 
-  const ready = !catalog.isLoading && (catalog.data?.length ?? 0) > 0;
+  const ready = !catalog.isLoading && !publishedChapters.isLoading && (catalog.data?.length ?? 0) > 0;
   const personalized = learned.size > 0;
 
   return (
