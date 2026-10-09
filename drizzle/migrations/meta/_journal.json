@@ -197,6 +197,13 @@
       "when": 1791709200000,
       "tag": "0027_shop_price_rebalance",
       "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "7",
+      "when": 1791712800000,
+      "tag": "0028_me_surpreenda",
+      "breakpoints": true
     }
   ]
 }
