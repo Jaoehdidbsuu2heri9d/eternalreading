@@ -39,8 +39,8 @@ function getTheme(slug = "", category = ""): FrameTheme {
 export function FrameArtwork({
   size, rarity = "common", color, animation = "none", slug, category,
 }: {
-  size: number; rarity?: string | null; color?: string | null; animation?: string | null;
-  slug?: string | null; category?: string | null;
+  size: number; rarity?: string | null | undefined; color?: string | null | undefined; animation?: string | null | undefined;
+  slug?: string | null | undefined; category?: string | null | undefined;
 }) {
   const instanceId = useId().replace(/:/g, "");
   const tone = color?.startsWith("#") ? color : RARITY_COLOR[rarity ?? "common"] ?? "#94a3b8";
