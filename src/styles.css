@@ -252,3 +252,19 @@
 @media (prefers-reduced-motion: reduce) {
   .frame-artwork *, .frame-artwork { animation: none !important; }
 }
+
+/* Silhuetas e efeitos distintos da coleção premium de molduras Eternal. */
+@keyframes frame-feather-rise { 0% { transform: translateY(5px) rotate(-8deg); opacity:0; } 35% { opacity:1; } 100% { transform:translateY(-8px) rotate(12deg); opacity:0; } }
+@keyframes frame-dragon-scale { 0%,100% { opacity:.65; filter:drop-shadow(0 0 2px #60a5fa); } 50% { opacity:1; filter:drop-shadow(0 0 8px #a78bfa); } }
+@keyframes frame-mist-flow { 0% { stroke-dashoffset:0; opacity:.4; } 50% { opacity:1; } 100% { stroke-dashoffset:-50; opacity:.4; } }
+@keyframes frame-blossom { 0% { transform:translateY(-3px) rotate(0); opacity:.25; } 50% { opacity:1; } 100% { transform:translateY(5px) rotate(28deg); opacity:.4; } }
+@keyframes frame-fox-spirit { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-3px) rotate(3deg); } }
+.frame-artwork__dragon { animation:frame-dragon-scale 2.1s ease-in-out infinite; transform-origin:50% 50%; }
+.frame-artwork__phoenix { animation:frame-feather-rise 2.2s ease-in-out infinite; transform-origin:50% 75%; }
+.frame-artwork__kitsune { animation:frame-fox-spirit 2s ease-in-out infinite; transform-origin:50% 50%; }
+.frame-artwork__moonlit { animation:frame-blossom 3.5s ease-in-out infinite; transform-origin:50% 50%; }
+.frame-artwork__sakura { animation:frame-blossom 2.8s ease-in-out infinite; transform-origin:50% 50%; }
+.frame-artwork__phantom { animation:frame-mist-flow 3.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+ .frame-artwork__dragon,.frame-artwork__phoenix,.frame-artwork__kitsune,.frame-artwork__moonlit,.frame-artwork__sakura,.frame-artwork__phantom { animation:none !important; }
+}
