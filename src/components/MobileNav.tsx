@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { BookOpen, Clock, Compass, Crown, Heart, HeartHandshake, Home, MoreHorizontal, Trophy, User, Users, X } from "lucide-react";
+import { BookOpen, Clock, Compass, Crown, Heart, HeartHandshake, Home, MoreHorizontal, Sparkles, Trophy, User, Users, X } from "lucide-react";
 
 const primary = [
   { to: "/inicio", label: "Início", Icon: Home },
@@ -12,6 +12,7 @@ const primary = [
 const secondary = [
   { to: "/atualizacoes", label: "Atualizações", Icon: Clock },
   { to: "/ranking", label: "Ranking", Icon: Trophy },
+  { to: "/me-surpreenda", label: "Me Surpreenda", Icon: Sparkles },
   { to: "/historico", label: "Histórico", Icon: BookOpen },
   { to: "/atividade", label: "Atividade", Icon: Users },
   { to: "/hall-da-fama", label: "Hall da Fama", Icon: Crown },
