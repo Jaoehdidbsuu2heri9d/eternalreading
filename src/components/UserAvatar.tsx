@@ -76,7 +76,7 @@ function FrameLayer({ frame, size, reducedMotion, visible }: { frame: FrameLike;
   if (media) {
     const pad = Math.round(size * 0.18);
     const st = { inset: -pad, width: size + pad * 2, height: size + pad * 2 };
-    const animatedImage = /\\.(gif|apng|webp)(?:$|[?#])/i.test(frame.media_path ?? frame.media_url ?? "");
+    const animatedImage = /\.(gif|apng|webp)(?:$|[?#])/i.test(frame.media_path ?? frame.media_url ?? "");
     // If there is no separate still asset, prefer a static CSS ring over animated media for reduced-motion users.
     if (reducedMotion && (frame.media_type === "video" || animatedImage)) {
       return <span aria-hidden className="pointer-events-none absolute rounded-full" style={{ inset: -ring, boxShadow: `0 0 0 ${ring}px ${frame.preview}, 0 0 ${ring * 3}px ${frame.preview}` }} />;
