@@ -2,10 +2,19 @@ import { useId } from "react";
 import { cn } from "@/lib/utils";
 import { RARITY_COLOR } from "@/lib/cosmetics";
 
-type FrameTheme = "fire" | "ice" | "galaxy" | "dark" | "nature" | "electric" | "magic" | "cat" | "bunny" | "halloween" | "christmas" | "easter" | "royal";
+type FrameTheme = "fire" | "ice" | "galaxy" | "dark" | "nature" | "electric" | "magic" | "cat" | "bunny" | "halloween" | "christmas" | "easter" | "royal" | "dragon" | "phoenix" | "kitsune" | "moonlit" | "sakura" | "phantom";
 
 function getTheme(slug = "", category = ""): FrameTheme {
   const s = slug.toLowerCase();
+  if (/celestial-dragon/.test(s)) return "dragon";
+  if (/eternal-phoenix/.test(s)) return "phoenix";
+  if (/galaxy-sovereign/.test(s)) return "galaxy";
+  if (/kitsune-spirit/.test(s)) return "kitsune";
+  if (/moonlit-garden/.test(s)) return "moonlit";
+  if (/bunny-dreamland/.test(s)) return "bunny";
+  if (/midnight-cat/.test(s)) return "cat";
+  if (/halloween-phantom/.test(s)) return "phantom";
+  if (/sakura-spring/.test(s)) return "sakura";
   if (/halloween|hallow|abobora|pumpkin|spooky/.test(s)) return "halloween";
   if (/christmas|natal|santa|snowman|noel/.test(s)) return "christmas";
   if (/easter|pascoa|bunny|coelh/.test(s)) return "easter";
@@ -41,7 +50,7 @@ export function FrameArtwork({
   const gradientId = "frame-tone-" + instanceId;
   const glowId = "frame-glow-" + instanceId;
   const orbitId = "frame-orbit-" + instanceId;
-  const isPet = theme === "cat" || theme === "bunny" || theme === "easter";
+  const isPet = ["cat", "bunny", "easter", "kitsune"].includes(theme);
   const motionClass = animation && animation !== "none" ? "frame-artwork__motion--" + animation : "frame-artwork__motion--glow";
 
   return (
@@ -122,6 +131,13 @@ export function FrameArtwork({
           <circle cx="50" cy="6" r="2" fill="#fff7ed" />
         </g>}
 
+        {/* Composições exclusivas para as dez molduras de coleção. */}
+        {theme === "dragon" && <g className="frame-artwork__dragon" stroke="#7dd3fc" strokeWidth="1.5" fill="#6366f1" fillOpacity=".55"><path d="M50 3l5 7 8-2-3 8 7 5-9 2-3 8-5-7-8 2 3-8-7-5 9-2Z"/><path d="M14 32l8-4 6 7-7 7-7-3Z M72 65l8-4 6 7-7 7-7-3Z" fill="#38bdf8"/><circle cx="50" cy="7" r="2.5" fill="#fff"/><circle cx="18" cy="36" r="1.8" fill="#fff"/><circle cx="78" cy="69" r="1.8" fill="#fff"/></g>}
+        {theme === "phoenix" && <g className="frame-artwork__phoenix" stroke="#fbbf24" strokeWidth="1.6" fill="#ef4444" fillOpacity=".68"><path d="M20 75Q5 61 17 48Q14 63 27 62Q20 49 31 38Q29 57 40 59L34 73Z"/><path d="M80 75Q95 61 83 48Q86 63 73 62Q80 49 69 38Q71 57 60 59L66 73Z"/><path d="M50 13l7 13-7 8-7-8Z" fill="#fef3c7"/><path d="M50 29l-7 15 7-3 7 3Z" fill="#f97316"/></g>}
+        {theme === "kitsune" && <g className="frame-artwork__kitsune" stroke="#fecdd3" strokeWidth="1.4" fill="#fb7185" fillOpacity=".6"><path d="M12 17L13 3 24 13 30 25 19 29Z M88 17L87 3 76 13 70 25 81 29Z"/><path d="M19 53q-8 9 1 16t-1 13 M81 53q8 9-1 16t1 13" stroke="#fda4af" strokeWidth="3" fill="none"/><circle cx="16" cy="45" r="5"/><circle cx="84" cy="45" r="5"/><path d="M16 42v6m-3-3h6M84 42v6m-3-3h6" stroke="#fff"/></g>}
+        {theme === "moonlit" && <g className="frame-artwork__moonlit" stroke="#ddd6fe" strokeWidth="1.4" fill="#a78bfa" fillOpacity=".7"><path d="M17 20q-9 12 0 19q-13-2-13-13q0-9 10-13q-2 4 3 7Z"/><path d="M80 72q-9 12 0 19q-13-2-13-13q0-9 10-13q-2 4 3 7Z"/><g fill="#f9a8d4" stroke="#fbcfe8"><circle cx="25" cy="24" r="4"/><circle cx="75" cy="75" r="4"/><circle cx="77" cy="22" r="3"/><circle cx="22" cy="78" r="3"/></g><path d="M25 24l-5-7m5 7 7-5m43 56 6-8" stroke="#fbcfe8"/></g>}
+        {theme === "sakura" && <g className="frame-artwork__sakura" fill="#f9a8d4" stroke="#fce7f3" strokeWidth="1"><path d="M18 24q-8-9 0-10q8 1 0 10q9-8 10 0q-2 8-10 0q8 10 0 11q-8-3 0-11q-10 6-11-2q2-7 11 2Z"/><path d="M79 72q-8-9 0-10q8 1 0 10q9-8 10 0q-2 8-10 0q8 10 0 11q-8-3 0-11q-10 6-11-2q2-7 11 2Z"/><circle cx="18" cy="24" r="2" fill="#fef3c7"/><circle cx="79" cy="72" r="2" fill="#fef3c7"/></g>}
+        {theme === "phantom" && <g className="frame-artwork__phantom"><g fill="#c4b5fd" stroke="#ede9fe" strokeWidth="1.2"><path d="M23 18q-9 0-9 10v10l4-4 4 4 4-4 4 4V28q0-10-7-10Z"/><path d="M78 65q-9 0-9 10v10l4-4 4 4 4-4 4 4V75q0-10-7-10Z"/></g><g fill="#f97316" stroke="#fed7aa" strokeWidth="1.2"><circle cx="75" cy="18" r="7"/><path d="M72 11l3-5 3 5" fill="#65a30d"/><path d="M71 16l3 2 3-2 M72 22h6" stroke="#431407" strokeWidth="1.5"/></g><path d="M5 54q10-9 20 0t20 0t20 0t20 0t10 0" stroke="#a78bfa" strokeWidth="2" strokeDasharray="3 4" fill="none" className="frame-artwork__mist"/></g>}
         {/* Event frames: pumpkin, Christmas hat/lights and Easter egg. */}
         {theme === "halloween" && <g className="frame-artwork__pumpkin" transform="translate(72 13)">
           <path d="M-2 -7Q-8 -12 -5 -16Q1 -17 1 -10Q7 -16 11 -11Q13 -5 5 -4" fill="#65a30d" stroke="#bef264" strokeWidth="1.3" />
