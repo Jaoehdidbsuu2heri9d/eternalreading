@@ -91,6 +91,7 @@ function FrameLayer({ frame, size, reducedMotion, visible }: { frame: FrameLike;
       <>
         <span aria-hidden className="pointer-events-none absolute rounded-full" style={{ inset: -ring, boxShadow: `0 0 0 ${Math.max(1, ring - 1)}px ${frame.preview}` }} />
         <AuraEffect effect={frame.effect} color={frame.preview} avatarSize={size} />
+        <FrameArtwork size={size} rarity={frame.rarity} color={frame.preview} animation={frame.animation} />
       </>
     );
   }
