@@ -9,7 +9,7 @@ import { useCosmeticMedia } from "@/components/cosmetics/CosmeticPreview";
 
 /** Moldura mínima usada para desenhar/visualizar (equipada ou em prévia). */
 export interface FrameLike {
-  preview: string; animation: string; rarity?: string | null; effect?: CosmeticEffect | null;
+  preview: string; animation: string; rarity?: string | null; slug?: string | null; frame_category?: string | null; effect?: CosmeticEffect | null;
   media_url?: string | null; media_path?: string | null; media_type?: string | null;
 }
 
@@ -91,7 +91,7 @@ function FrameLayer({ frame, size, reducedMotion, visible }: { frame: FrameLike;
       <>
         <span aria-hidden className="pointer-events-none absolute rounded-full" style={{ inset: -ring, boxShadow: `0 0 0 ${Math.max(1, ring - 1)}px ${frame.preview}` }} />
         <AuraEffect effect={frame.effect} color={frame.preview} avatarSize={size} />
-        <FrameArtwork size={size} rarity={frame.rarity} color={frame.preview} animation={frame.animation} />
+        <FrameArtwork size={size} rarity={frame.rarity} color={frame.preview} animation={frame.animation} slug={frame.slug} category={frame.frame_category} />
       </>
     );
   }
