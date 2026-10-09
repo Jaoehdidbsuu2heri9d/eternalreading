@@ -21,7 +21,7 @@ const EMPTY: Draft = {
   frame_category: "classica", required_achievement_id: null, featured: false, after_event: "unavailable",
   exclusive_tag: null, keep_after_plan: false, sort: 0,
 };
-const IMG_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
+const IMG_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif", "image/apng"];
 const toLocal = (v: string | null) => (v ? v.slice(0, 16) : "");
 
 /** Administração de cosméticos: criar, editar, ativar/desativar, conceder e ver estatísticas. */
@@ -167,7 +167,7 @@ export function AdminCosmetics({ framesOnly = false }: { framesOnly?: boolean })
           <Field label="Animação" htmlFor="c-anim"><Select id="c-anim" value={draft.animation} onChange={(e) => set("animation", e.target.value)}>{ANIMATIONS.map((a) => <option key={a} value={a}>{ANIMATION_LABEL[a]}</option>)}</Select></Field>
           <Field label="Imagem (link https, opcional)" htmlFor="c-media" hint="Para fundos/banners. Use arquivos leves (até ~2 MB, 1500×500)."><Input id="c-media" type="url" pattern="https://.*" value={draft.media_url ?? ""} onChange={(e) => set("media_url", e.target.value)} /></Field>
           <Field label="Arquivo de mídia (banners/fundos)" htmlFor="c-file" hint="Imagem até 5 MB, ou vídeo MP4/WebM até 15 MB, 15 s e 1920×1080. Vídeos tocam sem som, em loop.">
-            <input id="c-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif,video/mp4,video/webm" disabled={uploading}
+            <input id="c-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/apng,video/mp4,video/webm" disabled={uploading}
               onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) void uploadMedia(f); }} className="text-sm" />
             {draft.media_path && <button type="button" className="mt-1 text-xs text-primary" onClick={() => setDraft({ ...draft, media_path: null, media_type: "image" })}>Remover arquivo ({draft.media_type === "video" ? "vídeo" : "imagem"})</button>}
           </Field>
