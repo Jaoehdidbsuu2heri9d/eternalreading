@@ -146,13 +146,23 @@ function MeSurpreendaPage() {
   function surprise() {
     const pool = candidates.filter((c) => !seen.includes(c.manga.id)).slice(0, 12);
     if (!pool.length) {
-      const fallback = candidates.filter((c) => !seen.includes(c.manga.id));
+      const alreadyRead = new Set((history.data ?? []).map((h: any) => (h.manga as Manga | null)?.id).filter(Boolean));
+      const alreadyFavorite = new Set((favorites.data ?? []).map((m) => m.id));
+      const recentFeedback = new Set((feedback.data ?? []).filter((f) => Date.now() - new Date(f.created_at).getTime() < 30 * 24 * 60 * 60 * 1000).map((f) => f.manga_id));
+      const fallback = (catalog.data ?? []).filter((m) =>
+        publishedChapters.data?.has(m.id) && m.id && m.slug && m.title && m.cover_url &&
+        !alreadyRead.has(m.id) && !alreadyFavorite.has(m.id) && !recentFeedback.has(m.id) && !seen.includes(m.id)
+      );
       if (fallback.length) {
-        setCurrent(fallback[Math.floor(Math.random() * fallback.length)]);
+        const manga = fallback[Math.floor(Math.random() * fallback.length)];
+        setCurrent({ manga, score: 0, reasons: ["Descoberta aleatória entre obras publicadas que você ainda não iniciou"], compatibility: null });
+        setSeen((old) => [...old, manga.id]);
+        setRejecting(false);
+        setNotice("As recomendações personalizadas se esgotaram; esta é uma descoberta aleatória entre obras disponíveis.");
         return;
       }
       setCurrent(null);
-      setNotice(candidates.length ? "Você já viu todas as sugestões disponíveis nesta sessão. Ajuste os gêneros ou volte mais tarde para novas descobertas." : "Ainda não encontrei uma obra com dados suficientes que combine com seus filtros. Experimente outros gêneros ou amplie suas preferências.");
+      setNotice(candidates.length ? "Você já viu todas as sugestões disponíveis nesta sessão. Ajuste os gêneros ou volte mais tarde para novas descobertas." : "Não há candidatos inéditos suficientes neste momento. Experimente outros gêneros ou volte quando novas obras forem publicadas.");
       return;
     }
     // Explora as melhores opções, com pequena variação para evitar repetir sempre o topo.
