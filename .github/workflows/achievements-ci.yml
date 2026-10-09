@@ -44,7 +44,7 @@ jobs:
           python - <<'PY'
           from pglast import parse_sql
           from pathlib import Path
-          for name in ["drizzle/migrations/0014_achievements_v2.sql", "drizzle/migrations/0015_achievements_catalog.sql", "drizzle/migrations/0016_achievements_completion.sql", "drizzle/migrations/0018_donor_hall_sandbox.sql", "drizzle/migrations/0019_admin_manual_supporters.sql", "drizzle/migrations/0020_supporter_privilege_hardening.sql"]:
+          for name in ["drizzle/migrations/0014_achievements_v2.sql", "drizzle/migrations/0015_achievements_catalog.sql", "drizzle/migrations/0016_achievements_completion.sql", "drizzle/migrations/0018_donor_hall_sandbox.sql", "drizzle/migrations/0019_admin_manual_supporters.sql", "drizzle/migrations/0020_supporter_privilege_hardening.sql", "drizzle/migrations/0023_frames_shop_expansion.sql"]:
               parse_sql(Path(name).read_text())
               print("SQL OK:", name)
           PY
