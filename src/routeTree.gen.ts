@@ -35,6 +35,7 @@ import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedRankingRouteImport } from './routes/_authenticated/ranking'
 import { Route as AuthenticatedScansRouteImport } from './routes/_authenticated/scans'
 import { Route as AuthenticatedSejaParceiroRouteImport } from './routes/_authenticated/seja-parceiro'
+import { Route as AuthenticatedLojaMoldurasRouteImport } from './routes/_authenticated/loja_.molduras'
 import { Route as AuthenticatedObraSlugRouteImport } from './routes/_authenticated/obra.$slug'
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
 import { Route as AuthenticatedScanSlugRouteImport } from './routes/_authenticated/scan.$slug'
@@ -176,6 +177,12 @@ const AuthenticatedSejaParceiroRoute =
     path: '/seja-parceiro',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedLojaMoldurasRoute =
+  AuthenticatedLojaMoldurasRouteImport.update({
+    id: '/loja_/molduras',
+    path: '/loja/molduras',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedObraSlugRoute = AuthenticatedObraSlugRouteImport.update({
   id: '/obra/$slug',
   path: '/obra/$slug',
@@ -241,6 +248,7 @@ export interface FileRoutesByFullPath {
   '/ranking': typeof AuthenticatedRankingRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
+  '/loja/molduras': typeof AuthenticatedLojaMoldurasRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/scan/$slug': typeof AuthenticatedScanSlugRoute
@@ -275,6 +283,7 @@ export interface FileRoutesByTo {
   '/ranking': typeof AuthenticatedRankingRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
+  '/loja/molduras': typeof AuthenticatedLojaMoldurasRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/scan/$slug': typeof AuthenticatedScanSlugRoute
@@ -311,6 +320,7 @@ export interface FileRoutesById {
   '/_authenticated/ranking': typeof AuthenticatedRankingRoute
   '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
+  '/_authenticated/loja_/molduras': typeof AuthenticatedLojaMoldurasRoute
   '/_authenticated/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/_authenticated/scan/$slug': typeof AuthenticatedScanSlugRoute
@@ -347,6 +357,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/scans'
     | '/seja-parceiro'
+    | '/loja/molduras'
     | '/obra/$slug'
     | '/perfil/$username'
     | '/scan/$slug'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/scans'
     | '/seja-parceiro'
+    | '/loja/molduras'
     | '/obra/$slug'
     | '/perfil/$username'
     | '/scan/$slug'
@@ -416,6 +428,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ranking'
     | '/_authenticated/scans'
     | '/_authenticated/seja-parceiro'
+    | '/_authenticated/loja_/molduras'
     | '/_authenticated/obra/$slug'
     | '/_authenticated/perfil/$username'
     | '/_authenticated/scan/$slug'
@@ -621,6 +634,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSejaParceiroRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/loja_/molduras': {
+      id: '/_authenticated/loja_/molduras'
+      path: '/loja/molduras'
+      fullPath: '/loja/molduras'
+      preLoaderRoute: typeof AuthenticatedLojaMoldurasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/obra/$slug': {
       id: '/_authenticated/obra/$slug'
       path: '/obra/$slug'
@@ -693,6 +713,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedRankingRoute: typeof AuthenticatedRankingRoute
   AuthenticatedScansRoute: typeof AuthenticatedScansRoute
   AuthenticatedSejaParceiroRoute: typeof AuthenticatedSejaParceiroRoute
+  AuthenticatedLojaMoldurasRoute: typeof AuthenticatedLojaMoldurasRoute
   AuthenticatedObraSlugRoute: typeof AuthenticatedObraSlugRoute
   AuthenticatedPerfilUsernameRoute: typeof AuthenticatedPerfilUsernameRoute
   AuthenticatedScanSlugRoute: typeof AuthenticatedScanSlugRoute
@@ -720,6 +741,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedRankingRoute: AuthenticatedRankingRoute,
   AuthenticatedScansRoute: AuthenticatedScansRoute,
   AuthenticatedSejaParceiroRoute: AuthenticatedSejaParceiroRoute,
+  AuthenticatedLojaMoldurasRoute: AuthenticatedLojaMoldurasRoute,
   AuthenticatedObraSlugRoute: AuthenticatedObraSlugRoute,
   AuthenticatedPerfilUsernameRoute: AuthenticatedPerfilUsernameRoute,
   AuthenticatedScanSlugRoute: AuthenticatedScanSlugRoute,

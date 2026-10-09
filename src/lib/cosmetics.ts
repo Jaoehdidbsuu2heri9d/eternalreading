@@ -52,13 +52,23 @@ export interface CosmeticRow {
   availability: string; event_slug: string | null; starts_at: string | null; ends_at: string | null;
   in_shop?: boolean; stock?: number | null; sold?: number; effect?: CosmeticEffect | null;
   media_path?: string | null; media_type?: string;
+  frame_category?: string | null; required_achievement_id?: string | null; featured?: boolean;
+  released_at?: string; after_event?: string; exclusive_tag?: string | null; keep_after_plan?: boolean; sort?: number;
 }
+
+export const EXCLUSIVE_LABEL: Record<string, string> = {
+  eternal: "Exclusivo Eternal", sunshine: "Exclusivo Sunshine", event: "Exclusivo de Evento",
+  achievement: "Exclusivo de Conquista", founder: "Exclusivo Fundador",
+};
+export const AFTER_EVENT_LABEL: Record<string, string> = {
+  keep: "Continua disponível", unavailable: "Fica indisponível", rare: "Vira item raro", archive: "Arquivo de eventos",
+};
 
 /** Bordas animadas ao redor do avatar (efeito desenhado em SVG/CSS, não imagem). */
 export interface CosmeticEffect { style?: string; intensity?: number; speed?: number; size?: number }
-export const EFFECT_STYLES = ["lightning", "electric", "neon", "orbit", "fire", "aura", "magic"] as const;
+export const EFFECT_STYLES = ["lightning", "electric", "neon", "orbit", "fire", "ice", "galaxy", "aura", "magic", "dark"] as const;
 export const EFFECT_LABEL: Record<string, string> = {
   lightning: "Raios de energia", electric: "Energia elétrica", neon: "Neon", orbit: "Partículas orbitando",
-  fire: "Fogo estilizado", aura: "Aura", magic: "Energia mágica",
+  fire: "Fogo estilizado", ice: "Gelo cristalino", galaxy: "Galáxia", aura: "Aura", magic: "Energia mágica", dark: "Sombras",
 };
 export const hasEffect = (e: unknown): e is CosmeticEffect => !!e && typeof e === "object" && !!(e as CosmeticEffect).style;

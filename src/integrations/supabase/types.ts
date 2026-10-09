@@ -578,9 +578,45 @@ export type Database = {
           },
         ]
       }
+      cosmetic_events: {
+        Row: {
+          action: string
+          cosmetic_id: string
+          created_at: string
+          id: string
+          price: number | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          cosmetic_id: string
+          created_at?: string
+          id?: string
+          price?: number | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          cosmetic_id?: string
+          created_at?: string
+          id?: string
+          price?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cosmetic_events_cosmetic_id_fkey"
+            columns: ["cosmetic_id"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cosmetics: {
         Row: {
           active: boolean
+          after_event: string
           animation: string
           availability: string
           coin_price: number | null
@@ -589,8 +625,12 @@ export type Database = {
           effect: Json
           ends_at: string | null
           event_slug: string | null
+          exclusive_tag: string | null
+          featured: boolean
+          frame_category: string | null
           id: string
           in_shop: boolean
+          keep_after_plan: boolean
           kind: string
           media_path: string | null
           media_type: string
@@ -598,6 +638,8 @@ export type Database = {
           name: string
           preview: string
           rarity: string
+          released_at: string
+          required_achievement_id: string | null
           required_level: number
           required_plan: Database["public"]["Enums"]["plan_tier"]
           slug: string
@@ -609,6 +651,7 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          after_event?: string
           animation?: string
           availability?: string
           coin_price?: number | null
@@ -617,8 +660,12 @@ export type Database = {
           effect?: Json
           ends_at?: string | null
           event_slug?: string | null
+          exclusive_tag?: string | null
+          featured?: boolean
+          frame_category?: string | null
           id?: string
           in_shop?: boolean
+          keep_after_plan?: boolean
           kind: string
           media_path?: string | null
           media_type?: string
@@ -626,6 +673,8 @@ export type Database = {
           name: string
           preview: string
           rarity?: string
+          released_at?: string
+          required_achievement_id?: string | null
           required_level?: number
           required_plan?: Database["public"]["Enums"]["plan_tier"]
           slug: string
@@ -637,6 +686,7 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          after_event?: string
           animation?: string
           availability?: string
           coin_price?: number | null
@@ -645,8 +695,12 @@ export type Database = {
           effect?: Json
           ends_at?: string | null
           event_slug?: string | null
+          exclusive_tag?: string | null
+          featured?: boolean
+          frame_category?: string | null
           id?: string
           in_shop?: boolean
+          keep_after_plan?: boolean
           kind?: string
           media_path?: string | null
           media_type?: string
@@ -654,6 +708,8 @@ export type Database = {
           name?: string
           preview?: string
           rarity?: string
+          released_at?: string
+          required_achievement_id?: string | null
           required_level?: number
           required_plan?: Database["public"]["Enums"]["plan_tier"]
           slug?: string
@@ -663,7 +719,22 @@ export type Database = {
           stock?: number | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "cosmetics_frame_category_fkey"
+            columns: ["frame_category"]
+            isOneToOne: false
+            referencedRelation: "frame_categories"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "cosmetics_required_achievement_id_fkey"
+            columns: ["required_achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       donations: {
         Row: {
@@ -784,6 +855,30 @@ export type Database = {
           created_at?: string
           follower_id?: string
           following_id?: string
+        }
+        Relationships: []
+      }
+      frame_categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          name: string
+          slug: string
+          sort: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          name: string
+          slug: string
+          sort?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          name?: string
+          slug?: string
+          sort?: number
         }
         Relationships: []
       }
@@ -1808,6 +1903,10 @@ export type Database = {
         }
         Returns: number
       }
+      cosmetic_available: {
+        Args: { c: Database["public"]["Tables"]["cosmetics"]["Row"] }
+        Returns: boolean
+      }
       discover_secret: { Args: { p_key: string }; Returns: boolean }
       ensure_profile: { Args: { p_username?: string }; Returns: undefined }
       equip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
@@ -1816,6 +1915,13 @@ export type Database = {
         Returns: number
       }
       expire_subscriptions: { Args: never; Returns: number }
+      frame_popularity: {
+        Args: never
+        Returns: {
+          cosmetic_id: string
+          owners: number
+        }[]
+      }
       hall_of_fame: {
         Args: { p_limit?: number }
         Returns: {

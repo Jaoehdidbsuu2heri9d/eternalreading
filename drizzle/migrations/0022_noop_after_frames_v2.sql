@@ -1,0 +1,1 @@
+COMMENT ON TABLE public.cosmetics IS 'Cosmetic catalog (frames, borders, banners, backgrounds).';
