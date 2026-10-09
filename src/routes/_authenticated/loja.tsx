@@ -169,7 +169,7 @@ function ShopPage() {
                   <div key={c.id} className={`surface-panel overflow-hidden rounded-2xl ${s.on ? "glow-ring" : ""}`}
                     style={{ borderTop: `2px solid ${color}`, boxShadow: ["legendary", "mythic"].includes(c.rarity) ? `0 0 24px -12px ${color}` : undefined }}>
                     <button className="block w-full" onClick={() => setSel(c)} aria-label={`Prévia de ${c.name}`}>
-                      <CosmeticPreview kind={c.kind} preview={c.preview} animation={c.animation} mediaUrl={c.media_url} mediaPath={c.media_path} mediaType={c.media_type} effect={c.effect} />
+                      <CosmeticPreview kind={c.kind} preview={c.preview} animation={c.animation} mediaUrl={c.media_url} mediaPath={c.media_path} mediaType={c.media_type} effect={c.effect} slug={c.slug} frameCategory={c.frame_category} rarity={c.rarity} />
                     </button>
                     <div className="space-y-2 p-4">
                       <div className="flex items-center justify-between gap-2">
@@ -200,7 +200,7 @@ function ShopPage() {
               <p className="font-semibold">{sel.name}</p>
               <button onClick={() => setSel(null)} aria-label="Fechar"><X className="h-5 w-5" /></button>
             </div>
-            <CosmeticPreview kind={sel.kind} preview={sel.preview} animation={sel.animation} mediaUrl={sel.media_url} mediaPath={sel.media_path} mediaType={sel.media_type} effect={sel.effect} className="h-36" />
+            <CosmeticPreview kind={sel.kind} preview={sel.preview} animation={sel.animation} mediaUrl={sel.media_url} mediaPath={sel.media_path} mediaType={sel.media_type} effect={sel.effect} slug={sel.slug} frameCategory={sel.frame_category} rarity={sel.rarity} className="h-36" />
             <div className="flex items-center gap-4 p-6">
               <UserAvatar userId={profile.id} username={profile.username} avatarPath={profile.avatar_path} avatarUrl={profile.avatar_url} size={64}
                 previewAura={sel.kind === "border" && hasEffect(sel.effect) ? { effect: sel.effect, color: sel.preview } : null} />
