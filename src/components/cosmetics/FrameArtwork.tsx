@@ -9,7 +9,7 @@ function getTheme(slug = "", category = ""): FrameTheme {
   if (/halloween|hallow|abobora|pumpkin|spooky/.test(s)) return "halloween";
   if (/christmas|natal|santa|snowman|noel/.test(s)) return "christmas";
   if (/easter|pascoa|bunny|coelh/.test(s)) return "easter";
-  if (/kitty|cat|gatinh|paws|patinhas|fofinh/.test(s)) return "cat";
+  if (/kitty|kitten|cat|gatinh|paws|patinhas|fofinh/.test(s)) return "cat";
   if (/bunny|coelh/.test(s)) return "bunny";
   if (/chamas|flame|oni|ambar|fire/.test(s)) return "fire";
   if (/gelo|cristal|ice|frost/.test(s)) return "ice";
