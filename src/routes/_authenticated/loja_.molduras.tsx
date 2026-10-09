@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_authenticated/loja_/molduras")({
 });
 
 const PLAN_RANK: Record<PlanTier, number> = { free: 0, eternal: 1, eternal_sunshine: 2 };
-const RARITY_RANK: Record<string, number> = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, mythic: 5 };
+const RARITY_RANK: Record<string, number> = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, mythic: 5, secret: 6 };
 const isAnimated = (c: CosmeticRow) => hasEffect(c.effect) || c.animation !== "none" || c.media_type === "video";
 const HIGHLIGHTS = [
   ["hot", "🔥 Em alta"], ["new", "✨ Lançamentos"], ["legend", "👑 Lendárias"], ["anim", "⚡ Animadas"], ["event", "🎃 Evento atual"],
@@ -213,7 +213,7 @@ function FramesShop() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {list.map((c) => {
             const s = status(c); const color = RARITY_COLOR[c.rarity] ?? "#94a3b8";
-            const high = ["legendary", "mythic"].includes(c.rarity);
+            const high = ["legendary", "mythic", "secret"].includes(c.rarity);
             return (
               <article key={c.id} className={`surface-panel overflow-hidden rounded-2xl ${s.on ? "glow-ring" : ""}`}
                 style={{ borderTop: `2px solid ${color}`, boxShadow: high ? `0 0 28px -12px ${color}` : undefined }}>
