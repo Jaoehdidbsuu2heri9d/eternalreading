@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { useSignedUrl, useEquipped } from "@/lib/media";
 import { cn } from "@/lib/utils";
-import { animClass, hasEffect, type CosmeticEffect } from "@/lib/cosmetics";
+import { animClass, hasEffect, useVisibleAnim, type CosmeticEffect } from "@/lib/cosmetics";
 import { AuraEffect } from "@/components/cosmetics/AuraEffect";
 import { useCosmeticMedia } from "@/components/cosmetics/CosmeticPreview";
 
@@ -36,6 +36,7 @@ export function UserAvatar({
   badge?: React.ReactNode;
 }) {
   const signed = useSignedUrl("avatars", avatarPath);
+  const { ref: avatarRef, pausedClass } = useVisibleAnim<HTMLSpanElement>();
   const [reducedMotion, setReducedMotion] = useState(false);
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -51,7 +52,7 @@ export function UserAvatar({
   const aura = previewAura ?? (borderItem && hasEffect(borderItem.effect) ? { effect: borderItem.effect, color: borderItem.preview } : null);
 
   return (
-    <span className="relative inline-flex shrink-0" style={{ width: size, height: size }}>
+    <span ref={avatarRef} className={`relative inline-flex shrink-0 ${pausedClass}`} style={{ width: size, height: size }}>
       {aura && <AuraEffect effect={aura.effect} color={aura.color} avatarSize={size} />}
       <span className={cn("relative inline-flex h-full w-full items-center justify-center overflow-hidden rounded-full", !src && "gradient-eternal", className)}>
         {src ? (
@@ -62,14 +63,14 @@ export function UserAvatar({
           </span>
         )}
       </span>
-      {frameItem && <FrameLayer frame={frameItem} size={size} reducedMotion={reducedMotion} />}
+      {frameItem && <FrameLayer frame={frameItem} size={size} reducedMotion={reducedMotion} visible={!pausedClass} />}
       {badge && <span className="absolute -bottom-1 -right-1 z-10">{badge}</span>}
     </span>
   );
 }
 
 /** Camada da moldura: arte enviada (imagem/vídeo leve), efeito desenhado, ou anel colorido. */
-function FrameLayer({ frame, size, reducedMotion }: { frame: FrameLike; size: number; reducedMotion: boolean }) {
+function FrameLayer({ frame, size, reducedMotion, visible }: { frame: FrameLike; size: number; reducedMotion: boolean; visible: boolean }) {
   const media = useCosmeticMedia(frame.media_path, frame.media_url);
   const ring = Math.max(2, Math.round(size / 20));
   if (media) {
@@ -81,7 +82,7 @@ function FrameLayer({ frame, size, reducedMotion }: { frame: FrameLike; size: nu
       return <span aria-hidden className="pointer-events-none absolute rounded-full" style={{ inset: -ring, boxShadow: `0 0 0 ${ring}px ${frame.preview}, 0 0 ${ring * 3}px ${frame.preview}` }} />;
     }
     return frame.media_type === "video"
-      ? <video aria-hidden src={media} autoPlay={!reducedMotion} muted loop playsInline preload="metadata" className="pointer-events-none absolute object-contain" style={st} />
+      ? <video aria-hidden src={media} autoPlay={!reducedMotion && visible} muted loop playsInline preload="metadata" className="pointer-events-none absolute object-contain" style={st} />
       : <img aria-hidden src={media} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute object-contain" style={st} />;
   }
   if (hasEffect(frame.effect)) {
