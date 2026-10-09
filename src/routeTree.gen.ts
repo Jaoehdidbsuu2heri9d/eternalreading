@@ -30,6 +30,7 @@ import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authentica
 import { Route as AuthenticatedInicioRouteImport } from './routes/_authenticated/inicio'
 import { Route as AuthenticatedLojaRouteImport } from './routes/_authenticated/loja'
 import { Route as AuthenticatedMeRouteImport } from './routes/_authenticated/me'
+import { Route as AuthenticatedMeSurpreendaRouteImport } from './routes/_authenticated/me-surpreenda'
 import { Route as AuthenticatedPersonalizarRouteImport } from './routes/_authenticated/personalizar'
 import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated/planos'
 import { Route as AuthenticatedRankingRouteImport } from './routes/_authenticated/ranking'
@@ -148,6 +149,11 @@ const AuthenticatedLojaRoute = AuthenticatedLojaRouteImport.update({
 const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   id: '/me',
   path: '/me',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMeSurpreendaRoute = AuthenticatedMeSurpreendaRouteImport.update({
+  id: '/me-surpreenda',
+  path: '/me-surpreenda',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPersonalizarRoute =
@@ -599,6 +605,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMeRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/me-surpreenda': {
+      id: '/_authenticated/me-surpreenda'
+      path: '/me-surpreenda'
+      fullPath: '/me-surpreenda'
+      preLoaderRoute: typeof AuthenticatedMeSurpreendaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/personalizar': {
       id: '/_authenticated/personalizar'
       path: '/personalizar'
@@ -708,6 +721,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedInicioRoute: typeof AuthenticatedInicioRoute
   AuthenticatedLojaRoute: typeof AuthenticatedLojaRoute
   AuthenticatedMeRoute: typeof AuthenticatedMeRoute
+  AuthenticatedMeSurpreendaRoute: typeof AuthenticatedMeSurpreendaRoute
   AuthenticatedPersonalizarRoute: typeof AuthenticatedPersonalizarRoute
   AuthenticatedPlanosRoute: typeof AuthenticatedPlanosRoute
   AuthenticatedRankingRoute: typeof AuthenticatedRankingRoute
@@ -736,6 +750,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedInicioRoute: AuthenticatedInicioRoute,
   AuthenticatedLojaRoute: AuthenticatedLojaRoute,
   AuthenticatedMeRoute: AuthenticatedMeRoute,
+  AuthenticatedMeSurpreendaRoute: AuthenticatedMeSurpreendaRoute,
   AuthenticatedPersonalizarRoute: AuthenticatedPersonalizarRoute,
   AuthenticatedPlanosRoute: AuthenticatedPlanosRoute,
   AuthenticatedRankingRoute: AuthenticatedRankingRoute,
