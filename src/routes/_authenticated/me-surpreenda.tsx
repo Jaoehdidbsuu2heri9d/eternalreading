@@ -120,11 +120,11 @@ function MeSurpreendaPage() {
     const all = catalog.data ?? [];
     const favIds = new Set((favorites.data ?? []).map((m) => m.id));
     const readIds = new Set((history.data ?? []).map((h: any) => (h.manga as Manga | null)?.id).filter(Boolean));
-    const rejected = new Set((feedback.data ?? []).filter((f) => f.feedback === "dismissed").map((f) => f.manga_id));
+    const recentFeedback = new Set((feedback.data ?? []).filter((f) => Date.now() - new Date(f.created_at).getTime() < 30 * 24 * 60 * 60 * 1000).map((f) => f.manga_id));
     const liked = new Set((feedback.data ?? []).filter((f) => f.feedback === "liked").map((f) => f.manga_id));
     const referenceIds = new Set(preferenceData.reference_manga_ids);
     const availableIds = publishedChapters.data ?? new Set<string>();\n    const available = all.filter((m) => availableIds.has(m.id) && m.id && m.slug && m.title && m.cover_url && (m.synopsis?.trim() || m.genres?.length) &&
-      !favIds.has(m.id) && !readIds.has(m.id) && !rejected.has(m.id) && !referenceIds.has(m.id));
+      !favIds.has(m.id) && !readIds.has(m.id) && !recentFeedback.has(m.id) && !referenceIds.has(m.id));
     return available.map((m): Candidate => {
       let score = 0;
       const reasons: string[] = [];
