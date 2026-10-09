@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Crown, Medal, Trophy } from "lucide-react";
+import { Crown, Medal, Trophy, RefreshCw } from "lucide-react";
 
 import { PageHeader } from "@/components/PageHeader";
 import { TitleBadge } from "@/components/TitleBadge";
@@ -37,7 +37,7 @@ export const Route = createFileRoute("/_authenticated/ranking")({
 const medal = ["text-amber-400", "text-slate-300", "text-amber-700"];
 
 function RankingPage() {
-  const { data: rows, isLoading } = useQuery({ queryKey: ["reading-leaderboard"], queryFn: fetchLeaderboard });
+  const { data: rows, isLoading, isError, error, refetch, isFetching } = useQuery({ queryKey: ["reading-leaderboard"], queryFn: fetchLeaderboard, retry: 2, staleTime: 30_000 });
   const { data: titles } = useTitles();
 
   return (
@@ -46,6 +46,16 @@ function RankingPage() {
 
       {isLoading ? (
         <p className="py-12 text-center text-muted-foreground">Carregando ranking…</p>
+      ) : isError ? (
+        <section role="alert" className="my-8 rounded-2xl border border-destructive/30 bg-card p-6 text-center">
+          <h2 className="font-semibold">Não foi possível carregar o ranking</h2>
+          <p className="mt-2 text-sm text-muted-foreground">O ranking não foi carregado desta vez. Tente novamente.</p>
+          <button type="button" onClick={() => void refetch()} disabled={isFetching} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-60">
+            <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} aria-hidden />
+            {isFetching ? "Carregando…" : "Tentar novamente"}
+          </button>
+          {import.meta.env.DEV && error instanceof Error ? <p className="mt-3 break-words text-xs text-muted-foreground">{error.message}</p> : null}
+        </section>
       ) : !rows?.length ? (
         <p className="py-12 text-center text-muted-foreground">Ainda ninguém entrou no ranking. Comece a ler!</p>
       ) : (
