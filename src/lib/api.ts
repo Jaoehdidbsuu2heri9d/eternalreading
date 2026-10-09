@@ -157,13 +157,22 @@ export async function fetchHistory(userId: string) {
     .from("reading_history")
     .select(
       `read_at, progress,
-       manga:manga ( id, slug, title, cover_url, updated_at ),
+       manga:manga (
+         id, slug, title, cover_url, updated_at,
+         manga_genres ( genres ( id, slug, name ) )
+       ),
        chapter:chapters ( id, number, title )`,
     )
     .eq("user_id", userId)
     .order("read_at", { ascending: false });
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []).map((row) => {
+    const manga = row.manga as (Record<string, unknown> & { manga_genres?: { genres: Genre }[] }) | null;
+    if (!manga) return row;
+    const relations = manga.manga_genres ?? [];
+    const { manga_genres: _ignored, ...rest } = manga;
+    return { ...row, manga: { ...rest, genres: relations.map((r) => r.genres).filter(Boolean) } };
+  });
 }
 
 /** Salva o progresso de leitura e concede XP pela leitura do capítulo. */
