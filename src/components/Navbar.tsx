@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 
 import { Logo } from "@/components/Logo";
 import { UserMenu } from "@/components/UserMenu";
@@ -50,7 +50,16 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
           ))}
         </nav>
 
-        <form onSubmit={submitSearch} className="ml-auto hidden 2xl:block" role="search">
+        <Link
+          to="/me-surpreenda"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/15"
+          aria-label="Abrir Me Surpreenda"
+        >
+          <Sparkles className="h-4 w-4" aria-hidden />
+          <span>Me Surpreenda</span>
+        </Link>
+
+        <form onSubmit={submitSearch} className="hidden 2xl:block" role="search">
           <label htmlFor="busca-topo" className="sr-only">
             Pesquisar obras
           </label>
