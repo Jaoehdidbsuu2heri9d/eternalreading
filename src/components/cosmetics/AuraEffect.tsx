@@ -31,7 +31,9 @@ export function AuraEffect({ effect, color, avatarSize }: { effect: CosmeticEffe
   const intensity = Math.min(1.5, Math.max(0.4, effect.intensity ?? 1));
   const speed = Math.min(3, Math.max(0.3, effect.speed ?? 1));
   const size = Math.min(1.6, Math.max(0.6, effect.size ?? 1));
-  const style = effect.style ?? "aura";
+  // Estilos derivados: reaproveitam os desenhos leves existentes com outra paleta.
+  const raw = effect.style ?? "aura";
+  const style = raw === "ice" || raw === "galaxy" ? "orbit" : raw === "dark" ? "dark" : raw;
   const c = color.startsWith("#") ? color : "#a855f7";
 
   const box = 100; // viewBox
@@ -111,6 +113,22 @@ export function AuraEffect({ effect, color, avatarSize }: { effect: CosmeticEffe
           </svg>
           <svg viewBox={`0 0 ${box} ${box}`} className="aura-rev absolute inset-0 h-full w-full overflow-visible" style={{ ...dur(9), filter: glow }}>
             <circle cx={cx} cy={cx} r={r + spread * 0.85} fill="none" stroke={c} strokeOpacity={0.7} strokeWidth={0.5 * size} strokeDasharray="12 4 2 4" />
+          </svg>
+        </>
+      );
+      break;
+    case "dark":
+      body = (
+        <>
+          <span className="aura-breathe absolute inset-0 rounded-full" style={{
+            ...dur(3.4),
+            background: `radial-gradient(circle, transparent ${(r / 50) * 50 - 2}%, #000000cc ${(r / 50) * 50 + 2}%, ${c}66 ${((r + spread) / 50) * 50}%, transparent ${((r + spread) / 50) * 50 + 10}%)`,
+          }} />
+          <svg viewBox={`0 0 ${box} ${box}`} className="aura-rev absolute inset-0 h-full w-full overflow-visible" style={dur(12)}>
+            {Array.from({ length: 9 }).map((_, i) => {
+              const a = (i / 9) * Math.PI * 2, rr = r + spread * (0.3 + (i % 3) * 0.25);
+              return <circle key={i} cx={cx + Math.cos(a) * rr} cy={cx + Math.sin(a) * rr} r={(1 + (i % 2)) * size} fill={i % 3 ? "#0b0b12" : c} opacity={0.75} />;
+            })}
           </svg>
         </>
       );
