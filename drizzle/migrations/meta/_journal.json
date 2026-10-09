@@ -176,6 +176,13 @@
       "when": 1791700000000,
       "tag": "0024_featured_frame_collection",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1791702000000,
+      "tag": "0025_lively_thematic_frames",
+      "breakpoints": true
     }
   ]
 }
