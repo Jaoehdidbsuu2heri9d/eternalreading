@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_authenticated/loja_/molduras")({
 
 const PLAN_RANK: Record<PlanTier, number> = { free: 0, eternal: 1, eternal_sunshine: 2 };
 const RARITY_RANK: Record<string, number> = { common: 0, uncommon: 1, rare: 2, epic: 3, legendary: 4, mythic: 5, secret: 6 };
-const isAnimated = (c: CosmeticRow) => hasEffect(c.effect) || c.animation !== "none" || c.media_type === "video";
+const isAnimated = (c: CosmeticRow) => hasEffect(c.effect) || c.animation !== "none" || c.media_type === "video" || /\\.(gif|apng|webp)(?:$|[?#])/i.test(c.media_path ?? c.media_url ?? "");
 const HIGHLIGHTS = [
   ["hot", "🔥 Em alta"], ["new", "✨ Lançamentos"], ["legend", "👑 Lendárias"], ["anim", "⚡ Animadas"], ["event", "🎃 Evento atual"],
 ] as const;
