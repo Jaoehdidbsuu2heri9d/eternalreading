@@ -183,6 +183,13 @@
       "when": 1791702000000,
       "tag": "0025_lively_thematic_frames",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1791705600000,
+      "tag": "0026_premium_animated_frames",
+      "breakpoints": true
     }
   ]
 }
