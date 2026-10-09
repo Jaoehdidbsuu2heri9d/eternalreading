@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { cn } from "@/lib/utils";
 import { RARITY_COLOR } from "@/lib/cosmetics";
 
@@ -13,6 +14,7 @@ export function FrameArtwork({
   color?: string | null;
   animation?: string | null;
 }) {
+  const instanceId = useId().replace(/:/g, "");
   const tone = color?.startsWith("#") ? color : RARITY_COLOR[rarity ?? "common"] ?? "#94a3b8";
   const secondary: Record<string, string> = {
     common: "#e2e8f0", uncommon: "#a7f3d0", rare: "#bae6fd", epic: "#e9d5ff",
@@ -22,8 +24,8 @@ export function FrameArtwork({
   const detailClass = "frame-artwork__detail frame-artwork__detail--" + (rarity ?? "common");
   const motionClass = animation && animation !== "none" ? "frame-artwork__motion--" + animation : "";
   const pad = Math.max(8, Math.round(size * 0.17));
-  const gradientId = "frame-tone-" + (rarity ?? "common") + "-" + size;
-  const glowId = "frame-glow-" + (rarity ?? "common") + "-" + size;
+  const gradientId = "frame-tone-" + instanceId;
+  const glowId = "frame-glow-" + instanceId;
 
   return (
     <span aria-hidden="true" className={cn("pointer-events-none absolute z-[2] frame-artwork", motionClass)}
