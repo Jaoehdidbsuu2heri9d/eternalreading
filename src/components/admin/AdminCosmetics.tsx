@@ -51,7 +51,7 @@ export function AdminCosmetics() {
   const createCategory = useMutation({
     mutationFn: async () => {
       const name = newCategory.name.trim();
-      const slug = newCategory.slug.trim().toLowerCase() || name.normalize("NFD").replace(/[\\u0300-\\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const slug = newCategory.slug.trim().toLowerCase() || name.normalize("NFD").replace(/[^a-zA-Z0-9 -]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
       if (name.length < 2 || !/^[a-z0-9-]{2,40}$/.test(slug)) throw new Error("Informe nome e identificador válidos.");
       const { error } = await supabase.from("frame_categories").insert({ name, slug, sort: (categories.data?.length ?? 0) + 1, active: true });
       if (error) throw error;
