@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { useSignedUrl, useEquipped } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import { animClass, hasEffect, type CosmeticEffect } from "@/lib/cosmetics";
@@ -34,6 +36,14 @@ export function UserAvatar({
   badge?: React.ReactNode;
 }) {
   const signed = useSignedUrl("avatars", avatarPath);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener("change", update);
+    return () => media.removeEventListener("change", update);
+  }, []);
   const { data: equipped } = useEquipped(showFrame || previewFrame ? userId : undefined);
   const frameItem: FrameLike | undefined = previewFrame ?? (showFrame ? equipped?.["frame"] : undefined);
   const src = previewSrc ?? signed ?? avatarUrl ?? null;
@@ -52,22 +62,27 @@ export function UserAvatar({
           </span>
         )}
       </span>
-      {frameItem && <FrameLayer frame={frameItem} size={size} />}
+      {frameItem && <FrameLayer frame={frameItem} size={size} reducedMotion={reducedMotion} />}
       {badge && <span className="absolute -bottom-1 -right-1 z-10">{badge}</span>}
     </span>
   );
 }
 
 /** Camada da moldura: arte enviada (imagem/vídeo leve), efeito desenhado, ou anel colorido. */
-function FrameLayer({ frame, size }: { frame: FrameLike; size: number }) {
+function FrameLayer({ frame, size, reducedMotion }: { frame: FrameLike; size: number; reducedMotion: boolean }) {
   const media = useCosmeticMedia(frame.media_path, frame.media_url);
   const ring = Math.max(2, Math.round(size / 20));
   if (media) {
     const pad = Math.round(size * 0.18);
     const st = { inset: -pad, width: size + pad * 2, height: size + pad * 2 };
+    const animatedImage = /\\.gif(?:$|[?#])/i.test(frame.media_path ?? frame.media_url ?? "");
+    // If there is no separate still asset, prefer a static CSS ring over animated media for reduced-motion users.
+    if (reducedMotion && (frame.media_type === "video" || animatedImage)) {
+      return <span aria-hidden className="pointer-events-none absolute rounded-full" style={{ inset: -ring, boxShadow: `0 0 0 ${ring}px ${frame.preview}, 0 0 ${ring * 3}px ${frame.preview}` }} />;
+    }
     return frame.media_type === "video"
-      ? <video aria-hidden src={media} autoPlay muted loop playsInline className="pointer-events-none absolute object-contain" style={st} />
-      : <img aria-hidden src={media} alt="" loading="lazy" className="pointer-events-none absolute object-contain" style={st} />;
+      ? <video aria-hidden src={media} autoPlay={!reducedMotion} muted loop playsInline preload="metadata" className="pointer-events-none absolute object-contain" style={st} />
+      : <img aria-hidden src={media} alt="" loading="lazy" decoding="async" className="pointer-events-none absolute object-contain" style={st} />;
   }
   if (hasEffect(frame.effect)) {
     return (
