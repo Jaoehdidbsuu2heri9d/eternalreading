@@ -3,6 +3,7 @@ import { BannerVideo } from "@/components/cosmetics/BannerVideo";
 import { animClass, hasEffect, useVisibleAnim, type CosmeticEffect } from "@/lib/cosmetics";
 import { useSignedUrl } from "@/lib/media";
 import { cn } from "@/lib/utils";
+import { FrameArtwork } from "@/components/cosmetics/FrameArtwork";
 
 const isColor = (v: string) => v.startsWith("#");
 
@@ -37,7 +38,7 @@ export function CosmeticSurface({
 
 /** Miniatura visual de um cosmético, por categoria. Animação pausa fora da tela. */
 export function CosmeticPreview({
-  kind, preview, animation, mediaUrl, mediaPath, mediaType, effect, className,
+  kind, preview, animation, mediaUrl, mediaPath, mediaType, effect, slug, frameCategory, rarity, className,
 }: {
   kind: string; preview: string; animation: string; mediaUrl?: string | null | undefined; mediaPath?: string | null | undefined;
   mediaType?: string | null | undefined; effect?: CosmeticEffect | null | undefined; className?: string;
@@ -60,9 +61,8 @@ export function CosmeticPreview({
   } else if (kind === "frame") {
     inner = (
       <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-full">
-        <span className={cn("absolute inset-0 rounded-full", anim)}
-          style={isColor(preview) ? { boxShadow: `0 0 0 4px ${preview}, 0 0 14px ${preview}`, ["--cos-color" as string]: preview } : { background: preview }} />
         <span className="gradient-eternal relative h-14 w-14 rounded-full border-2 border-background" />
+        <FrameArtwork size={56} rarity={rarity} color={preview} animation={animation} slug={slug} category={frameCategory} />
       </span>
     );
   } else if (kind === "border") {
