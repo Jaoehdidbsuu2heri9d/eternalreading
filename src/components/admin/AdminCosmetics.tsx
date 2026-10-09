@@ -25,7 +25,7 @@ const IMG_TYPES = ["image/png", "image/jpeg", "image/webp", "image/gif"];
 const toLocal = (v: string | null) => (v ? v.slice(0, 16) : "");
 
 /** Administração de cosméticos: criar, editar, ativar/desativar, conceder e ver estatísticas. */
-export function AdminCosmetics() {
+export function AdminCosmetics({ framesOnly = false }: { framesOnly?: boolean }) {
   const qc = useQueryClient();
   const [draft, setDraft] = useState<Draft | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
@@ -68,10 +68,12 @@ export function AdminCosmetics() {
   });
 
   const data = useQuery({
-    queryKey: ["admin-cosmetics"],
+    queryKey: ["admin-cosmetics", framesOnly],
     queryFn: async () => {
+      const catalog = supabase.from("cosmetics").select("*");
+      const itemQuery = framesOnly ? catalog.eq("kind", "frame") : catalog;
       const [items, stats, shop] = await Promise.all([
-        supabase.from("cosmetics").select("*").order("kind").order("sort"),
+        itemQuery.order("kind").order("sort"),
         supabase.rpc("admin_cosmetic_stats"),
         supabase.rpc("admin_shop_stats"),
       ]);
@@ -147,8 +149,8 @@ export function AdminCosmetics() {
   return (
     <section className="mt-10">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Cosméticos</h2>
-        <Button size="sm" onClick={() => setDraft({ ...EMPTY })}>+ Novo item</Button>
+        <h2 className="text-xl font-semibold">{framesOnly ? "Molduras" : "Cosméticos"}</h2>
+        <Button size="sm" onClick={() => setDraft({ ...EMPTY, kind: framesOnly ? "frame" : EMPTY.kind })}>{framesOnly ? "+ Nova moldura" : "+ Novo item"}</Button>
       </div>
       {msg && <p role="status" className="mb-3 text-sm text-muted-foreground">{msg}</p>}
 
@@ -158,7 +160,7 @@ export function AdminCosmetics() {
           <Field label="Nome" htmlFor="c-name"><Input id="c-name" required maxLength={60} value={draft.name} onChange={(e) => set("name", e.target.value)} /></Field>
           <Field label="Identificador (slug)" htmlFor="c-slug" hint="letras minúsculas, números e hífen"><Input id="c-slug" required pattern="[a-z0-9-]{3,40}" value={draft.slug} onChange={(e) => set("slug", e.target.value)} /></Field>
           <div className="sm:col-span-2"><Field label="Descrição" htmlFor="c-desc"><Input id="c-desc" required maxLength={200} value={draft.description} onChange={(e) => set("description", e.target.value)} /></Field></div>
-          <Field label="Tipo de cosmético" htmlFor="c-kind"><Select id="c-kind" value={draft.kind} onChange={(e) => set("kind", e.target.value)}>{Object.entries(KIND_LABEL).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select></Field>
+          {!framesOnly && <Field label="Tipo de cosmético" htmlFor="c-kind"><Select id="c-kind" value={draft.kind} onChange={(e) => set("kind", e.target.value)}>{Object.entries(KIND_LABEL).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</Select></Field>}
           {draft.kind === "frame" && <Field label="Categoria da moldura" htmlFor="c-frame-category"><Select id="c-frame-category" value={draft.frame_category ?? "classica"} onChange={(e) => set("frame_category", e.target.value)}>{(categories.data ?? []).filter((cat) => cat.active).map((cat) => <option key={cat.slug} value={cat.slug}>{cat.name}</option>)}</Select></Field>}
           <Field label="Raridade" htmlFor="c-rar"><Select id="c-rar" value={draft.rarity} onChange={(e) => set("rarity", e.target.value)}>{RARITIES.map((r) => <option key={r} value={r}>{RARITY_LABEL[r]}</option>)}</Select></Field>
           <Field label="Visual (cor ou gradiente CSS; texto para títulos/selos)" htmlFor="c-prev"><Input id="c-prev" required maxLength={300} value={draft.preview} onChange={(e) => set("preview", e.target.value)} /></Field>
@@ -251,7 +253,7 @@ export function AdminCosmetics() {
             {(data.data ?? []).map((c) => (
               <tr key={c.id} className="border-t border-border">
                 <td className="p-2 font-medium">{c.name}{!c.active && <span className="ml-2 text-xs text-muted-foreground">(inativo)</span>}</td>
-                <td className="p-2">{KIND_LABEL[c.kind]}</td>
+                <td className="p-2">{c.kind === "frame" ? (categories.data ?? []).find((cat) => cat.slug === c.frame_category)?.name ?? "Clássica" : KIND_LABEL[c.kind]}</td>
                 <td className="p-2">{RARITY_LABEL[c.rarity]}</td>
                 <td className="p-2">{c.in_shop ? "Loja" : AVAILABILITY_LABEL[c.availability]}{c.coin_price != null ? ` • ${c.coin_price}◈` : ""}{c.stock != null ? ` • estoque ${c.stock}` : ""}</td>
                 <td className="p-2">{c.purchases}</td>
