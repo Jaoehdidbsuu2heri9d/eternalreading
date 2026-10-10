@@ -162,6 +162,23 @@ BEGIN
   ELSE
     NEW.created_at := now();
   END IF;
+
+  -- The client UI is not a security boundary: only real, published catalog entries
+  -- and a chapter belonging to that exact work may be attached to a post.
+  IF NEW.manga_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM public.manga
+    WHERE id = NEW.manga_id AND published = true AND deleted_at IS NULL
+  ) THEN
+    RAISE EXCEPTION 'feed_manga_unavailable';
+  END IF;
+  IF NEW.chapter_id IS NOT NULL AND NOT EXISTS (
+    SELECT 1 FROM public.chapters
+    WHERE id = NEW.chapter_id AND manga_id = NEW.manga_id
+      AND status = 'published' AND deleted_at IS NULL
+  ) THEN
+    RAISE EXCEPTION 'feed_chapter_mismatch';
+  END IF;
+
   NEW.updated_at := now();
   RETURN NEW;
 END $$;
@@ -173,6 +190,7 @@ RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public'
 AS $$
 DECLARE parent_post uuid;
 DECLARE parent_parent uuid;
+DECLARE parent_hidden boolean;
 BEGIN
   IF TG_OP = 'INSERT' THEN
     IF (SELECT count(*) FROM public.feed_comments WHERE user_id = NEW.user_id AND created_at > now() - interval '1 hour') >= 30 THEN
@@ -183,8 +201,8 @@ BEGIN
     END IF;
   END IF;
   IF NEW.parent_id IS NOT NULL THEN
-    SELECT post_id, parent_id INTO parent_post, parent_parent FROM public.feed_comments WHERE id = NEW.parent_id;
-    IF parent_post IS DISTINCT FROM NEW.post_id OR parent_parent IS NOT NULL THEN
+    SELECT post_id, parent_id, hidden INTO parent_post, parent_parent, parent_hidden FROM public.feed_comments WHERE id = NEW.parent_id;
+    IF parent_post IS DISTINCT FROM NEW.post_id OR parent_parent IS NOT NULL OR COALESCE(parent_hidden, true) THEN
       RAISE EXCEPTION 'invalid_comment_parent';
     END IF;
   END IF;
