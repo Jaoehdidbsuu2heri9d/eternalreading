@@ -25,7 +25,7 @@ export function PagesEditor({ pages, onChange, folder }: { pages: string[]; onCh
         setBusy(`Enviando ${i + 1} de ${files.length}…`);
         urls.push(await uploadImage(folder, files[i]!));
       }
-    } catch { setErr("Falha ao enviar algumas páginas."); }
+    } catch (error) { setErr(error instanceof Error ? error.message : "Falha ao enviar algumas páginas."); }
     onChange([...pages, ...urls]);
     setBusy(null);
   }
@@ -40,7 +40,7 @@ export function PagesEditor({ pages, onChange, folder }: { pages: string[]; onCh
     try {
       const url = await uploadImage(folder, f);
       onChange(pages.map((p, i) => (i === replIdx ? url : p)));
-    } catch { setErr("Falha ao substituir."); }
+    } catch (error) { setErr(error instanceof Error ? error.message : "Falha ao substituir."); }
     setBusy(null);
   }
 
