@@ -31,7 +31,7 @@ function CloudflareStorageStatus() {
         headers: { Authorization: "Bearer " + data.session.access_token },
       });
       const result = await response.json().catch(() => null) as
-        | { configured?: boolean; bucket?: string | null; requiredSecrets?: string[]; error?: string }
+        | { configured?: boolean; connected?: boolean; status?: number | null; bucket?: string | null; requiredSecrets?: string[]; error?: string }
         | null;
       if (!response.ok || !result) throw new Error("Não foi possível verificar o Cloudflare R2.");
       return result;
@@ -45,15 +45,25 @@ function CloudflareStorageStatus() {
         <div className="min-w-0 flex-1">
           <h3 className="font-semibold">Armazenamento das obras</h3>
           {status.isLoading ? <p className="mt-1 text-sm text-muted-foreground">Verificando conexão com Cloudflare R2…</p>
-            : status.data?.configured ? (
-              <p className="mt-1 flex items-center gap-2 text-sm text-emerald-400"><CheckCircle2 className="h-4 w-4 shrink-0" />Credenciais do Cloudflare R2 configuradas · bucket <code>{status.data.bucket}</code></p>
+            : status.data?.connected ? (
+              <p className="mt-1 flex items-center gap-2 text-sm text-emerald-400"><CheckCircle2 className="h-4 w-4 shrink-0" />Conexão real com Cloudflare R2 confirmada · bucket <code>{status.data.bucket}</code></p>
             ) : status.isError ? (
               <p role="alert" className="mt-1 text-sm text-destructive">{status.error instanceof Error ? status.error.message : "Não foi possível consultar o armazenamento."}</p>
             ) : (
               <div className="mt-1 flex items-start gap-2 text-sm text-amber-300">
                 <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
-                <div><p>Cloudflare R2 ainda não está configurado. O envio de novas imagens ficará bloqueado até a configuração.</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Adicione os secrets no servidor Lovable: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY e CLOUDFLARE_R2_BUCKET.</p>
+                <div>
+                  {status.data?.configured ? (
+                    <>
+                      <p>As credenciais existem, mas o teste real de escrita/exclusão no bucket falhou{status.data.status ? ` (HTTP ${status.data.status})` : ""}. Novos uploads não serão enviados ao R2 até corrigir as permissões ou credenciais.</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Os uploads continuam usando o armazenamento atual enquanto o R2 não estiver conectado.</p>
+                    </>
+                  ) : (
+                    <>
+                      <p>Cloudflare R2 ainda não está configurado. O site continuará usando o armazenamento atual; nada será bloqueado.</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Quando estiver pronto, adicione os secrets no servidor Lovable: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY e CLOUDFLARE_R2_BUCKET.</p>
+                    </>
+                  )}
                   <a href="https://github.com/Jaoehdidbsuu2heri9d/eternalreading/blob/main/docs/cloudflare-r2-setup.md" target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs font-semibold text-primary hover:underline">Abrir instruções de configuração →</a>
                 </div>
               </div>
