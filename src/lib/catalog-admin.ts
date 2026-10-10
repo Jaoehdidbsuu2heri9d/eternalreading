@@ -50,6 +50,42 @@ export async function uploadImage(folder: string, f: File): Promise<string> {
   return result.url;
 }
 
+/** Envia várias imagens em paralelo, mantendo cada URL na posição do arquivo original. */
+export async function uploadImagesInParallel(
+  folder: string,
+  files: File[],
+  onProgress?: (completed: number, total: number) => void,
+  concurrency = 4,
+): Promise<Array<{ url: string | null; error: string | null }>> {
+  const results: Array<{ url: string | null; error: string | null }> = files.map(() => ({ url: null, error: null }));
+  if (!files.length) return results;
+
+  let nextIndex = 0;
+  let completed = 0;
+  const workerCount = Math.min(files.length, Math.max(1, Math.floor(concurrency)));
+
+  await Promise.all(Array.from({ length: workerCount }, async () => {
+    while (true) {
+      const index = nextIndex++;
+      if (index >= files.length) return;
+      const file = files[index]!;
+      try {
+        results[index] = { url: await uploadImage(folder, file), error: null };
+      } catch (error) {
+        results[index] = {
+          url: null,
+          error: error instanceof Error ? error.message : "Falha ao enviar a imagem.",
+        };
+      } finally {
+        completed += 1;
+        onProgress?.(completed, files.length);
+      }
+    }
+  }));
+
+  return results;
+}
+
 export function slugify(s: string) {
   return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "").slice(0, 80);
 }
