@@ -3,7 +3,7 @@ export type AdminGroup = { id: string; label: string; items: AdminSection[] };
 export const ADMIN_GROUPS: AdminGroup[] = [
  {id:"visao-geral",label:"Visão Geral",items:[{id:"dashboard",label:"Dashboard"},{id:"alertas",label:"Alertas"},{id:"atividade",label:"Atividade"}]},
  {id:"usuarios",label:"Usuários",items:[{id:"todos",label:"Todos os usuários"},{id:"administradores",label:"Administradores"}]},
- {id:"conteudo",label:"Conteúdo",items:[{id:"obras",label:"Obras"},{id:"capitulos",label:"Capítulos"}]},
+ {id:"conteudo",label:"Conteúdo",items:[{id:"obras",label:"Obras"},{id:"capitulos",label:"Capítulos"},{id:"fila-publicacao",label:"Fila de publicação"}]},
  {id:"scans-parcerias",label:"Scans & Parcerias",items:[{id:"solicitacoes",label:"Solicitações",badge:"requests"},{id:"convites",label:"Convites"},{id:"scans",label:"Scans parceiros"}]},
  {id:"comunidade",label:"Comunidade",items:[{id:"denuncias",label:"Denúncias e moderação",badge:"reports"},{id:"bloqueios",label:"Bloqueios"}]},
  {id:"gamificacao",label:"Gamificação",items:[{id:"niveis-xp",label:"Níveis & XP"},{id:"conquistas",label:"Conquistas"},{id:"coins",label:"Eternal Coins"}]},
