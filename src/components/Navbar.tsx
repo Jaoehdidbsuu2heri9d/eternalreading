@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Search, Sparkles } from "lucide-react";
+import { MessageSquare, Search, Sparkles } from "lucide-react";
 
 import { Logo } from "@/components/Logo";
 import { UserMenu } from "@/components/UserMenu";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 const links = [
   { to: "/inicio", label: "Início" },
+  { to: "/feed", label: "Eternal Feed" },
   { to: "/explorar", label: "Explorar" },
   { to: "/me-surpreenda", label: "Me Surpreenda" },
   { to: "/atualizacoes", label: "Atualizações" },
