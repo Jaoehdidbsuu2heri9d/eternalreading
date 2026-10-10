@@ -1311,6 +1311,62 @@ export type Database = {
           },
         ]
       }
+      recommendation_feedback: {
+        Row: {
+          created_at: string
+          feedback: string
+          id: string
+          manga_id: string
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feedback: string
+          id?: string
+          manga_id: string
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feedback?: string
+          id?: string
+          manga_id?: string
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendation_feedback_manga_id_fkey"
+            columns: ["manga_id"]
+            isOneToOne: false
+            referencedRelation: "manga"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recommendation_preferences: {
+        Row: {
+          genre_slugs: string[]
+          reference_manga_ids: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          genre_slugs?: string[]
+          reference_manga_ids?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          genre_slugs?: string[]
+          reference_manga_ids?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       scan_requests: {
         Row: {
           community_url: string | null
