@@ -209,7 +209,7 @@ function AdminPage() {
       {(is("usuarios","administradores") || is("seguranca","equipe")) && <AdminTeam isOwner={isOwner} mode="administrators" />}
       {(is("comunidade","denuncias") || is("comunidade","bloqueios")) && <AdminModeration />}
       {is("personalizacao","temas-eventos") && (isOwner ? <AdminEventThemes /> : <section className="rounded-2xl border border-border p-5"><h2 className="font-bold">Acesso restrito ao dono</h2><p className="mt-1 text-sm text-muted-foreground">Somente o dono da Eternal Reading pode criar e ativar temas globais.</p></section>)}
-      {is("personalizacao","molduras") && <AdminCosmetics framesOnly />
+{is("personalizacao","molduras") && <AdminCosmetics framesOnly />}
       {is("personalizacao","cosmeticos") && <AdminCosmetics />}
       {is("gamificacao","coins") && <AdminCoins />}
       {is("gamificacao","conquistas") && <AdminAchievements />}

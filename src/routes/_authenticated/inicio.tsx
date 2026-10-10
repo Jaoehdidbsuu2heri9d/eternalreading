@@ -130,7 +130,7 @@ function HomePage() {
           <p className="mt-3 text-4xl font-black text-gradient-eternal">Nv. {profile?.level ?? 1}</p>
           <div className="mt-5 h-2 overflow-hidden rounded-full bg-surface-2"><div className="gradient-eternal h-full rounded-full transition-all duration-700" style={{ width: `${progress?.pct ?? 0}%` }} /></div>
           <p className="mt-2 text-xs text-muted-foreground">{profile?.xp ?? 0} XP • faltam {Math.max(0, (progress?.next ?? 100) - (profile?.xp ?? 0))} XP para o próximo nível</p>
-          <Link to="/perfil" className="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3">Ver meu perfil <ArrowRight className="h-4 w-4" /></Link>
+          <Link to="/me" className="relative mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:gap-3">Ver meu perfil <ArrowRight className="h-4 w-4" /></Link>
         </div>
       </section>
 

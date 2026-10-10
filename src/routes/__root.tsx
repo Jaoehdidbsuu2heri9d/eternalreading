@@ -122,7 +122,7 @@ function GlobalEventTheme({ children }: { children: ReactNode }) {
       const now = new Date().toISOString();
       const { data, error } = await (supabase as any).from("site_event_themes").select("id,name,description,primary_color,secondary_color,accent_color,background_color,banner_url,decoration,effects_intensity,animations_enabled,starts_at,ends_at,status,priority").in("status", ["active", "scheduled"]).order("priority", { ascending: false }).limit(30);
       if (error) throw error;
-      return (data ?? []).find((t) => (!t.starts_at || t.starts_at <= now) && (!t.ends_at || t.ends_at > now)) ?? null;
+      return (data ?? []).find((t: any) => (!t.starts_at || t.starts_at <= now) && (!t.ends_at || t.ends_at > now)) ?? null;
     },
     refetchInterval: 60_000,
     staleTime: 30_000,
