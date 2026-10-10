@@ -28,7 +28,7 @@ export function mediaUploadError(error: unknown): string {
   return detail ? `Não foi possível enviar: ${detail}` : "Não foi possível enviar o arquivo. Tente novamente.";
 }
 
-export type MediaBucket = "avatars" | "profile-banners" | "cosmetic-media";
+export type MediaBucket = "avatars" | "profile-banners" | "cosmetic-media" | "feed-media";
 
 /** Link assinado (1h) com cache; null enquanto não houver caminho. */
 export function useSignedUrl(bucket: MediaBucket, path: string | null | undefined) {
