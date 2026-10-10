@@ -16,7 +16,6 @@ const links = [
   { to: "/ranking", label: "Ranking" },
   { to: "/favoritos", label: "Favoritos" },
   { to: "/historico", label: "Histórico" },
-  { to: "/atividade", label: "Atividade" },
   { to: "/scans", label: "Scans" },
   { to: "/conquistas", label: "Conquistas" },
   { to: "/hall-da-fama", label: "Hall da Fama" },
