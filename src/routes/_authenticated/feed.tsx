@@ -132,7 +132,7 @@ async function fetchFeedPage(tab: FeedTab, page: number, userId: string): Promis
     if (!ids.length) return [];
     const { data, error } = await db.from("feed_posts").select(select).in("id", ids).eq("hidden", false);
     if (error) throw error;
-    const order = new Map(ids.map((id: string, index: number) => [id, index]));
+    const order = new Map(ids.map((id: string, index: number) => [id, index] as const));
     const posts = ((data ?? []) as FeedPost[]).sort((a, b) => (order.get(a.id)! - order.get(b.id)!));
     return attachAuthors(posts);
   }
