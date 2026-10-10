@@ -19,7 +19,11 @@ export function ImagePicker({ label, value, onChange, folder, aspect = "aspect-[
     if (v) return setErr(v);
     setErr(null);
     setBusy(true);
-    try { onChange(await uploadImage(folder, f)); } catch { setErr("Falha no envio."); } finally { setBusy(false); }
+    try {
+      onChange(await uploadImage(folder, f));
+    } catch (error) {
+      setErr(error instanceof Error ? error.message : "Falha no envio.");
+    } finally { setBusy(false); }
   }
 
   return (
