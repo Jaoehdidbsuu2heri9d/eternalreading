@@ -12,6 +12,7 @@ type BulkGroup = {
   title: string;
   files: File[];
   urls: Array<string | null>;
+  chapterId?: string;
   saved: boolean;
 };
 
@@ -181,6 +182,7 @@ export function BulkChapterPublisher({ mangaId, defaultScan, nextNumber, onDone 
       }
 
       const succeeded = new Set<string>();
+      const recoveredIds = new Map<string, string>();
       const failures: string[] = [];
       let next = 0;
       const workers = Math.min(3, pending.length);
@@ -192,7 +194,7 @@ export function BulkChapterPublisher({ mangaId, defaultScan, nextNumber, onDone 
           if (index >= pending.length) return;
           const group = pending[index]!;
           try {
-            await saveChapter(mangaId, null, {
+            await saveChapter(mangaId, group.chapterId ?? null, {
               number: Number(group.number.replace(",", ".")),
               title: group.title.trim() || null,
               volume: null,
@@ -202,6 +204,8 @@ export function BulkChapterPublisher({ mangaId, defaultScan, nextNumber, onDone 
             }, group.urls.filter((url): url is string => !!url));
             succeeded.add(group.id);
           } catch (saveError) {
+            const recoveredId = (saveError as { chapterId?: string }).chapterId;
+            if (recoveredId) recoveredIds.set(group.id, recoveredId);
             failures.push(`${group.label}: ${(saveError as { code?: string }).code === "23505" ? "o número já existe nessa obra" : "falha ao salvar o capítulo"}`);
           } finally {
             savedCount += 1;
@@ -210,7 +214,9 @@ export function BulkChapterPublisher({ mangaId, defaultScan, nextNumber, onDone 
         }
       }));
 
-      working = working.map((group) => succeeded.has(group.id) ? { ...group, saved: true } : group);
+      working = working.map((group) => succeeded.has(group.id)
+        ? { ...group, saved: true }
+        : recoveredIds.has(group.id) ? { ...group, chapterId: recoveredIds.get(group.id) } : group);
       setGroups(working);
       if (failures.length) {
         setError(`${succeeded.size} capítulo(s) salvos; ${failures.length} precisam de atenção: ${failures.slice(0, 3).join("; ")}${failures.length > 3 ? "; …" : ""}. Ajuste os números ou tente novamente; os capítulos salvos serão ignorados.`);
