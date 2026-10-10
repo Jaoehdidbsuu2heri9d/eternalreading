@@ -56,7 +56,7 @@ function CloudflareStorageStatus() {
                   {status.data?.configured ? (
                     <>
                       <p>As credenciais existem, mas o teste real de escrita/exclusão no bucket falhou{status.data.status ? ` (HTTP ${status.data.status})` : ""}. Novos uploads não serão enviados ao R2 até corrigir as permissões ou credenciais.</p>
-                      <p className="mt-1 text-xs text-muted-foreground">Os uploads continuam usando o armazenamento atual enquanto o R2 não estiver conectado.</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Uploads para o R2 podem falhar até corrigir as credenciais/permissões. O fallback para o Supabase só é usado quando os secrets do R2 não estão configurados.</p>
                     </>
                   ) : (
                     <>
