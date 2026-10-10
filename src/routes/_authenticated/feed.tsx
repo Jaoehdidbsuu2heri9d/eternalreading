@@ -65,14 +65,14 @@ type ChapterOption = { id: string; number: number; title: string | null };
 type FeedComment = {
   id: string; post_id: string; user_id: string; parent_id: string | null; body: string;
   is_spoiler: boolean; hidden: boolean; edited_at: string | null; created_at: string;
-  author?: MiniProfile; replies?: FeedComment[];
+  author?: MiniProfile | undefined; replies?: FeedComment[];
 };
 type FeedPost = {
   id: string; user_id: string; body: string; category: string | null; manga_id: string | null;
   chapter_id: string | null; image_path: string | null; is_spoiler: boolean; hidden: boolean;
   created_at: string; updated_at: string; reactions?: { user_id: string; reaction: ReactionValue }[];
   comments?: { count: number }[]; manga?: WorkLink | null;
-  chapter?: ChapterOption | null; author?: MiniProfile;
+  chapter?: ChapterOption | null; author?: MiniProfile | undefined;
 };
 
 type FeedTab = "for_you" | "recent" | "popular" | "readings" | "memes" | "following";
@@ -132,7 +132,7 @@ async function fetchFeedPage(tab: FeedTab, page: number, userId: string): Promis
     if (!ids.length) return [];
     const { data, error } = await db.from("feed_posts").select(select).in("id", ids).eq("hidden", false);
     if (error) throw error;
-    const order = new Map(ids.map((id: string, index: number) => [id, index] as const));
+    const order = new Map<string, number>(ids.map((id: string, index: number) => [id, index] as const));
     const posts = ((data ?? []) as FeedPost[]).sort((a, b) => (order.get(a.id)! - order.get(b.id)!));
     return attachAuthors(posts);
   }
@@ -145,7 +145,7 @@ async function fetchFeedPage(tab: FeedTab, page: number, userId: string): Promis
   return attachAuthors((data ?? []) as FeedPost[]);
 }
 
-function AvatarLink({ profile }: { profile?: MiniProfile }) {
+function AvatarLink({ profile }: { profile?: MiniProfile | undefined }) {
   const username = profile?.username ?? "leitor";
   return (
     <Link to="/perfil/$username" params={{ username }} className="flex min-w-0 items-center gap-3">
@@ -229,7 +229,7 @@ function EternalFeedPage() {
           </Button>
         </div>
         <div className="mt-5 flex items-center gap-3 rounded-2xl border border-border/70 bg-background/70 p-3">
-          <UserAvatar userId={user.id} username={myProfile?.username ?? user.user_metadata?.username ?? "leitor"} avatarPath={myProfile?.avatar_path} avatarUrl={myProfile?.avatar_url} size={42} showFrame />
+          <UserAvatar userId={user.id} username={myProfile?.username ?? user.user_metadata?.["username"] ?? "leitor"} avatarPath={myProfile?.avatar_path} avatarUrl={myProfile?.avatar_url} size={42} showFrame />
           <button type="button" onClick={() => setComposerOpen(true)} className="min-h-11 flex-1 rounded-xl border border-border bg-secondary/60 px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-secondary">
             O que você está lendo ou pensando?
           </button>
