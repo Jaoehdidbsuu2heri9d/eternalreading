@@ -473,7 +473,7 @@ function FeedPostCard({ post, userId, onEdit, onDelete, onReport, onModerate }: 
           {post.author && <TitleBadge level={post.author.level} />}
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <time dateTime={post.created_at} title={new Date(post.created_at).toLocaleString("pt-BR")} className="text-xs text-muted-foreground">{formatRelativeDate(post.created_at)}</time>
+          <time dateTime={post.created_at} title={post.created_at} className="text-xs text-muted-foreground">{formatRelativeDate(post.created_at)}</time>
           {own && <><button type="button" onClick={onEdit} aria-label="Editar publicação" className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"><Pencil className="h-4 w-4" /></button><button type="button" onClick={onDelete} aria-label="Excluir publicação" className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><Trash2 className="h-4 w-4" /></button></>}
           {!own && <button type="button" onClick={onReport} aria-label="Denunciar publicação" className="rounded-lg p-2 text-muted-foreground hover:bg-secondary hover:text-foreground"><Flag className="h-4 w-4" /></button>}
           {canModerate && <button type="button" onClick={onModerate} aria-label="Ocultar publicação como moderador" title="Ocultar publicação (moderação)" className="rounded-lg p-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"><EyeOff className="h-4 w-4" /></button>}
@@ -543,17 +543,18 @@ function FeedComments({ postId, userId, onReport }: { postId: string; userId: st
   const [editing, setEditing] = useState<FeedComment | null>(null);
   const [errorText, setErrorText] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [commentLimit, setCommentLimit] = useState(12);
   const { isAdmin } = useRoles(userId);
 
   const commentsQuery = useQuery({
-    queryKey: ["feed-comments", postId],
+    queryKey: ["feed-comments", postId, commentLimit],
     queryFn: async () => {
       const { data, error } = await db.from("feed_comments")
         .select("id,post_id,user_id,parent_id,body,is_spoiler,hidden,edited_at,created_at")
         .eq("post_id", postId).is("parent_id", null).eq("hidden", false)
-        .order("created_at", { ascending: true }).limit(12);
+        .order("created_at", { ascending: false }).limit(commentLimit);
       if (error) throw error;
-      const parents = (data ?? []) as FeedComment[];
+      const parents = ((data ?? []) as FeedComment[]).reverse();
       const parentIds = parents.map((comment) => comment.id);
       const repliesResult = parentIds.length
         ? await db.from("feed_comments").select("id,post_id,user_id,parent_id,body,is_spoiler,hidden,edited_at,created_at")
@@ -663,6 +664,7 @@ function FeedComments({ postId, userId, onReport }: { postId: string; userId: st
         </div>
       ))}
       {!commentsQuery.isLoading && (commentsQuery.data ?? []).length === 0 && <p className="py-2 text-center text-xs text-muted-foreground">Ainda não há comentários. Comece a conversa!</p>}
+      {(commentsQuery.data ?? []).length >= commentLimit && <div className="flex justify-center pt-1"><button type="button" onClick={() => setCommentLimit((limit) => limit + 12)} className="rounded-lg px-3 py-2 text-xs font-semibold text-primary hover:bg-primary/10">Carregar mais comentários</button></div>}
     </div>
   );
 }
