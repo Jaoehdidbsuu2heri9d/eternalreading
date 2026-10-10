@@ -115,7 +115,7 @@ function PodiumCard({
   position: 1 | 2 | 3;
   isMe: boolean;
 }) {
-  const config = podium[position - 1];
+  const config = podium[position - 1]!;
   const Icon = config.Icon;
 
   return (
