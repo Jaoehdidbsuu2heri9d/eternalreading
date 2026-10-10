@@ -9,7 +9,7 @@ export const ADMIN_GROUPS: AdminGroup[] = [
  {id:"gamificacao",label:"Gamificação",items:[{id:"niveis-xp",label:"Níveis & XP"},{id:"conquistas",label:"Conquistas"},{id:"coins",label:"Eternal Coins"}]},
  {id:"assinaturas",label:"Assinaturas",items:[{id:"assinaturas",label:"Assinaturas"},{id:"pagamentos",label:"Pagamentos"}]},
  {id:"apoiadores",label:"Apoiadores",items:[{id:"reconhecimentos",label:"Reconhecimentos"},{id:"contribuicoes",label:"Contribuições"},{id:"hall",label:"Hall da Fama"}]},
- {id:"personalizacao",label:"Personalização",items:[{id:"molduras",label:"Molduras"},{id:"cosmeticos",label:"Cosméticos e loja"}]},
+ {id:"personalizacao",label:"Personalização",items:[{id:"molduras",label:"Molduras"},{id:"cosmeticos",label:"Cosméticos e loja"},{id:"temas-eventos",label:"Temas e Eventos"}]},
  {id:"comunicacao",label:"Comunicação",items:[{id:"notificacoes",label:"Notificações"}]},
  {id:"sistema",label:"Sistema",items:[{id:"webhooks",label:"Webhooks",badge:"webhooks"},{id:"auditoria",label:"Logs do sistema"}]},
  {id:"seguranca",label:"Segurança",items:[{id:"equipe",label:"Acessos administrativos"},{id:"logs",label:"Auditoria"}]},
