@@ -172,7 +172,7 @@ function ShopPage() {
             </Select>
             <Select value={theme} onChange={(e) => setTheme(e.target.value)} aria-label="Filtrar por tema">
               <option value="all">Todos os temas</option>
-              {Array.from(new Set((items.data?.all ?? []).map((item) => item.frame_category).filter((v): v is string => !!v))).sort().map((v) => <option key={v} value={v}>{v[0].toUpperCase()+v.slice(1)}</option>)}
+              {Array.from(new Set((items.data?.all ?? []).map((item) => item.frame_category).filter((v): v is string => !!v))).sort().map((v) => <option key={v} value={v}>{v.charAt(0).toUpperCase()+v.slice(1)}</option>)}
             </Select>
           </div>
           {items.isLoading ? <p className="text-sm text-muted-foreground">Carregando…</p> : list.length === 0 ? <p className="text-sm text-muted-foreground">Nenhum item à venda com esses filtros.</p> : (
