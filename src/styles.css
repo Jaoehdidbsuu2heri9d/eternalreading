@@ -163,6 +163,39 @@
   .aura-spin, .aura-rev, .aura-dash, .aura-flicker, .aura-hue, .aura-breathe, .aura-flame { animation: none !important; }
 }
 
+/* ===== Temas globais de eventos ===== */
+html[data-event-animations="false"] *,
+html[data-event-animations="false"] *::before,
+html[data-event-animations="false"] *::after {
+  animation: none !important;
+  transition-duration: 0s !important;
+}
+html[data-event-decoration="snow"] body {
+  background-image: radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--event-accent, #fff) 24%, transparent) 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 28%, color-mix(in srgb, var(--event-accent, #fff) 20%, transparent) 0 1px, transparent 2px);
+  background-size: 54px 54px, 83px 83px;
+}
+html[data-event-decoration="sparkles"] body {
+  background-image: radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--event-accent, #f0abfc) 22%, transparent) 0 1px, transparent 2px),
+    radial-gradient(circle at 78% 28%, color-mix(in srgb, var(--event-primary, #8b5cf6) 20%, transparent) 0 1px, transparent 2px);
+  background-size: 67px 67px, 101px 101px;
+}
+html[data-event-decoration="hearts"] body {
+  background-image: radial-gradient(circle at 15% 25%, color-mix(in srgb, var(--event-accent, #fda4af) 14%, transparent) 0 2px, transparent 3px);
+  background-size: 72px 72px;
+}
+html[data-event-decoration="bats"] body {
+  background-image: radial-gradient(ellipse at 88% 10%, color-mix(in srgb, var(--event-accent, #f97316) 12%, transparent), transparent 34%);
+}
+html[data-event-decoration="flowers"] body {
+  background-image: radial-gradient(ellipse at 10% 8%, color-mix(in srgb, var(--event-secondary, #f9a8d4) 16%, transparent), transparent 32%);
+}
+html[data-event-decoration="confetti"] body {
+  background-image: radial-gradient(circle at 12% 16%, color-mix(in srgb, var(--event-accent, #facc15) 18%, transparent) 0 2px, transparent 3px),
+    radial-gradient(circle at 80% 24%, color-mix(in srgb, var(--event-primary, #eab308) 16%, transparent) 0 2px, transparent 3px);
+  background-size: 79px 79px, 113px 113px;
+}
+
 /* Remove o widget de branding do Lovable por completo em todas as rotas. */
 #lovable-badge {
   display: none !important;
