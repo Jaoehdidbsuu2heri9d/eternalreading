@@ -27,7 +27,7 @@ function CloudflareStorageStatus() {
     queryFn: async () => {
       const { data, error } = await supabase.auth.getSession();
       if (error || !data.session?.access_token) throw new Error("Faça login novamente para verificar o armazenamento.");
-      const response = await fetch("/api/admin/media", {
+      const response = await fetch("/api/public/media/_status", {
         headers: { Authorization: "Bearer " + data.session.access_token },
       });
       const result = await response.json().catch(() => null) as
