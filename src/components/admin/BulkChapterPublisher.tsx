@@ -284,12 +284,12 @@ export function BulkChapterPublisher({ mangaId, defaultScan, nextNumber, onDone 
       {busy && <p className="flex items-center gap-2 text-sm text-muted-foreground"><LoaderCircle className="h-4 w-4 animate-spin" />{progress || "Processando capítulos…"}</p>}
 
       <div className="flex flex-wrap justify-end gap-2 border-t border-border pt-3">
-        <Button type="button" variant="secondary" disabled={busy || !groups.length} onClick={() => void run("draft")}>
-          Salvar como rascunhos
+        <Button type="button" variant="secondary" disabled={busy || !groups.length || pendingStatus === "published"} onClick={() => void run("draft")}>
+          {pendingStatus === "draft" ? "Continuar rascunhos" : "Salvar como rascunhos"}
         </Button>
-        <Button type="button" disabled={busy || !groups.length} onClick={() => void run("published")}>
+        <Button type="button" disabled={busy || !groups.length || pendingStatus === "draft"} onClick={() => void run("published")}>
           <Upload className="mr-2 h-4 w-4" />
-          {busy ? "Processando…" : pendingStatus ? "Continuar publicação" : `Enviar e publicar ${groups.length} capítulos`}
+          {busy ? "Processando…" : pendingStatus === "published" ? "Continuar publicação" : `Enviar e publicar ${groups.length} capítulos`}
         </Button>
       </div>
     </div>
