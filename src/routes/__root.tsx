@@ -9,6 +9,8 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -113,13 +115,38 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function GlobalEventTheme({ children }: { children: ReactNode }) {
+  const { data: theme } = useQuery({
+    queryKey: ["global-event-theme"],
+    queryFn: async () => {
+      const now = new Date().toISOString();
+      const { data, error } = await supabase.from("site_event_themes").select("id,name,description,primary_color,secondary_color,accent_color,background_color,banner_url,decoration,effects_intensity,animations_enabled,starts_at,ends_at,status,priority").in("status", ["active", "scheduled"]).order("priority", { ascending: false }).limit(30);
+      if (error) throw error;
+      return (data ?? []).find((t) => (!t.starts_at || t.starts_at <= now) && (!t.ends_at || t.ends_at > now)) ?? null;
+    },
+    refetchInterval: 60_000,
+    staleTime: 30_000,
+    retry: 1,
+  });
+  useEffect(() => {
+    const root = document.documentElement;
+    if (!theme) {
+      ["--event-primary","--event-secondary","--event-accent","--event-background"].forEach((key) => root.style.removeProperty(key));
+      root.removeAttribute("data-event-decoration");
+      root.removeAttribute("data-event-animations");
+      return;
+    }
+    root.style.setProperty("--event-primary", theme.primary_color);
+    root.style.setProperty("--event-secondary", theme.secondary_color);
+    root.style.setProperty("--event-accent", theme.accent_color);
+    root.style.setProperty("--event-background", theme.background_color);
+    root.setAttribute("data-event-decoration", theme.decoration);
+    root.setAttribute("data-event-animations", String(theme.animations_enabled));
+  }, [theme]);
+  return <>{theme ? <div role="status" className="relative z-40 flex items-center justify-center gap-2 border-b border-white/10 px-4 py-2 text-center text-xs font-semibold text-white" style={{ background: `linear-gradient(90deg, ${theme.secondary_color}, ${theme.primary_color})` }}><span aria-hidden>{theme.decoration === "snow" ? "❄" : theme.decoration === "hearts" ? "♡" : theme.decoration === "bats" ? "✦" : "✧"}</span>{theme.name}{theme.description ? <span className="hidden font-normal opacity-80 sm:inline">— {theme.description}</span> : null}</div> : null}{children}</>;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-    </QueryClientProvider>
-  );
+  return <QueryClientProvider client={queryClient}><GlobalEventTheme><Outlet /></GlobalEventTheme></QueryClientProvider>;
 }
