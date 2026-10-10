@@ -88,7 +88,7 @@ function MeSurpreendaPage() {
       if (error) throw error;
     },
     onSuccess: async () => { await qc.invalidateQueries({ queryKey: ["recommendation-preferences", user?.id] }); setShowPreferences(false); setCurrent(null); setSeen([]); setNotice("Preferências salvas. Sua próxima sugestão já vai considerar esses gêneros."); },
-    onError: () => setNotice("Não foi possível salvar suas preferências. Tente novamente."),
+    onError: (error: { message?: string }) => setNotice(`Falha ao salvar preferências: ${error?.message ?? "erro desconhecido"}`),
   });
   const sendFeedback = useMutation({
     mutationFn: async ({ mangaId, value, why }: { mangaId: string; value: "liked" | "dismissed"; why?: string }) => {
