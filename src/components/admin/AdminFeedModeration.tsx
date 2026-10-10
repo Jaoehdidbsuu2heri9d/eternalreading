@@ -14,8 +14,8 @@ type FeedReport = {
   reason: string; status: string; created_at: string;
   post: { id: string; body: string; user_id: string; hidden: boolean; manga: { slug: string; title: string } | null } | null;
   comment: { id: string; body: string; user_id: string; hidden: boolean; post: { id: string; body: string; manga: { slug: string; title: string } | null } | null } | null;
-  reporter?: { username: string; display_name: string | null };
-  author?: { username: string; display_name: string | null };
+  reporter?: { username: string; display_name: string | null } | undefined;
+  author?: { username: string; display_name: string | null } | undefined;
 };
 
 /** Denúncias do Eternal Feed integradas à seção Comunidade da administração. */
