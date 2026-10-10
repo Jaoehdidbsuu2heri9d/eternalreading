@@ -158,17 +158,32 @@ export type ChapterInput = { number: number; title: string | null; volume: strin
 
 export async function saveChapter(mangaId: string, id: string | null, c: ChapterInput, pageUrls: string[]) {
   let chapterId = id;
-  if (id) {
-    const { error } = await supabase.from("chapters").update(c).eq("id", id);
+  try {
+    if (id) {
+      const { error } = await supabase.from("chapters").update(c).eq("id", id);
+      if (error) throw error;
+    } else {
+      const { data, error } = await supabase.from("chapters").insert({ ...c, manga_id: mangaId }).select("id").single();
+      if (error) throw error;
+      chapterId = data.id;
+    }
+    const { error } = await supabase.rpc("admin_set_chapter_pages", { p_chapter: chapterId!, p_urls: pageUrls });
     if (error) throw error;
-  } else {
-    const { data, error } = await supabase.from("chapters").insert({ ...c, manga_id: mangaId }).select("id").single();
-    if (error) throw error;
-    chapterId = data.id;
+    const { error: mangaError } = await supabase.from("manga").update({ updated_at: new Date().toISOString() }).eq("id", mangaId);
+    if (mangaError) throw mangaError;
+  } catch (error) {
+    // If a new chapter was inserted before a later step failed, preserve its ID so batch retries update it instead of creating a duplicate.
+    if (!id && chapterId) {
+      const source = error as { code?: string; message?: string; details?: string; hint?: string };
+      throw Object.assign(new Error(source?.message ?? "Falha ao salvar capítulo."), {
+        code: source?.code,
+        details: source?.details,
+        hint: source?.hint,
+        chapterId,
+      });
+    }
+    throw error;
   }
-  const { error } = await supabase.rpc("admin_set_chapter_pages", { p_chapter: chapterId!, p_urls: pageUrls });
-  if (error) throw error;
-  await supabase.from("manga").update({ updated_at: new Date().toISOString() }).eq("id", mangaId);
 }
 
 export async function deleteChapter(id: string) {
