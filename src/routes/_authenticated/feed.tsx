@@ -95,7 +95,7 @@ async function attachAuthors(posts: FeedPost[]): Promise<FeedPost[]> {
   const { data, error } = await db.from("profiles")
     .select("id,username,display_name,avatar_path,avatar_url,level").in("id", ids);
   if (error) throw error;
-  const authors = new Map<string, MiniProfile>((data ?? []).map((profile: MiniProfile) => [profile.id, profile]));
+  const authors = new Map<string, MiniProfile>((data ?? []).map((profile: MiniProfile) => [profile.id, profile] as const));
   return posts.map((post) => ({ ...post, author: authors.get(post.user_id) }));
 }
 
@@ -564,7 +564,7 @@ function FeedComments({ postId, userId, onReport }: { postId: string; userId: st
       const ids = [...new Set([...parents, ...replies].map((comment) => comment.user_id))];
       const profilesResult = ids.length ? await db.from("profiles").select("id,username,display_name,avatar_path,avatar_url,level").in("id", ids) : { data: [], error: null };
       if (profilesResult.error) throw profilesResult.error;
-      const profiles = new Map<string, MiniProfile>((profilesResult.data ?? []).map((profile: MiniProfile) => [profile.id, profile]));
+      const profiles = new Map<string, MiniProfile>((profilesResult.data ?? []).map((profile: MiniProfile) => [profile.id, profile] as const));
       const addAuthor = (comment: FeedComment) => ({ ...comment, author: profiles.get(comment.user_id) });
       return parents.map((parent) => ({ ...addAuthor(parent), replies: replies.filter((reply) => reply.parent_id === parent.id).map(addAuthor) }));
     },
