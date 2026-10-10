@@ -4,13 +4,14 @@ import { BookOpen, Clock, Compass, Crown, Heart, HeartHandshake, Home, MessageSq
 
 const primary = [
   { to: "/inicio", label: "Início", Icon: Home },
-  { to: "/feed", label: "Feed", Icon: MessageSquare },
   { to: "/explorar", label: "Explorar", Icon: Compass },
   { to: "/favoritos", label: "Favoritos", Icon: Heart },
   { to: "/conquistas", label: "Conquistas", Icon: Trophy },
 ] as const;
 
 const secondary = [
+  { to: "/feed", label: "Eternal Feed", Icon: MessageSquare },
+  { to: "/conquistas", label: "Conquistas", Icon: Trophy },
   { to: "/atualizacoes", label: "Atualizações", Icon: Clock },
   { to: "/ranking", label: "Ranking", Icon: Trophy },
   { to: "/me-surpreenda", label: "Me Surpreenda", Icon: Sparkles },
