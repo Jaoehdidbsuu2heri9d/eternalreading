@@ -26,7 +26,7 @@ export async function uploadImage(folder: string, f: File): Promise<string> {
   form.append("folder", folder);
   let response: Response;
   try {
-    response = await fetch("/api/admin/media", {
+    response = await fetch("/api/public/media/upload", {
       method: "POST",
       headers: { Authorization: `Bearer ${data.session.access_token}` },
       body: form,
