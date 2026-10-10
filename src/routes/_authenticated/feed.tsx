@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  BookOpen, Check, ChevronDown, Eye, EyeOff, Flag, Flame, ImagePlus, LoaderCircle,
+  BookOpen, ChevronDown, Eye, EyeOff, Flag, ImagePlus, LoaderCircle,
   MessageCircle, Pencil, Search, Send, Sparkles, Trash2, X,
 } from "lucide-react";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { TitleBadge } from "@/components/TitleBadge";
 import { Button } from "@/components/common/EButton";
 import { SpoilerText } from "@/components/social/SpoilerText";
-import { useSession } from "@/hooks/useAuth";
+import { useProfile, useSession } from "@/hooks/useAuth";
 import { useRoles } from "@/hooks/useRoles";
 import { supabase } from "@/integrations/supabase/client";
 import { useSignedUrl } from "@/lib/media";
@@ -160,13 +160,14 @@ function AvatarLink({ profile }: { profile?: MiniProfile }) {
 }
 
 function SignedFeedImage({ path }: { path: string }) {
-  const { data } = useSignedUrl("feed-media", path);
-  if (!data) return <div className="h-44 animate-pulse rounded-xl bg-secondary/60" />;
-  return <img src={data} alt="Imagem da publicação" loading="lazy" className="max-h-[480px] w-full rounded-xl border border-border object-contain" />;
+  const url = useSignedUrl("feed-media", path);
+  if (!url) return <div className="h-44 animate-pulse rounded-xl bg-secondary/60" />;
+  return <img src={url} alt="Imagem da publicação" loading="lazy" className="max-h-[480px] w-full rounded-xl border border-border object-contain" />;
 }
 
 function EternalFeedPage() {
   const { user, loading } = useSession();
+  const { data: myProfile } = useProfile(user);
   const [tab, setTab] = useState<FeedTab>("for_you");
   const [composerOpen, setComposerOpen] = useState(false);
   const [editingPost, setEditingPost] = useState<FeedPost | null>(null);
@@ -228,7 +229,7 @@ function EternalFeedPage() {
           </Button>
         </div>
         <div className="mt-5 flex items-center gap-3 rounded-2xl border border-border/70 bg-background/70 p-3">
-          <UserAvatar userId={user.id} username={user.user_metadata?.username || "leitor"} size={42} showFrame />
+          <UserAvatar userId={user.id} username={myProfile?.username ?? user.user_metadata?.username ?? "leitor"} avatarPath={myProfile?.avatar_path} avatarUrl={myProfile?.avatar_url} size={42} showFrame />
           <button type="button" onClick={() => setComposerOpen(true)} className="min-h-11 flex-1 rounded-xl border border-border bg-secondary/60 px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-secondary">
             O que você está lendo ou pensando?
           </button>
