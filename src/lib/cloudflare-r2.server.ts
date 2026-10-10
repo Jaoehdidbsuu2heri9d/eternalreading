@@ -97,22 +97,41 @@ export async function probeR2Connection(): Promise<{ configured: boolean; connec
 
   const key = `_diagnostics/${crypto.randomUUID()}.txt`;
   const client = createR2Client(config);
+  let writeStatus: number | null = null;
+  let cleanupStatus: number | null = null;
+  let writeSucceeded = false;
+  let cleanupSucceeded = false;
+
   try {
     const put = await client.fetch(objectUrl(config, key), {
       method: "PUT",
       headers: { "Content-Type": "text/plain", "Cache-Control": "no-store" },
       body: "eternal-r2-connection-test",
     });
-    if (!put.ok) {
+    writeStatus = put.status;
+    writeSucceeded = put.ok;
+    if (!writeSucceeded) {
       console.error("[Cloudflare R2] Connection probe write failed with status", put.status);
-      return { configured: true, connected: false, status: put.status };
     }
-
-    const del = await client.fetch(objectUrl(config, key), { method: "DELETE" });
-    const connected = del.ok || del.status === 204;
-    if (!connected) console.error("[Cloudflare R2] Connection probe cleanup failed with status", del.status);
-    return { configured: true, connected, status: del.status };
   } catch {
-    return { configured: true, connected: false, status: null };
+    // Still attempt cleanup below in case the write reached R2 before the connection failed.
   }
+
+  // Always attempt cleanup, including when the PUT response is an error or times out.
+  try {
+    const del = await client.fetch(objectUrl(config, key), { method: "DELETE" });
+    cleanupStatus = del.status;
+    cleanupSucceeded = del.ok || del.status === 404;
+    if (!cleanupSucceeded) {
+      console.error("[Cloudflare R2] Connection probe cleanup failed with status", del.status);
+    }
+  } catch {
+    cleanupSucceeded = false;
+  }
+
+  return {
+    configured: true,
+    connected: writeSucceeded && cleanupSucceeded,
+    status: writeSucceeded ? cleanupStatus : writeStatus,
+  };
 }
