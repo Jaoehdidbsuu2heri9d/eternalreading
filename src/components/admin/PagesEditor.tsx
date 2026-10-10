@@ -109,10 +109,10 @@ export function PagesEditor({ pages, onChange, folder }: { pages: string[]; onCh
             <img src={p} alt={`Página ${i + 1}`} loading="lazy" className="aspect-[2/3] w-full rounded-lg object-cover" />
             <p className="py-1 text-center text-xs">Página {String(i + 1).padStart(2, "0")}</p>
             <div className="flex justify-center gap-0.5">
-              <button type="button" className="rounded p-1 hover:bg-secondary" aria-label="Mover para cima" onClick={() => move(i, -1)}><ArrowUp className="h-3.5 w-3.5" /></button>
-              <button type="button" className="rounded p-1 hover:bg-secondary" aria-label="Mover para baixo" onClick={() => move(i, 1)}><ArrowDown className="h-3.5 w-3.5" /></button>
-              <button type="button" className="rounded p-1 hover:bg-secondary" aria-label="Substituir" onClick={() => { setReplIdx(i); replInput.current?.click(); }}><RefreshCw className="h-3.5 w-3.5" /></button>
-              <button type="button" className="rounded p-1 text-destructive hover:bg-secondary" aria-label="Remover" onClick={() => onChange(pages.filter((_, k) => k !== i))}><Trash2 className="h-3.5 w-3.5" /></button>
+              <button type="button" disabled={!!busy} className="rounded p-1 hover:bg-secondary disabled:opacity-40" aria-label="Mover para cima" onClick={() => move(i, -1)}><ArrowUp className="h-3.5 w-3.5" /></button>
+              <button type="button" disabled={!!busy} className="rounded p-1 hover:bg-secondary disabled:opacity-40" aria-label="Mover para baixo" onClick={() => move(i, 1)}><ArrowDown className="h-3.5 w-3.5" /></button>
+              <button type="button" disabled={!!busy} className="rounded p-1 hover:bg-secondary disabled:opacity-40" aria-label="Substituir" onClick={() => { setReplIdx(i); replInput.current?.click(); }}><RefreshCw className="h-3.5 w-3.5" /></button>
+              <button type="button" disabled={!!busy} className="rounded p-1 text-destructive hover:bg-secondary disabled:opacity-40" aria-label="Remover" onClick={() => onChange(pages.filter((_, k) => k !== i))}><Trash2 className="h-3.5 w-3.5" /></button>
             </div>
           </li>
         ))}
