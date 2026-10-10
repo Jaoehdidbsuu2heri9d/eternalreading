@@ -156,7 +156,7 @@ function MeSurpreendaPage() {
         !alreadyRead.has(m.id) && !alreadyFavorite.has(m.id) && !recentFeedback.has(m.id) && !seen.includes(m.id)
       );
       if (fallback.length) {
-        const manga = fallback[Math.floor(Math.random() * fallback.length)];
+        const manga = fallback[Math.floor(Math.random() * fallback.length)]!;
         setCurrent({ manga, score: 0, reasons: ["Descoberta aleatória entre obras publicadas que você ainda não iniciou"], compatibility: null });
         setSeen((old) => [...old, manga.id]);
         setRejecting(false);
@@ -170,7 +170,7 @@ function MeSurpreendaPage() {
         !seen.includes(m.id)
       );
       if (rediscoveryPool.length) {
-        const manga = rediscoveryPool[Math.floor(Math.random() * rediscoveryPool.length)];
+        const manga = rediscoveryPool[Math.floor(Math.random() * rediscoveryPool.length)]!;
         setCurrent({ manga, score: 0, reasons: ["Uma nova chance de descobrir ou revisitar esta obra disponível"], compatibility: null });
         setSeen((old) => [...old, manga.id]);
         setRejecting(false);
@@ -182,9 +182,9 @@ function MeSurpreendaPage() {
       return;
     }
     // Explora as melhores opções, com pequena variação para evitar repetir sempre o topo.
-    const bestScore = pool[0].score;
+    const bestScore = pool[0]!.score;
     const top = pool.filter((c) => c.score >= bestScore - Math.max(2, bestScore * 0.25));
-    const pick = top[Math.floor(Math.random() * top.length)];
+    const pick = top[Math.floor(Math.random() * top.length)]!;
     setCurrent(pick);
     setSeen((old) => [...old, pick.manga.id]);
     setRejecting(false);

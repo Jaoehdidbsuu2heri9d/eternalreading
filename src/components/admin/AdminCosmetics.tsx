@@ -100,7 +100,7 @@ export function AdminCosmetics({ framesOnly = false }: { framesOnly?: boolean })
   });
   const deleteCosmetic = useMutation({
     mutationFn: async (c: CosmeticRow) => {
-      const { error } = await supabase.rpc("admin_delete_cosmetic", { p_cosmetic: c.id });
+      const { error } = await (supabase.rpc as unknown as (n: string, a: object) => Promise<{ error: Error | null }>)("admin_delete_cosmetic", { p_cosmetic: c.id });
       if (error) throw error;
     },
     onSuccess: () => { setMsg("Item excluído."); refresh(); },
@@ -263,7 +263,7 @@ export function AdminCosmetics({ framesOnly = false }: { framesOnly?: boolean })
                 <td className="p-2">{c.equippedCount}</td>
                 <td className="flex gap-1 p-2">
                   <Button size="sm" variant="ghost" onClick={() => setDraft({ ...c })}>Editar</Button>
-                  <Button size="sm" variant="secondary" onClick={() => setDraft({ ...c, id: undefined, slug: `${c.slug.slice(0, 34)}-copy`, name: `${c.name} (cópia)`, active: false, featured: false, sort: (c.sort ?? 0) + 1 })}>Duplicar</Button>
+                  <Button size="sm" variant="secondary" onClick={() => setDraft({ ...(({ id: _id, ...rest }) => rest)(c), slug: `${c.slug.slice(0, 34)}-copy`, name: `${c.name} (cópia)`, active: false, featured: false, sort: (c.sort ?? 0) + 1 })}>Duplicar</Button>
                   <Button size="sm" variant="secondary" onClick={() => toggleActive.mutate(c)}>{c.active ? "Desativar" : "Ativar"}</Button>
                   <Button size="sm" variant="danger" disabled={deleteCosmetic.isPending || c.owners > 0} title={c.owners > 0 ? "Preserve o inventário: desative o item." : "Excluir item sem proprietários"} onClick={() => { if (confirm(`Excluir ${c.name}? Esta ação só é permitida se ninguém possuir o item.`)) deleteCosmetic.mutate(c); }}>Excluir</Button>
                 </td>
