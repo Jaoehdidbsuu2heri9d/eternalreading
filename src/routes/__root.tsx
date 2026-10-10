@@ -130,8 +130,9 @@ function GlobalEventTheme({ children }: { children: ReactNode }) {
   });
   useEffect(() => {
     const root = document.documentElement;
+    const themedProperties = ["--event-primary","--event-secondary","--event-accent","--event-background","--primary","--ring","--accent","--background"];
     if (!theme) {
-      ["--event-primary","--event-secondary","--event-accent","--event-background"].forEach((key) => root.style.removeProperty(key));
+      themedProperties.forEach((key) => root.style.removeProperty(key));
       root.removeAttribute("data-event-decoration");
       root.removeAttribute("data-event-animations");
       return;
@@ -140,6 +141,11 @@ function GlobalEventTheme({ children }: { children: ReactNode }) {
     root.style.setProperty("--event-secondary", theme.secondary_color);
     root.style.setProperty("--event-accent", theme.accent_color);
     root.style.setProperty("--event-background", theme.background_color);
+    // The design system consumes these variables throughout the whole app.
+    root.style.setProperty("--primary", theme.primary_color);
+    root.style.setProperty("--ring", theme.primary_color);
+    root.style.setProperty("--accent", theme.accent_color);
+    root.style.setProperty("--background", theme.background_color);
     root.setAttribute("data-event-decoration", theme.decoration);
     root.setAttribute("data-event-animations", String(theme.animations_enabled));
   }, [theme]);
