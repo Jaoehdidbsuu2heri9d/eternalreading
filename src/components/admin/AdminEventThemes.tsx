@@ -36,9 +36,16 @@ export function AdminEventThemes() {
     mutationFn: async (row: Partial<ThemeRow> & { name: string; event_type: string }) => {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) throw new Error("Entre novamente para continuar.");
-      const payload = { ...row, updated_by: auth.user.id, ...(row.id ? {} : { created_by: auth.user.id }) };
-      const result = row.id
-        ? await (supabase as any).from("site_event_themes").update(payload).eq("id", row.id).select().single()
+      // The form uses an empty string as the temporary ID for new themes.
+      // Never send that value to PostgreSQL: the column is UUID and must be omitted on INSERT.
+      const { id, ...fields } = row;
+      const payload = {
+        ...fields,
+        updated_by: auth.user.id,
+        ...(id ? {} : { created_by: auth.user.id }),
+      };
+      const result = id
+        ? await (supabase as any).from("site_event_themes").update(payload).eq("id", id).select().single()
         : await (supabase as any).from("site_event_themes").insert(payload).select().single();
       if (result.error) throw result.error;
       return result.data;
