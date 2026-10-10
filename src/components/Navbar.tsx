@@ -12,7 +12,6 @@ const links = [
   { to: "/inicio", label: "Início" },
   { to: "/feed", label: "Eternal Feed" },
   { to: "/explorar", label: "Explorar" },
-  { to: "/me-surpreenda", label: "Me Surpreenda" },
   { to: "/atualizacoes", label: "Atualizações" },
   { to: "/ranking", label: "Ranking" },
   { to: "/favoritos", label: "Favoritos" },
