@@ -151,11 +151,12 @@ const AuthenticatedMeRoute = AuthenticatedMeRouteImport.update({
   path: '/me',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedMeSurpreendaRoute = AuthenticatedMeSurpreendaRouteImport.update({
-  id: '/me-surpreenda',
-  path: '/me-surpreenda',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
+const AuthenticatedMeSurpreendaRoute =
+  AuthenticatedMeSurpreendaRouteImport.update({
+    id: '/me-surpreenda',
+    path: '/me-surpreenda',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPersonalizarRoute =
   AuthenticatedPersonalizarRouteImport.update({
     id: '/personalizar',
@@ -249,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/inicio': typeof AuthenticatedInicioRoute
   '/loja': typeof AuthenticatedLojaRoute
   '/me': typeof AuthenticatedMeRoute
+  '/me-surpreenda': typeof AuthenticatedMeSurpreendaRoute
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
   '/ranking': typeof AuthenticatedRankingRoute
@@ -284,6 +286,7 @@ export interface FileRoutesByTo {
   '/inicio': typeof AuthenticatedInicioRoute
   '/loja': typeof AuthenticatedLojaRoute
   '/me': typeof AuthenticatedMeRoute
+  '/me-surpreenda': typeof AuthenticatedMeSurpreendaRoute
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
   '/ranking': typeof AuthenticatedRankingRoute
@@ -321,6 +324,7 @@ export interface FileRoutesById {
   '/_authenticated/inicio': typeof AuthenticatedInicioRoute
   '/_authenticated/loja': typeof AuthenticatedLojaRoute
   '/_authenticated/me': typeof AuthenticatedMeRoute
+  '/_authenticated/me-surpreenda': typeof AuthenticatedMeSurpreendaRoute
   '/_authenticated/personalizar': typeof AuthenticatedPersonalizarRoute
   '/_authenticated/planos': typeof AuthenticatedPlanosRoute
   '/_authenticated/ranking': typeof AuthenticatedRankingRoute
@@ -358,6 +362,7 @@ export interface FileRouteTypes {
     | '/inicio'
     | '/loja'
     | '/me'
+    | '/me-surpreenda'
     | '/personalizar'
     | '/planos'
     | '/ranking'
@@ -393,6 +398,7 @@ export interface FileRouteTypes {
     | '/inicio'
     | '/loja'
     | '/me'
+    | '/me-surpreenda'
     | '/personalizar'
     | '/planos'
     | '/ranking'
@@ -429,6 +435,7 @@ export interface FileRouteTypes {
     | '/_authenticated/inicio'
     | '/_authenticated/loja'
     | '/_authenticated/me'
+    | '/_authenticated/me-surpreenda'
     | '/_authenticated/personalizar'
     | '/_authenticated/planos'
     | '/_authenticated/ranking'
