@@ -27,7 +27,7 @@ export function AdminEventThemes() {
   const themes = useQuery({
     queryKey: ["admin-event-themes"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("site_event_themes").select("*").order("priority", { ascending: false }).order("created_at", { ascending: false });
+      const { data, error } = await (supabase as any).from("site_event_themes").select("*").order("priority", { ascending: false }).order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as ThemeRow[];
     },
@@ -38,8 +38,8 @@ export function AdminEventThemes() {
       if (!auth.user) throw new Error("Entre novamente para continuar.");
       const payload = { ...row, updated_by: auth.user.id, ...(row.id ? {} : { created_by: auth.user.id }) };
       const result = row.id
-        ? await supabase.from("site_event_themes").update(payload).eq("id", row.id).select().single()
-        : await supabase.from("site_event_themes").insert(payload).select().single();
+        ? await (supabase as any).from("site_event_themes").update(payload).eq("id", row.id).select().single()
+        : await (supabase as any).from("site_event_themes").insert(payload).select().single();
       if (result.error) throw result.error;
       return result.data;
     },
@@ -51,9 +51,9 @@ export function AdminEventThemes() {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) throw new Error("Sessão expirada.");
       // Expire any currently active theme before activating the selected one.
-      const { error: expireError } = await supabase.from("site_event_themes").update({ status: "archived", updated_by: auth.user.id }).eq("status", "active");
+      const { error: expireError } = await (supabase as any).from("site_event_themes").update({ status: "archived", updated_by: auth.user.id }).eq("status", "active");
       if (expireError) throw expireError;
-      const { error } = await supabase.from("site_event_themes").update({ status: "active", updated_by: auth.user.id }).eq("id", row.id);
+      const { error } = await (supabase as any).from("site_event_themes").update({ status: "active", updated_by: auth.user.id }).eq("id", row.id);
       if (error) throw error;
     },
     onSuccess: () => { setNotice("Tema global ativado. A aparência global será aplicada quando o mecanismo de temas estiver conectado."); void qc.invalidateQueries({ queryKey: ["admin-event-themes"] }); },
@@ -61,7 +61,7 @@ export function AdminEventThemes() {
   });
   const deactivate = useMutation({
     mutationFn: async (row: ThemeRow) => {
-      const { error } = await supabase.from("site_event_themes").update({ status: "archived" }).eq("id", row.id);
+      const { error } = await (supabase as any).from("site_event_themes").update({ status: "archived" }).eq("id", row.id);
       if (error) throw error;
     },
     onSuccess: () => { setNotice("Tema desativado."); void qc.invalidateQueries({ queryKey: ["admin-event-themes"] }); },
