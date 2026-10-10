@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { CheckCircle2, Cloud, RefreshCw, ShieldAlert } from "lucide-react";
 
 import { Badge } from "@/components/common/EBadge";
 import { Button } from "@/components/common/EButton";
@@ -13,10 +14,56 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { fetchGenres, fetchScans } from "@/lib/api";
 import { type AdminWork, deleteWork, listWorks } from "@/lib/catalog-admin";
 import { formatDate } from "@/lib/format";
+import { supabase } from "@/integrations/supabase/client";
 import { STATUS_LABEL, TYPE_LABEL } from "@/lib/types";
 
 type Sort = "recent" | "oldest" | "chapters";
 
+/** Exibe o estado da conexão R2 sem expor nenhuma credencial. */
+function CloudflareStorageStatus() {
+  const status = useQuery({
+    queryKey: ["cloudflare-r2-status"],
+    retry: false,
+    queryFn: async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error || !data.session?.access_token) throw new Error("Faça login novamente para verificar o armazenamento.");
+      const response = await fetch("/api/admin/media", {
+        headers: { Authorization: "Bearer " + data.session.access_token },
+      });
+      const result = await response.json().catch(() => null) as
+        | { configured?: boolean; bucket?: string | null; requiredSecrets?: string[]; error?: string }
+        | null;
+      if (!response.ok || !result) throw new Error("Não foi possível verificar o Cloudflare R2.");
+      return result;
+    },
+  });
+
+  return (
+    <div className="mb-5 rounded-2xl border border-border bg-card/60 p-4">
+      <div className="flex items-start gap-3">
+        <div className="rounded-xl bg-primary/10 p-2 text-primary"><Cloud className="h-5 w-5" /></div>
+        <div className="min-w-0 flex-1">
+          <h3 className="font-semibold">Armazenamento das obras</h3>
+          {status.isLoading ? <p className="mt-1 text-sm text-muted-foreground">Verificando conexão com Cloudflare R2…</p>
+            : status.data?.configured ? (
+              <p className="mt-1 flex items-center gap-2 text-sm text-emerald-400"><CheckCircle2 className="h-4 w-4 shrink-0" />Cloudflare R2 conectado · bucket <code>{status.data.bucket}</code></p>
+            ) : status.isError ? (
+              <p role="alert" className="mt-1 text-sm text-destructive">{status.error instanceof Error ? status.error.message : "Não foi possível consultar o armazenamento."}</p>
+            ) : (
+              <div className="mt-1 flex items-start gap-2 text-sm text-amber-300">
+                <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0" />
+                <div><p>Cloudflare R2 ainda não está configurado. O envio de novas imagens ficará bloqueado até a configuração.</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Adicione os secrets no servidor Lovable: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_R2_ACCESS_KEY_ID, CLOUDFLARE_R2_SECRET_ACCESS_KEY e CLOUDFLARE_R2_BUCKET.</p>
+                  <a href="https://github.com/Jaoehdidbsuu2heri9d/eternalreading/blob/main/docs/cloudflare-r2-setup.md" target="_blank" rel="noreferrer" className="mt-2 inline-block text-xs font-semibold text-primary hover:underline">Abrir instruções de configuração →</a>
+                </div>
+              </div>
+            )}
+        </div>
+        <button type="button" onClick={() => void status.refetch()} aria-label="Atualizar status do Cloudflare R2" className="rounded-lg p-2 text-muted-foreground hover:bg-secondary"><RefreshCw className="h-4 w-4" /></button>
+      </div>
+    </div>
+  );
+}
 /** Catálogo na Administração: lista, filtros, adicionar, editar e excluir obras. */
 export function AdminWorks() {
   const qc = useQueryClient();
@@ -51,6 +98,7 @@ export function AdminWorks() {
 
   return (
     <section className="mt-10">
+      <CloudflareStorageStatus />
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-xl font-semibold">Obras</h2>
         <Button size="sm" onClick={() => setEditing(null)}>+ Adicionar obra</Button>
