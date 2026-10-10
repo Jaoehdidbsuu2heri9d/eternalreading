@@ -840,6 +840,209 @@ export type Database = {
           },
         ]
       }
+      feed_comments: {
+        Row: {
+          body: string
+          created_at: string
+          edited_at: string | null
+          hidden: boolean
+          id: string
+          is_spoiler: boolean
+          parent_id: string | null
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          edited_at?: string | null
+          hidden?: boolean
+          id?: string
+          is_spoiler?: boolean
+          parent_id?: string | null
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          edited_at?: string | null
+          hidden?: boolean
+          id?: string
+          is_spoiler?: boolean
+          parent_id?: string | null
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "feed_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_post_stats"
+            referencedColumns: ["post_id"]
+          },
+          {
+            foreignKeyName: "feed_comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_posts: {
+        Row: {
+          body: string
+          category: string | null
+          chapter_id: string | null
+          created_at: string
+          hidden: boolean
+          id: string
+          image_path: string | null
+          is_spoiler: boolean
+          manga_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body?: string
+          category?: string | null
+          chapter_id?: string | null
+          created_at?: string
+          hidden?: boolean
+          id?: string
+          image_path?: string | null
+          is_spoiler?: boolean
+          manga_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          category?: string | null
+          chapter_id?: string | null
+          created_at?: string
+          hidden?: boolean
+          id?: string
+          image_path?: string | null
+          is_spoiler?: boolean
+          manga_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_posts_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_posts_manga_id_fkey"
+            columns: ["manga_id"]
+            isOneToOne: false
+            referencedRelation: "manga"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_reactions: {
+        Row: {
+          created_at: string
+          post_id: string
+          reaction: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          post_id: string
+          reaction: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          post_id?: string
+          reaction?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_post_stats"
+            referencedColumns: ["post_id"]
+          },
+          {
+            foreignKeyName: "feed_reactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      feed_reports: {
+        Row: {
+          comment_id: string | null
+          created_at: string
+          id: string
+          post_id: string | null
+          reason: string
+          reporter_id: string
+          status: string
+        }
+        Insert: {
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          reason: string
+          reporter_id: string
+          status?: string
+        }
+        Update: {
+          comment_id?: string | null
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          reason?: string
+          reporter_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_reports_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "feed_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "feed_reports_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_post_stats"
+            referencedColumns: ["post_id"]
+          },
+          {
+            foreignKeyName: "feed_reports_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       follows: {
         Row: {
           created_at: string
@@ -1457,6 +1660,75 @@ export type Database = {
         }
         Relationships: []
       }
+      site_event_themes: {
+        Row: {
+          accent_color: string
+          animations_enabled: boolean
+          background_color: string
+          banner_url: string | null
+          created_at: string
+          created_by: string | null
+          decoration: string
+          description: string
+          effects_intensity: number
+          ends_at: string | null
+          event_type: string
+          id: string
+          name: string
+          primary_color: string
+          priority: number
+          secondary_color: string
+          starts_at: string | null
+          status: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          accent_color?: string
+          animations_enabled?: boolean
+          background_color?: string
+          banner_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          decoration?: string
+          description?: string
+          effects_intensity?: number
+          ends_at?: string | null
+          event_type?: string
+          id?: string
+          name: string
+          primary_color?: string
+          priority?: number
+          secondary_color?: string
+          starts_at?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          accent_color?: string
+          animations_enabled?: boolean
+          background_color?: string
+          banner_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          decoration?: string
+          description?: string
+          effects_intensity?: number
+          ends_at?: string | null
+          event_type?: string
+          id?: string
+          name?: string
+          primary_color?: string
+          priority?: number
+          secondary_color?: string
+          starts_at?: string | null
+          status?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       subscription_plans: {
         Row: {
           billing_interval: string
@@ -1791,7 +2063,25 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      feed_post_stats: {
+        Row: {
+          category: string | null
+          comment_count: number | null
+          created_at: string | null
+          manga_id: string | null
+          post_id: string | null
+          reaction_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feed_posts_manga_id_fkey"
+            columns: ["manga_id"]
+            isOneToOne: false
+            referencedRelation: "manga"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       achievement_goal: {
