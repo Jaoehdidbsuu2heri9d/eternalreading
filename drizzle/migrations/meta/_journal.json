@@ -204,6 +204,13 @@
       "when": 1791712800000,
       "tag": "0028_me_surpreenda",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1791624000000,
+      "tag": "0029_site_event_themes",
+      "breakpoints": true
     }
   ]
 }
