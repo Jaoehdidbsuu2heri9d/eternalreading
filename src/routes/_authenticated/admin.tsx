@@ -20,6 +20,7 @@ import { AdminBilling } from "@/components/admin/AdminBilling";
 import { AdminCoins } from "@/components/admin/AdminCoins";
 import { AdminAchievements } from "@/components/admin/AdminAchievements";
 import { AdminSupporters } from "@/components/admin/AdminSupporters";
+import { AdminEventThemes } from "@/components/admin/AdminEventThemes";
 import { useSession } from "@/hooks/useAuth";
 import { useRoles } from "@/hooks/useRoles";
 
@@ -207,7 +208,8 @@ function AdminPage() {
       {(is("usuarios","todos") || is("gamificacao","niveis-xp")) && <AdminTeam isOwner={isOwner} mode="people" />}
       {(is("usuarios","administradores") || is("seguranca","equipe")) && <AdminTeam isOwner={isOwner} mode="administrators" />}
       {(is("comunidade","denuncias") || is("comunidade","bloqueios")) && <AdminModeration />}
-      {is("personalizacao","molduras") && <AdminCosmetics framesOnly />}
+      {is("personalizacao","temas-eventos") && (isOwner ? <AdminEventThemes /> : <section className="rounded-2xl border border-border p-5"><h2 className="font-bold">Acesso restrito ao dono</h2><p className="mt-1 text-sm text-muted-foreground">Somente o dono da Eternal Reading pode criar e ativar temas globais.</p></section>)}
+      {is("personalizacao","molduras") && <AdminCosmetics framesOnly />
       {is("personalizacao","cosmeticos") && <AdminCosmetics />}
       {is("gamificacao","coins") && <AdminCoins />}
       {is("gamificacao","conquistas") && <AdminAchievements />}
