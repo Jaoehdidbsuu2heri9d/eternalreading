@@ -46,7 +46,7 @@ function CloudflareStorageStatus() {
           <h3 className="font-semibold">Armazenamento das obras</h3>
           {status.isLoading ? <p className="mt-1 text-sm text-muted-foreground">Verificando conexão com Cloudflare R2…</p>
             : status.data?.configured ? (
-              <p className="mt-1 flex items-center gap-2 text-sm text-emerald-400"><CheckCircle2 className="h-4 w-4 shrink-0" />Cloudflare R2 conectado · bucket <code>{status.data.bucket}</code></p>
+              <p className="mt-1 flex items-center gap-2 text-sm text-emerald-400"><CheckCircle2 className="h-4 w-4 shrink-0" />Credenciais do Cloudflare R2 configuradas · bucket <code>{status.data.bucket}</code></p>
             ) : status.isError ? (
               <p role="alert" className="mt-1 text-sm text-destructive">{status.error instanceof Error ? status.error.message : "Não foi possível consultar o armazenamento."}</p>
             ) : (
