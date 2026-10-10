@@ -32,9 +32,9 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
-        <Logo to="/inicio" />
+    <header className="sticky top-0 z-40 w-full min-w-0 border-b border-border bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-14 w-full min-w-0 max-w-7xl items-center gap-2 px-3 sm:h-16 sm:gap-4 sm:px-4">
+        <Logo to="/inicio" className="shrink-0" />
 
         <nav className="hidden items-center gap-1 xl:flex" aria-label="Navegação principal">
           {links.map((l) => (
@@ -51,11 +51,11 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
 
         <Link
           to="/me-surpreenda"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border border-primary/30 bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/15"
+          className="inline-flex shrink-0 items-center gap-1 rounded-xl border border-primary/30 bg-primary/10 px-2 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/15 sm:gap-1.5 sm:px-3"
           aria-label="Abrir Me Surpreenda"
         >
           <Sparkles className="h-4 w-4" aria-hidden />
-          <span>Me Surpreenda</span>
+          <span className="hidden min-[480px]:inline">Me Surpreenda</span>
         </Link>
 
         <form onSubmit={submitSearch} className="hidden 2xl:block" role="search">
@@ -77,7 +77,7 @@ export function Navbar({ profile }: { profile?: Profile | null }) {
           </div>
         </form>
 
-        <div className={cn("flex items-center gap-1", "ml-auto lg:ml-0")}>
+        <div className={cn("flex shrink-0 items-center gap-1", "ml-auto lg:ml-0")}>
           <NotificationBell {...(profile ? { userId: profile.id } : {})} />
           <UserMenu profile={profile ?? null} />
         </div>

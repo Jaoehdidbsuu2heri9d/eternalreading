@@ -301,3 +301,26 @@ html[data-event-decoration="confetti"] body {
 @media (prefers-reduced-motion: reduce) {
  .frame-artwork__dragon,.frame-artwork__phoenix,.frame-artwork__kitsune,.frame-artwork__moonlit,.frame-artwork__sakura,.frame-artwork__phantom { animation:none !important; }
 }
+
+
+/* ===== Mobile layout safety: full-width shell and safe viewport sizing ===== */
+html,
+body {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  overflow-x: clip;
+}
+
+body > * {
+  min-width: 0;
+}

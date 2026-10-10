@@ -24,9 +24,9 @@ const secondary = [
 export function MobileNav({ username }: { username?: string }) {
   const [more, setMore] = useState(false);
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur-xl xl:hidden" aria-label="Navegação inferior">
+    <nav className="fixed inset-x-0 bottom-0 z-50 w-full border-t border-border bg-background/98 shadow-[0_-8px_28px_rgba(0,0,0,0.3)] backdrop-blur-xl xl:hidden" aria-label="Navegação inferior">
       {more && (
-        <div id="mobile-more" className="absolute inset-x-0 bottom-full border-t border-border bg-background p-4 shadow-2xl" aria-label="Mais páginas">
+        <div id="mobile-more" className="absolute inset-x-0 bottom-full max-h-[70dvh] overflow-y-auto border-t border-border bg-background p-4 shadow-2xl" aria-label="Mais páginas">
           <div className="mx-auto mb-3 flex max-w-lg items-center justify-between">
             <span className="text-sm font-semibold">Mais páginas</span>
             <button type="button" onClick={() => setMore(false)} className="rounded-lg p-2" aria-label="Fechar menu"><X className="h-5 w-5" /></button>
@@ -43,19 +43,19 @@ export function MobileNav({ username }: { username?: string }) {
       <ul className="flex items-stretch justify-around pb-[env(safe-area-inset-bottom)]">
         {primary.map(({ to, label, Icon }) => (
           <li key={to} className="min-w-0 flex-1">
-            <Link to={to} onClick={() => setMore(false)} className="flex h-16 flex-col items-center justify-center gap-1 text-[10px] text-muted-foreground transition-colors" activeProps={{ className: "text-primary-foreground" }}>
+            <Link to={to} onClick={() => setMore(false)} className="flex h-16 min-w-0 flex-col items-center justify-center gap-1 px-0.5 text-[9px] leading-none text-muted-foreground transition-colors min-[380px]:text-[10px]" activeProps={{ className: "text-primary-foreground" }}>
               <Icon className="h-5 w-5" aria-hidden /><span className="truncate">{label}</span>
             </Link>
           </li>
         ))}
         <li className="min-w-0 flex-1">
-          <Link to="/perfil/$username" params={{ username: username ?? "" }} onClick={() => setMore(false)} className="flex h-16 flex-col items-center justify-center gap-1 text-[10px] text-muted-foreground" activeProps={{ className: "text-primary-foreground" }}>
-            <User className="h-5 w-5" aria-hidden /><span>Perfil</span>
+          <Link to="/perfil/$username" params={{ username: username ?? "" }} onClick={() => setMore(false)} className="flex h-16 min-w-0 flex-col items-center justify-center gap-1 px-0.5 text-[9px] leading-none text-muted-foreground min-[380px]:text-[10px]" activeProps={{ className: "text-primary-foreground" }}>
+            <User className="h-5 w-5" aria-hidden /><span className="max-w-full truncate">Perfil</span>
           </Link>
         </li>
         <li className="min-w-0 flex-1">
-          <button type="button" aria-expanded={more} aria-controls="mobile-more" onClick={() => setMore(!more)} className="flex h-16 w-full flex-col items-center justify-center gap-1 text-[10px] text-muted-foreground">
-            <MoreHorizontal className="h-5 w-5" aria-hidden /><span>Mais</span>
+          <button type="button" aria-expanded={more} aria-controls="mobile-more" onClick={() => setMore(!more)} className="flex h-16 w-full min-w-0 flex-col items-center justify-center gap-1 px-0.5 text-[9px] leading-none text-muted-foreground min-[380px]:text-[10px]">
+            <MoreHorizontal className="h-5 w-5" aria-hidden /><span className="max-w-full truncate">Mais</span>
           </button>
         </li>
       </ul>

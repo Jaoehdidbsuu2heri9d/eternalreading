@@ -65,20 +65,20 @@ function MangaPage() {
   const readParam = lastNum != null ? String(Number(lastNum)) : first ? String(first.number) : null;
 
   return (
-    <div>
-      <div className="relative h-48 overflow-hidden sm:h-72">
+    <div className="w-full min-w-0 overflow-x-clip">
+      <div className="relative h-40 w-full overflow-hidden sm:h-72">
         <img src={m.banner_url ?? m.cover_url ?? ""} alt="" className="h-full w-full object-cover opacity-40 blur-sm" />
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
       </div>
-      <div className="mx-auto -mt-28 max-w-5xl px-4 pb-10 sm:-mt-40">
-        <div className="relative flex flex-col gap-6 sm:flex-row">
-          <img src={m.cover_url ?? ""} alt={`Capa de ${m.title}`} className="w-40 shrink-0 self-center rounded-2xl shadow-2xl sm:w-56 sm:self-start" />
-          <div className="flex-1 space-y-3 sm:pt-24">
+      <div className="mx-auto -mt-24 w-full min-w-0 max-w-5xl px-4 pb-8 sm:-mt-40 sm:pb-10">
+        <div className="relative flex min-w-0 flex-col gap-5 sm:flex-row sm:gap-6">
+          <img src={m.cover_url ?? ""} alt={`Capa de ${m.title}`} className="w-36 max-w-[52vw] shrink-0 self-center rounded-2xl shadow-2xl sm:w-56 sm:self-start" />
+          <div className="min-w-0 flex-1 space-y-3 sm:pt-24">
             <div className="flex flex-wrap gap-2">
               <Badge tone="primary">{TYPE_LABEL[m.type]}</Badge>
               <Badge>{STATUS_LABEL[m.status]}</Badge>
             </div>
-            <h1 className="text-3xl font-bold">{m.title}</h1>
+            <h1 className="break-words text-2xl font-bold leading-tight sm:text-3xl">{m.title}</h1>
             {m.alt_title && <p className="text-sm text-muted-foreground">{m.alt_title}</p>}
             <p className="text-sm text-muted-foreground">
               {m.author && <>Autor: {m.author} • </>}
@@ -102,7 +102,7 @@ function MangaPage() {
             </div>
           </div>
         </div>
-        {m.synopsis && <p className="mt-8 leading-relaxed text-muted-foreground">{m.synopsis}</p>}
+        {m.synopsis && <p className="mt-6 break-words leading-7 text-muted-foreground sm:mt-8 sm:leading-relaxed">{m.synopsis}</p>}
         <h2 className="mb-3 mt-8 text-xl font-semibold">Capítulos</h2>
         <ChapterList chapters={list} mangaSlug={slug} />
         <Comments mangaId={m.id} chapterId={null} {...(user ? { me: user.id } : {})} />

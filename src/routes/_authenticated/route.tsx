@@ -33,9 +33,9 @@ function AuthenticatedLayout() {
   if (isReader) return <><Outlet /><AchievementUnlockToast userId={user?.id} profile={profile} /></>;
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen min-h-[100dvh] w-full min-w-0 flex-col overflow-x-clip">
       <Navbar profile={profile ?? null} />
-      <main className="flex-1 pb-20 xl:pb-0">
+      <main className="w-full min-w-0 flex-1 pb-[calc(5rem+env(safe-area-inset-bottom))] xl:pb-0">
         <Outlet />
       </main>
       <Footer />
