@@ -164,7 +164,7 @@ BEGIN
   END IF;
   NEW.updated_at := now();
   RETURN NEW;
-END $;
+END $$;
 DROP TRIGGER IF EXISTS feed_posts_guard ON public.feed_posts;
 CREATE TRIGGER feed_posts_guard BEFORE INSERT OR UPDATE ON public.feed_posts FOR EACH ROW EXECUTE FUNCTION public.guard_feed_post();
 
@@ -198,7 +198,7 @@ BEGIN
     NEW.created_at := now();
   END IF;
   RETURN NEW;
-END $;
+END $$;
 DROP TRIGGER IF EXISTS feed_comments_guard ON public.feed_comments;
 CREATE TRIGGER feed_comments_guard BEFORE INSERT OR UPDATE ON public.feed_comments FOR EACH ROW EXECUTE FUNCTION public.guard_feed_comment();
 
@@ -246,7 +246,7 @@ CREATE TRIGGER feed_comment_notification AFTER INSERT ON public.feed_comments FO
 
 CREATE OR REPLACE FUNCTION public.guard_feed_reaction()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public'
-AS $
+AS $$
 BEGIN
   IF TG_OP = 'UPDATE' THEN
     IF NEW.user_id <> OLD.user_id OR NEW.post_id <> OLD.post_id THEN
@@ -257,7 +257,7 @@ BEGIN
     NEW.created_at := now();
   END IF;
   RETURN NEW;
-END $;
+END $$;
 DROP TRIGGER IF EXISTS feed_reactions_guard ON public.feed_reactions;
 CREATE TRIGGER feed_reactions_guard BEFORE INSERT OR UPDATE ON public.feed_reactions FOR EACH ROW EXECUTE FUNCTION public.guard_feed_reaction();
 
