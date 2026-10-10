@@ -1,9 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { BookOpen, Clock, Compass, Crown, Heart, HeartHandshake, Home, MoreHorizontal, Sparkles, Trophy, User, X } from "lucide-react";
+import { BookOpen, Clock, Compass, Crown, Heart, HeartHandshake, Home, MessageSquare, MoreHorizontal, Sparkles, Trophy, User, X } from "lucide-react";
 
 const primary = [
   { to: "/inicio", label: "Início", Icon: Home },
+  { to: "/feed", label: "Feed", Icon: MessageSquare },
   { to: "/explorar", label: "Explorar", Icon: Compass },
   { to: "/favoritos", label: "Favoritos", Icon: Heart },
   { to: "/conquistas", label: "Conquistas", Icon: Trophy },
