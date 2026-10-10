@@ -163,8 +163,22 @@ function MeSurpreendaPage() {
         setNotice("As recomendações personalizadas se esgotaram; esta é uma descoberta aleatória entre obras disponíveis.");
         return;
       }
+      // Último recurso: permite redescobrir uma obra com capítulos publicados,
+      // mesmo que já esteja no histórico/favoritos ou tenha recebido feedback.
+      const rediscoveryPool = (catalog.data ?? []).filter((m) =>
+        publishedChapters.data?.has(m.id) && m.id && m.slug && m.title && m.cover_url &&
+        !seen.includes(m.id)
+      );
+      if (rediscoveryPool.length) {
+        const manga = rediscoveryPool[Math.floor(Math.random() * rediscoveryPool.length)];
+        setCurrent({ manga, score: 0, reasons: ["Uma nova chance de descobrir ou revisitar esta obra disponível"], compatibility: null });
+        setSeen((old) => [...old, manga.id]);
+        setRejecting(false);
+        setNotice("Você já explorou as sugestões inéditas; esta é uma obra disponível para redescobrir.");
+        return;
+      }
       setCurrent(null);
-      setNotice(candidates.length ? "Você já viu todas as sugestões disponíveis nesta sessão. Ajuste os gêneros ou volte mais tarde para novas descobertas." : "Não há candidatos inéditos suficientes neste momento. Experimente outros gêneros ou volte quando novas obras forem publicadas.");
+      setNotice(candidates.length ? "Você já viu todas as sugestões disponíveis nesta sessão. Clique novamente após ajustar os gêneros para tentar outras descobertas." : "Ainda há poucas obras com capítulos publicados. Publique novos capítulos para ampliar suas sugestões.");
       return;
     }
     // Explora as melhores opções, com pequena variação para evitar repetir sempre o topo.
