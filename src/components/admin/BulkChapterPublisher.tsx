@@ -214,9 +214,11 @@ export function BulkChapterPublisher({ mangaId, defaultScan, nextNumber, onDone 
         }
       }));
 
-      working = working.map((group) => succeeded.has(group.id)
-        ? { ...group, saved: true }
-        : recoveredIds.has(group.id) ? { ...group, chapterId: recoveredIds.get(group.id) } : group);
+      working = working.map((group) => {
+        if (succeeded.has(group.id)) return { ...group, saved: true };
+        const recoveredId = recoveredIds.get(group.id);
+        return recoveredId ? { ...group, chapterId: recoveredId } : group;
+      });
       setGroups(working);
       if (failures.length) {
         setError(`${succeeded.size} capítulo(s) salvos; ${failures.length} precisam de atenção: ${failures.slice(0, 3).join("; ")}${failures.length > 3 ? "; …" : ""}. Ajuste os números ou tente novamente; os capítulos salvos serão ignorados.`);
