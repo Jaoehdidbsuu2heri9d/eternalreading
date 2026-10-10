@@ -15,11 +15,39 @@ export function validateImage(f: File): string | null {
 export async function uploadImage(folder: string, f: File): Promise<string> {
   const err = validateImage(f);
   if (err) throw new Error(err);
-  const ext = f.type === "image/png" ? "png" : f.type === "image/webp" ? "webp" : "jpg";
-  const path = `${folder}/${crypto.randomUUID()}.${ext}`;
-  const { error } = await supabase.storage.from("manga-media").upload(path, f, { contentType: f.type });
-  if (error) throw error;
-  return `/api/public/media/${path}`;
+
+  const { data, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !data.session?.access_token) {
+    throw new Error("Sua sessão expirou. Entre novamente para enviar arquivos.");
+  }
+
+  const form = new FormData();
+  form.append("file", f, f.name);
+  form.append("folder", folder);
+  let response: Response;
+  try {
+    response = await fetch("/api/admin/media", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${data.session.access_token}` },
+      body: form,
+    });
+  } catch {
+    throw new Error("Não foi possível conectar ao servidor de armazenamento. Tente novamente.");
+  }
+
+  const result = await response.json().catch(() => null) as
+    | { url?: string; message?: string; error?: string }
+    | null;
+  if (!response.ok || !result?.url) {
+    if (response.status === 503 || result?.error === "cloudflare_r2_not_configured") {
+      throw new Error("Cloudflare R2 ainda não está configurado no Lovable. Configure as credenciais do bucket antes de enviar obras.");
+    }
+    if (response.status === 403) throw new Error("Somente administradores autorizados podem enviar arquivos de obras.");
+    if (response.status === 413) throw new Error("A imagem deve ter no máximo 10 MB.");
+    if (response.status === 415) throw new Error(result?.message ?? "Formato inválido. Use JPG, PNG ou WebP.");
+    throw new Error(result?.message ?? "Falha ao enviar imagem para o Cloudflare R2.");
+  }
+  return result.url;
 }
 
 export function slugify(s: string) {
