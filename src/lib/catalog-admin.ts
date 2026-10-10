@@ -40,7 +40,7 @@ export async function uploadImage(folder: string, f: File): Promise<string> {
     | null;
   if (!response.ok || !result?.url) {
     if (response.status === 503 || result?.error === "cloudflare_r2_not_configured") {
-      throw new Error("Cloudflare R2 ainda não está configurado no Lovable. Configure as credenciais do bucket antes de enviar obras.");
+      throw new Error("O servidor não reconheceu a configuração do Cloudflare R2. Confira se os secrets estão disponíveis no ambiente publicado e se a aplicação foi republicada. Não envie as credenciais pelo chat.");
     }
     if (response.status === 403) throw new Error("Somente administradores autorizados podem enviar arquivos de obras.");
     if (response.status === 413) throw new Error("A imagem deve ter no máximo 10 MB.");

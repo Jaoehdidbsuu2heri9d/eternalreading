@@ -42,8 +42,8 @@ function matchesImageSignature(bytes: Uint8Array, mime: string) {
 }
 
 /**
- * Serves catalog images and handles the protected R2 upload/status actions.
- * R2 itself stays private: credentials are only read by this server route.
+ * Serves catalog images and handles protected upload/status actions.
+ * R2 credentials are read only on the server; the bucket remains private.
  */
 export const Route = createFileRoute("/api/public/media/$")({
   server: {
@@ -54,18 +54,31 @@ export const Route = createFileRoute("/api/public/media/$")({
         if (path === "_status") {
           const access = await authorizeAdmin(request);
           if ("response" in access) return access.response;
-          const { getR2Config } = await import("@/lib/cloudflare-r2.server");
+          const { getR2Config, probeR2Connection } = await import("@/lib/cloudflare-r2.server");
           const config = getR2Config();
+          if (!config) {
+            return Response.json({
+              provider: "not-configured",
+              configured: false,
+              connected: false,
+              bucket: null,
+              requiredSecrets: [
+                "CLOUDFLARE_ACCOUNT_ID",
+                "CLOUDFLARE_R2_ACCESS_KEY_ID",
+                "CLOUDFLARE_R2_SECRET_ACCESS_KEY",
+                "CLOUDFLARE_R2_BUCKET",
+              ],
+            });
+          }
+
+          const probe = await probeR2Connection();
           return Response.json({
-            provider: config ? "cloudflare-r2" : "not-configured",
-            configured: !!config,
-            bucket: config?.bucket ?? null,
-            requiredSecrets: config ? [] : [
-              "CLOUDFLARE_ACCOUNT_ID",
-              "CLOUDFLARE_R2_ACCESS_KEY_ID",
-              "CLOUDFLARE_R2_SECRET_ACCESS_KEY",
-              "CLOUDFLARE_R2_BUCKET",
-            ],
+            provider: probe.connected ? "cloudflare-r2" : "cloudflare-r2-error",
+            configured: probe.configured,
+            connected: probe.connected,
+            status: probe.status,
+            bucket: config.bucket,
+            requiredSecrets: [],
           });
         }
 
@@ -73,7 +86,7 @@ export const Route = createFileRoute("/api/public/media/$")({
           return new Response("Not found", { status: 404 });
         }
 
-        // New objects live in R2. Legacy Supabase media remains a read fallback.
+        // New R2 objects use the r2/ prefix. Legacy Supabase keys remain unchanged.
         try {
           const { getR2Object } = await import("@/lib/cloudflare-r2.server");
           const object = await getR2Object(path);
@@ -147,15 +160,34 @@ export const Route = createFileRoute("/api/public/media/$")({
         }
 
         const { getR2Config, putR2Object } = await import("@/lib/cloudflare-r2.server");
-        if (!getR2Config()) {
+        const configuredR2 = getR2Config();
+        const legacyKey = `${folder}/${crypto.randomUUID()}.${ext}`;
+        const body = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+
+        if (!configuredR2) {
+          // Keep administration uploads working until R2 secrets are configured.
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { error } = await supabaseAdmin.storage.from("manga-media").upload(legacyKey, body, {
+            contentType: mime,
+            upsert: false,
+          });
+          if (error) {
+            console.error("[Legacy media upload] Failed:", error.message);
+            return Response.json({
+              error: "legacy_media_upload_failed",
+              message: "Não foi possível enviar a imagem para o armazenamento atual. Tente novamente.",
+            }, { status: 502 });
+          }
           return Response.json({
-            error: "cloudflare_r2_not_configured",
-            message: "O Cloudflare R2 ainda não está configurado. Adicione as quatro variáveis de ambiente do R2 no Lovable e tente novamente.",
-          }, { status: 503 });
+            ok: true,
+            provider: "supabase-legacy",
+            path: legacyKey,
+            url: `/api/public/media/${legacyKey}`,
+          }, { status: 201 });
         }
 
-        const key = `${folder}/${crypto.randomUUID()}.${ext}`;
-        const body = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+        // Prefix separates R2 objects from all existing Supabase keys.
+        const key = `r2/${folder}/${crypto.randomUUID()}.${ext}`;
         try {
           await putR2Object(key, body, mime);
         } catch (error) {

@@ -34,13 +34,13 @@ Depois de salvar as variáveis, faça o redeploy/restart do projeto para o proce
 
 ## 4. Confirmar a ligação e enviar a primeira obra
 
-1. Abra o menu administrativo da Eternal Reading e vá a **Conteúdo → Obras**. O painel mostra se o R2 está configurado.
-2. Abra uma obra e envie uma capa/banners. Depois abra **Capítulos**, selecione um capítulo e adicione páginas.
-3. Confira se as miniaturas aparecem e se a página da obra abre normalmente. As novas imagens devem ser entregues pela rota do site com o cabeçalho `X-Storage-Provider: cloudflare-r2`.
+1. Abra o menu administrativo da Eternal Reading e vá a **Conteúdo → Obras**. O painel faz um teste real de gravação e exclusão de um pequeno objeto temporário; ele só mostra conexão confirmada quando essa operação funciona.
+2. Abra uma obra e envie uma capa/banner. Depois abra **Capítulos**, selecione um capítulo e adicione páginas.
+3. Confira se as miniaturas aparecem e se a página da obra abre normalmente. Quando o R2 estiver conectado, as novas imagens devem ser entregues pela rota do site com o cabeçalho `X-Storage-Provider: cloudflare-r2`.
 
 ## Compatibilidade com os arquivos antigos
 
-Os arquivos já guardados no bucket privado `manga-media` do Supabase continuam acessíveis como fallback. Novos uploads de capas, banners e páginas vão para o Cloudflare R2 assim que as quatro variáveis estiverem configuradas. Essa etapa não migra automaticamente os arquivos antigos para R2.
+Os arquivos já guardados no bucket privado `manga-media` do Supabase continuam acessíveis. Quando o R2 está configurado e o teste de conexão passa, novos uploads vão para o R2 com o prefixo `r2/`, separado dos caminhos antigos. Se as credenciais do R2 não estiverem configuradas, os uploads continuam indo para o armazenamento atual do Supabase; a Administração não fica bloqueada. Essa etapa não migra automaticamente os arquivos antigos para R2.
 
 ## Formatos e limites atuais
 
@@ -51,7 +51,7 @@ Os arquivos já guardados no bucket privado `manga-media` do Supabase continuam 
 
 ## Se não funcionar
 
-- **“R2 ainda não está configurado”**: confirme os quatro secrets e reinicie/republique o projeto.
-- **Falha ao enviar**: confira se as credenciais têm leitura e escrita no bucket selecionado e se o nome do bucket está correto.
-- **Upload funciona, mas a imagem não abre**: confira logs do servidor e se o token mantém permissão de leitura.
+- **Painel diz que o R2 não está configurado**: confirme os quatro secrets e reinicie/republique o projeto. Os uploads continuam usando o Supabase enquanto isso.
+- **Credenciais configuradas, mas conexão falha**: confira se o token tem Object Read & Write no bucket selecionado e se o nome do bucket e Account ID estão corretos. O painel testa uma gravação e uma exclusão reais.
+- **Upload R2 funciona, mas a imagem não abre**: confira logs do servidor e se o token mantém permissão de leitura.
 - Não publique o bucket nem compartilhe o Secret Access Key para contornar erros de autenticação.
