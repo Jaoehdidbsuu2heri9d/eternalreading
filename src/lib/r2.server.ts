@@ -1,53 +1,51 @@
-/** Cloudflare R2 (API S3) — só no servidor. Credenciais vêm de secrets; nunca são devolvidas nem registradas. */
+/** Cloudflare R2 (API S3) — só no servidor. Aceita nomes CLOUDFLARE_* (documentados) ou R2_*. Nunca devolve valores. */
 import { AwsClient } from "aws4fetch";
 
-export const R2_ALLOWED_TYPES: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
-export const R2_FOLDER_RE = /^(covers|banners|works\/[0-9a-f-]{36}\/chapters\/([0-9a-f-]{36}|new)\/pages)$/;
-export const R2_KEY_RE = /^(covers|banners|works\/[0-9a-f-]{36}\/chapters\/([0-9a-f-]{36}|new)\/pages)\/[0-9a-f-]{36}\.(jpg|png|webp)$/;
+export const R2_PREFIX = "r2/";
+export type R2Config = { client: AwsClient; base: string; bucket: string; maxBytes: number };
 
-export type R2Config = { client: AwsClient; base: string; maxBytes: number; publicBase: string | null };
+const pick = (...names: string[]) => names.map((n) => process.env[n]?.trim() ?? "").find(Boolean) ?? "";
 
-/** Lê a configuração; null se faltar algo. `missing` lista só NOMES de variáveis. */
 export function r2Config(): { cfg: R2Config | null; missing: string[] } {
-  const env = process.env;
-  const accountId = env["R2_ACCOUNT_ID"];
-  const keyId = env["R2_ACCESS_KEY_ID"];
-  const secret = env["R2_SECRET_ACCESS_KEY"];
-  const bucket = env["R2_BUCKET_NAME"];
+  const accountId = pick("CLOUDFLARE_ACCOUNT_ID", "R2_ACCOUNT_ID");
+  const keyId = pick("CLOUDFLARE_R2_ACCESS_KEY_ID", "R2_ACCESS_KEY_ID");
+  const secret = pick("CLOUDFLARE_R2_SECRET_ACCESS_KEY", "R2_SECRET_ACCESS_KEY");
+  const bucket = pick("CLOUDFLARE_R2_BUCKET", "R2_BUCKET_NAME");
+  const endpointEnv = pick("CLOUDFLARE_R2_ENDPOINT", "R2_ENDPOINT");
   const missing = [
-    !accountId && !env["R2_ENDPOINT"] ? "R2_ACCOUNT_ID" : null,
-    !keyId ? "R2_ACCESS_KEY_ID" : null,
-    !secret ? "R2_SECRET_ACCESS_KEY" : null,
-    !bucket ? "R2_BUCKET_NAME" : null,
+    !accountId && !endpointEnv ? "CLOUDFLARE_ACCOUNT_ID" : null,
+    !keyId ? "CLOUDFLARE_R2_ACCESS_KEY_ID" : null,
+    !secret ? "CLOUDFLARE_R2_SECRET_ACCESS_KEY" : null,
+    !bucket ? "CLOUDFLARE_R2_BUCKET" : null,
   ].filter((v): v is string => !!v);
   if (missing.length) return { cfg: null, missing };
-  const endpoint = (env["R2_ENDPOINT"] || `https://${accountId}.r2.cloudflarestorage.com`).replace(/\/+$/, "");
-  const mb = Number(env["R2_MAX_UPLOAD_MB"] ?? 10);
-  const publicBase = env["R2_PUBLIC_BASE_URL"]?.replace(/\/+$/, "") || null;
+  if (!/^[a-z0-9-]{3,63}$/.test(bucket) || (!endpointEnv && !/^[a-f0-9]{32}$/i.test(accountId))) return { cfg: null, missing: ["formato inválido do Account ID ou bucket"] };
+  const endpoint = (endpointEnv || `https://${accountId}.r2.cloudflarestorage.com`).replace(/\/+$/, "");
+  if (!/^https:\/\//.test(endpoint)) return { cfg: null, missing: ["endpoint deve usar https"] };
+  const mb = Number(pick("CLOUDFLARE_R2_MAX_UPLOAD_MB", "R2_MAX_UPLOAD_MB") || 10);
   return {
     cfg: {
-      client: new AwsClient({ accessKeyId: keyId!, secretAccessKey: secret!, service: "s3", region: "auto" }),
-      base: `${endpoint}/${encodeURIComponent(bucket!)}`,
-      maxBytes: Math.max(1, Math.min(isFinite(mb) ? mb : 10, 50)) * 1024 * 1024,
-      publicBase: publicBase && /^https:\/\//.test(publicBase) ? publicBase : null,
+      client: new AwsClient({ accessKeyId: keyId, secretAccessKey: secret, service: "s3", region: "auto", retries: 2 }),
+      base: `${endpoint}/${bucket}`, bucket,
+      maxBytes: Math.max(1, Math.min(Number.isFinite(mb) ? mb : 10, 50)) * 1024 * 1024,
     },
     missing: [],
   };
 }
 
-const objUrl = (cfg: R2Config, key: string) => `${cfg.base}/${key.split("/").map(encodeURIComponent).join("/")}`;
+const url = (cfg: R2Config, key: string) => `${cfg.base}/${key}`;
+export const r2Get = (cfg: R2Config, key: string) => cfg.client.fetch(url(cfg, key), { method: "GET" });
+export const r2Delete = (cfg: R2Config, key: string) => cfg.client.fetch(url(cfg, key), { method: "DELETE" });
+export const r2Put = (cfg: R2Config, key: string, body: ArrayBuffer | string, type: string) =>
+  cfg.client.fetch(url(cfg, key), { method: "PUT", body, headers: { "Content-Type": type, "Cache-Control": "public, max-age=31536000, immutable" } });
 
-/** URL pré-assinada de PUT (10 min) presa ao tipo e tamanho do arquivo. */
-export async function presignPut(cfg: R2Config, key: string, contentType: string, size: number) {
-  const url = new URL(objUrl(cfg, key));
-  url.searchParams.set("X-Amz-Expires", "600");
-  const signed = await cfg.client.sign(new Request(url, { method: "PUT", headers: { "Content-Type": contentType, "Content-Length": String(size) } }), {
-    aws: { signQuery: true, allHeaders: true },
-  });
-  return signed.url;
+/** Teste real: grava e apaga um objeto pequeno. */
+export async function r2Probe(cfg: R2Config): Promise<{ ok: boolean; status: number | null }> {
+  const key = `${R2_PREFIX}_diagnostics/${crypto.randomUUID()}.txt`;
+  try {
+    const put = await r2Put(cfg, key, "ok", "text/plain");
+    if (!put.ok) return { ok: false, status: put.status };
+    const del = await r2Delete(cfg, key);
+    return { ok: del.ok || del.status === 204, status: del.status };
+  } catch { return { ok: false, status: null }; }
 }
-
-export const getObject = (cfg: R2Config, key: string) => cfg.client.fetch(objUrl(cfg, key), { method: "GET" });
-export const deleteObject = (cfg: R2Config, key: string) => cfg.client.fetch(objUrl(cfg, key), { method: "DELETE" });
-export const putObject = (cfg: R2Config, key: string, body: string) =>
-  cfg.client.fetch(objUrl(cfg, key), { method: "PUT", body, headers: { "Content-Type": "text/plain" } });
