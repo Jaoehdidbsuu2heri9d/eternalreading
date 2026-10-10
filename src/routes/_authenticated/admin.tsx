@@ -14,6 +14,7 @@ import { formatDate } from "@/lib/format";
 import { AdminTeam } from "@/components/admin/AdminTeam";
 import { AdminLogs } from "@/components/admin/AdminLogs";
 import { AdminWorks } from "@/components/admin/AdminWorks";
+import { AdminChapterQueue } from "@/components/admin/AdminChapterQueue";
 import { AdminModeration } from "@/components/admin/AdminModeration";
 import { AdminFeedModeration } from "@/components/admin/AdminFeedModeration";
 import { AdminCosmetics } from "@/components/admin/AdminCosmetics";
@@ -206,6 +207,7 @@ function AdminPage() {
         {is("conteudo","capitulos") && <p className="rounded-xl border border-border p-4 text-sm text-muted-foreground">Os capítulos são organizados dentro de cada obra. Selecione <strong>Capítulos</strong> na obra desejada para abrir o editor completo, preservado em sua rota original.</p>}
         <AdminWorks />
       </>}
+      {is("conteudo","fila-publicacao") && <AdminChapterQueue />}
       {(is("usuarios","todos") || is("gamificacao","niveis-xp")) && <AdminTeam isOwner={isOwner} mode="people" />}
       {(is("usuarios","administradores") || is("seguranca","equipe")) && <AdminTeam isOwner={isOwner} mode="administrators" />}
       {is("comunidade","denuncias") && <AdminFeedModeration />}
