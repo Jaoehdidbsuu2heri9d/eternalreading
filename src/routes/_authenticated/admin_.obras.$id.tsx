@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Badge } from "@/components/common/EBadge";
 import { Button } from "@/components/common/EButton";
 import { PagesEditor } from "@/components/admin/PagesEditor";
+import { BulkChapterPublisher } from "@/components/admin/BulkChapterPublisher";
 import { field } from "@/components/admin/WorkForm";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription,
@@ -45,6 +46,7 @@ function ChaptersAdmin() {
   const chapters = useQuery({ queryKey: ["admin-chapters", id], queryFn: () => listChapters(id) });
   const scans = useQuery({ queryKey: ["scans"], queryFn: fetchScans });
   const [editing, setEditing] = useState<AdminChapter | null | undefined>(undefined);
+  const [bulkOpen, setBulkOpen] = useState(false);
   const [toDelete, setToDelete] = useState<AdminChapter | null>(null);
 
   const refresh = () => {
@@ -58,7 +60,10 @@ function ChaptersAdmin() {
       <Link to="/admin" search={{area:"conteudo",view:"obras"}} className="text-sm text-muted-foreground hover:text-foreground">← Administração</Link>
       <div className="mb-6 mt-2 flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Capítulos — {w?.title ?? "…"}</h1>
-        <Button size="sm" onClick={() => setEditing(null)}>+ Adicionar capítulo</Button>
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="secondary" onClick={() => setBulkOpen(true)}>Publicar em lote</Button>
+          <Button size="sm" onClick={() => setEditing(null)}>+ Adicionar capítulo</Button>
+        </div>
       </div>
       <p className="mb-3 text-xs text-muted-foreground">A ordem segue o número do capítulo (1, 2, 3 … 10). Para reordenar, edite o número. Extras podem usar números como 0.5 ou 10.5 com o título "Extra".</p>
       <ul className="space-y-2">
@@ -87,6 +92,23 @@ function ChaptersAdmin() {
             <ChapterForm key={editing?.id ?? "new"} mangaId={id} chapter={editing} defaultScan={w.scan_id} scans={scans.data ?? []}
               nextNumber={Math.floor(Math.max(0, ...(chapters.data ?? []).map((c) => c.number))) + 1}
               onDone={() => { setEditing(undefined); refresh(); }} />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={bulkOpen} onOpenChange={(open) => !open && setBulkOpen(false)}>
+        <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Publicação de capítulos em lote</DialogTitle>
+          </DialogHeader>
+          {w && (
+            <BulkChapterPublisher
+              key={id}
+              mangaId={id}
+              defaultScan={w.scan_id}
+              nextNumber={Math.floor(Math.max(0, ...(chapters.data ?? []).map((c) => c.number))) + 1}
+              onDone={() => { setBulkOpen(false); refresh(); }}
+            />
           )}
         </DialogContent>
       </Dialog>
