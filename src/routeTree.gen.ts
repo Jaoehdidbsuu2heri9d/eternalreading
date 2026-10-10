@@ -24,6 +24,7 @@ import { Route as AuthenticatedAtualizacoesRouteImport } from './routes/_authent
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedConquistasRouteImport } from './routes/_authenticated/conquistas'
 import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticated/explorar'
+import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedHallDaFamaRouteImport } from './routes/_authenticated/hall-da-fama'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
@@ -119,6 +120,11 @@ const AuthenticatedConquistasRoute = AuthenticatedConquistasRouteImport.update({
 const AuthenticatedExplorarRoute = AuthenticatedExplorarRouteImport.update({
   id: '/explorar',
   path: '/explorar',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
+  id: '/feed',
+  path: '/feed',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
@@ -244,6 +250,8 @@ export interface FileRoutesByFullPath {
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/conquistas': typeof AuthenticatedConquistasRoute
   '/explorar': typeof AuthenticatedExplorarRoute
+  '/feed': typeof AuthenticatedFeedRoute
+  '/feed': typeof AuthenticatedFeedRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/historico': typeof AuthenticatedHistoricoRoute
@@ -318,6 +326,7 @@ export interface FileRoutesById {
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/conquistas': typeof AuthenticatedConquistasRoute
   '/_authenticated/explorar': typeof AuthenticatedExplorarRoute
+  '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
@@ -356,6 +365,8 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/conquistas'
     | '/explorar'
+    | '/feed'
+    | '/feed'
     | '/favoritos'
     | '/hall-da-fama'
     | '/historico'
@@ -429,6 +440,7 @@ export interface FileRouteTypes {
     | '/_authenticated/configuracoes'
     | '/_authenticated/conquistas'
     | '/_authenticated/explorar'
+    | '/_authenticated/feed'
     | '/_authenticated/favoritos'
     | '/_authenticated/hall-da-fama'
     | '/_authenticated/historico'
@@ -568,6 +580,13 @@ declare module '@tanstack/react-router' {
       path: '/explorar'
       fullPath: '/explorar'
       preLoaderRoute: typeof AuthenticatedExplorarRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/feed': {
+      id: '/_authenticated/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof AuthenticatedFeedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/favoritos': {
@@ -722,6 +741,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedConquistasRoute: typeof AuthenticatedConquistasRoute
   AuthenticatedExplorarRoute: typeof AuthenticatedExplorarRoute
+  AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedHallDaFamaRoute: typeof AuthenticatedHallDaFamaRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
@@ -751,6 +771,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedConquistasRoute: AuthenticatedConquistasRoute,
   AuthenticatedExplorarRoute: AuthenticatedExplorarRoute,
+  AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedHallDaFamaRoute: AuthenticatedHallDaFamaRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
