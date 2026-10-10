@@ -156,9 +156,15 @@ BEGIN
       RAISE EXCEPTION 'duplicate';
     END IF;
   END IF;
+  IF TG_OP = 'UPDATE' THEN
+    NEW.user_id := OLD.user_id;
+    NEW.created_at := OLD.created_at;
+  ELSE
+    NEW.created_at := now();
+  END IF;
   NEW.updated_at := now();
   RETURN NEW;
-END $$;
+END $;
 DROP TRIGGER IF EXISTS feed_posts_guard ON public.feed_posts;
 CREATE TRIGGER feed_posts_guard BEFORE INSERT OR UPDATE ON public.feed_posts FOR EACH ROW EXECUTE FUNCTION public.guard_feed_post();
 
@@ -182,9 +188,17 @@ BEGIN
       RAISE EXCEPTION 'invalid_comment_parent';
     END IF;
   END IF;
-  IF TG_OP = 'UPDATE' THEN NEW.edited_at := now(); END IF;
+  IF TG_OP = 'UPDATE' THEN
+    NEW.user_id := OLD.user_id;
+    NEW.post_id := OLD.post_id;
+    NEW.parent_id := OLD.parent_id;
+    NEW.created_at := OLD.created_at;
+    NEW.edited_at := now();
+  ELSE
+    NEW.created_at := now();
+  END IF;
   RETURN NEW;
-END $$;
+END $;
 DROP TRIGGER IF EXISTS feed_comments_guard ON public.feed_comments;
 CREATE TRIGGER feed_comments_guard BEFORE INSERT OR UPDATE ON public.feed_comments FOR EACH ROW EXECUTE FUNCTION public.guard_feed_comment();
 
@@ -229,6 +243,23 @@ BEGIN
 END $$;
 DROP TRIGGER IF EXISTS feed_comment_notification ON public.feed_comments;
 CREATE TRIGGER feed_comment_notification AFTER INSERT ON public.feed_comments FOR EACH ROW EXECUTE FUNCTION public.notify_feed_comment();
+
+CREATE OR REPLACE FUNCTION public.guard_feed_reaction()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path TO 'public'
+AS $
+BEGIN
+  IF TG_OP = 'UPDATE' THEN
+    IF NEW.user_id <> OLD.user_id OR NEW.post_id <> OLD.post_id THEN
+      RAISE EXCEPTION 'immutable_feed_reaction';
+    END IF;
+    NEW.created_at := OLD.created_at;
+  ELSE
+    NEW.created_at := now();
+  END IF;
+  RETURN NEW;
+END $;
+DROP TRIGGER IF EXISTS feed_reactions_guard ON public.feed_reactions;
+CREATE TRIGGER feed_reactions_guard BEFORE INSERT OR UPDATE ON public.feed_reactions FOR EACH ROW EXECUTE FUNCTION public.guard_feed_reaction();
 
 -- Popular means engagement in the last seven days, not lifetime popularity.
 CREATE OR REPLACE VIEW public.feed_post_stats WITH (security_invoker = true) AS
