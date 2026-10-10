@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { MessageSquare, Search, Sparkles } from "lucide-react";
+import { Search, Sparkles } from "lucide-react";
 
 import { Logo } from "@/components/Logo";
 import { UserMenu } from "@/components/UserMenu";
