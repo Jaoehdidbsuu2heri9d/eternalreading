@@ -36,7 +36,7 @@ export function AdminFeedModeration() {
         : { data: [], error: null };
       if (profileResult.error) throw profileResult.error;
       const profiles = new Map<string, { id: string; username: string; display_name: string | null }>(
-        (profileResult.data ?? []).map((profile: { id: string; username: string; display_name: string | null }) => [profile.id, profile]),
+        (profileResult.data ?? []).map((profile: { id: string; username: string; display_name: string | null }) => [profile.id, profile] as const),
       );
       return rows.map((row) => ({
         ...row,
