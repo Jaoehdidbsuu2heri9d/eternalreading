@@ -781,6 +781,27 @@ export type Database = {
         }
         Relationships: []
       }
+      dragon_sequence_days: {
+        Row: {
+          created_at: string
+          points_awarded: number
+          read_on: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          points_awarded?: number
+          read_on: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          points_awarded?: number
+          read_on?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       event_participations: {
         Row: {
           created_at: string
@@ -811,6 +832,276 @@ export type Database = {
           rewards?: number
           user_id?: string
           won?: boolean
+        }
+        Relationships: []
+      }
+      faction_mission_completions: {
+        Row: {
+          completed_at: string
+          faction_slug: string
+          id: string
+          mission_key: string
+          period_start: string
+          points_awarded: number
+          season_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          faction_slug: string
+          id?: string
+          mission_key: string
+          period_start: string
+          points_awarded: number
+          season_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          faction_slug?: string
+          id?: string
+          mission_key?: string
+          period_start?: string
+          points_awarded?: number
+          season_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_mission_completions_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "faction_mission_completions_mission_key_fkey"
+            columns: ["mission_key"]
+            isOneToOne: false
+            referencedRelation: "faction_missions"
+            referencedColumns: ["mission_key"]
+          },
+          {
+            foreignKeyName: "faction_mission_completions_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "faction_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_missions: {
+        Row: {
+          active: boolean
+          cadence: string
+          description: string
+          mission_key: string
+          reward_points: number
+          sort_order: number
+          target_count: number
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          cadence: string
+          description: string
+          mission_key: string
+          reward_points: number
+          sort_order?: number
+          target_count: number
+          title: string
+        }
+        Update: {
+          active?: boolean
+          cadence?: string
+          description?: string
+          mission_key?: string
+          reward_points?: number
+          sort_order?: number
+          target_count?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      faction_season_members: {
+        Row: {
+          chapters_read: number
+          contribution_points: number
+          faction_slug: string
+          joined_at: string
+          last_activity_at: string | null
+          season_id: string
+          user_id: string
+        }
+        Insert: {
+          chapters_read?: number
+          contribution_points?: number
+          faction_slug: string
+          joined_at?: string
+          last_activity_at?: string | null
+          season_id: string
+          user_id: string
+        }
+        Update: {
+          chapters_read?: number
+          contribution_points?: number
+          faction_slug?: string
+          joined_at?: string
+          last_activity_at?: string | null
+          season_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_season_members_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "faction_season_members_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "faction_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_season_scores: {
+        Row: {
+          chapters_read: number
+          faction_slug: string
+          points: number
+          season_id: string
+          updated_at: string
+        }
+        Insert: {
+          chapters_read?: number
+          faction_slug: string
+          points?: number
+          season_id: string
+          updated_at?: string
+        }
+        Update: {
+          chapters_read?: number
+          faction_slug?: string
+          points?: number
+          season_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_season_scores_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "faction_season_scores_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "faction_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_seasons: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          end_at: string
+          id: string
+          name: string
+          start_at: string
+          status: string
+          winner_slug: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          end_at: string
+          id?: string
+          name: string
+          start_at?: string
+          status?: string
+          winner_slug?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          end_at?: string
+          id?: string
+          name?: string
+          start_at?: string
+          status?: string
+          winner_slug?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_seasons_winner_slug_fkey"
+            columns: ["winner_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      factions: {
+        Row: {
+          accent_color: string
+          active: boolean
+          created_at: string
+          description: string
+          emblem: string
+          founder: string
+          founder_title: string
+          gradient_class: string
+          lore: string
+          motto: string
+          name: string
+          short_name: string
+          slug: string
+          sort_order: number
+          virtues: string[]
+        }
+        Insert: {
+          accent_color: string
+          active?: boolean
+          created_at?: string
+          description: string
+          emblem: string
+          founder: string
+          founder_title: string
+          gradient_class: string
+          lore: string
+          motto: string
+          name: string
+          short_name: string
+          slug: string
+          sort_order: number
+          virtues?: string[]
+        }
+        Update: {
+          accent_color?: string
+          active?: boolean
+          created_at?: string
+          description?: string
+          emblem?: string
+          founder?: string
+          founder_title?: string
+          gradient_class?: string
+          lore?: string
+          motto?: string
+          name?: string
+          short_name?: string
+          slug?: string
+          sort_order?: number
+          virtues?: string[]
         }
         Relationships: []
       }
@@ -1043,60 +1334,6 @@ export type Database = {
           },
         ]
       }
-      factions: {
-        Row: {
-          active: boolean
-          accent_color: string
-          created_at: string
-          description: string
-          emblem: string
-          founder: string
-          founder_title: string
-          gradient_class: string
-          lore: string
-          motto: string
-          name: string
-          short_name: string
-          slug: string
-          sort_order: number
-          virtues: string[]
-        }
-        Insert: {
-          active?: boolean
-          accent_color: string
-          created_at?: string
-          description: string
-          emblem: string
-          founder: string
-          founder_title: string
-          gradient_class: string
-          lore: string
-          motto: string
-          name: string
-          short_name: string
-          slug: string
-          sort_order: number
-          virtues?: string[]
-        }
-        Update: {
-          active?: boolean
-          accent_color?: string
-          created_at?: string
-          description?: string
-          emblem?: string
-          founder?: string
-          founder_title?: string
-          gradient_class?: string
-          lore?: string
-          motto?: string
-          name?: string
-          short_name?: string
-          slug?: string
-          sort_order?: number
-          virtues?: string[]
-        }
-        Relationships: []
-      }
       follows: {
         Row: {
           created_at: string
@@ -1114,251 +1351,6 @@ export type Database = {
           following_id?: string
         }
         Relationships: []
-      }
-      user_factions: {
-        Row: {
-          contribution_points: number
-          faction_slug: string
-          joined_at: string
-          user_id: string
-        }
-        Insert: {
-          contribution_points?: number
-          faction_slug: string
-          joined_at?: string
-          user_id: string
-        }
-        Update: {
-          contribution_points?: number
-          faction_slug?: string
-          joined_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_factions_faction_slug_fkey"
-            columns: ["faction_slug"]
-            isOneToOne: false
-            referencedRelation: "factions"
-            referencedColumns: ["slug"]
-          },
-        ]
-      }
-      faction_mission_completions: {
-        Row: {
-          completed_at: string
-          faction_slug: string
-          id: string
-          mission_key: string
-          period_start: string
-          points_awarded: number
-          season_id: string
-          user_id: string
-        }
-        Insert: {
-          completed_at?: string
-          faction_slug: string
-          id?: string
-          mission_key: string
-          period_start: string
-          points_awarded: number
-          season_id: string
-          user_id: string
-        }
-        Update: {
-          completed_at?: string
-          faction_slug?: string
-          id?: string
-          mission_key?: string
-          period_start?: string
-          points_awarded?: number
-          season_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "faction_mission_completions_faction_slug_fkey"
-            columns: ["faction_slug"]
-            isOneToOne: false
-            referencedRelation: "factions"
-            referencedColumns: ["slug"]
-          },
-          {
-            foreignKeyName: "faction_mission_completions_mission_key_fkey"
-            columns: ["mission_key"]
-            isOneToOne: false
-            referencedRelation: "faction_missions"
-            referencedColumns: ["mission_key"]
-          },
-          {
-            foreignKeyName: "faction_mission_completions_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "faction_seasons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      faction_missions: {
-        Row: {
-          active: boolean
-          cadence: string
-          description: string
-          mission_key: string
-          reward_points: number
-          sort_order: number
-          target_count: number
-          title: string
-        }
-        Insert: {
-          active?: boolean
-          cadence: string
-          description: string
-          mission_key: string
-          reward_points: number
-          sort_order?: number
-          target_count: number
-          title: string
-        }
-        Update: {
-          active?: boolean
-          cadence?: string
-          description?: string
-          mission_key?: string
-          reward_points?: number
-          sort_order?: number
-          target_count?: number
-          title?: string
-        }
-        Relationships: []
-      }
-      faction_season_members: {
-        Row: {
-          chapters_read: number
-          contribution_points: number
-          faction_slug: string
-          joined_at: string
-          last_activity_at: string | null
-          season_id: string
-          user_id: string
-        }
-        Insert: {
-          chapters_read?: number
-          contribution_points?: number
-          faction_slug: string
-          joined_at?: string
-          last_activity_at?: string | null
-          season_id: string
-          user_id: string
-        }
-        Update: {
-          chapters_read?: number
-          contribution_points?: number
-          faction_slug?: string
-          joined_at?: string
-          last_activity_at?: string | null
-          season_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "faction_season_members_faction_slug_fkey"
-            columns: ["faction_slug"]
-            isOneToOne: false
-            referencedRelation: "factions"
-            referencedColumns: ["slug"]
-          },
-          {
-            foreignKeyName: "faction_season_members_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "faction_seasons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      faction_season_scores: {
-        Row: {
-          chapters_read: number
-          faction_slug: string
-          points: number
-          season_id: string
-          updated_at: string
-        }
-        Insert: {
-          chapters_read?: number
-          faction_slug: string
-          points?: number
-          season_id: string
-          updated_at?: string
-        }
-        Update: {
-          chapters_read?: number
-          faction_slug?: string
-          points?: number
-          season_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "faction_season_scores_faction_slug_fkey"
-            columns: ["faction_slug"]
-            isOneToOne: false
-            referencedRelation: "factions"
-            referencedColumns: ["slug"]
-          },
-          {
-            foreignKeyName: "faction_season_scores_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "faction_seasons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      faction_seasons: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          description: string
-          end_at: string
-          id: string
-          name: string
-          start_at: string
-          status: string
-          winner_slug: string | null
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          end_at: string
-          id?: string
-          name: string
-          start_at?: string
-          status?: string
-          winner_slug?: string | null
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          end_at?: string
-          id?: string
-          name?: string
-          start_at?: string
-          status?: string
-          winner_slug?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "faction_seasons_winner_slug_fkey"
-            columns: ["winner_slug"]
-            isOneToOne: false
-            referencedRelation: "factions"
-            referencedColumns: ["slug"]
-          },
-        ]
       }
       frame_categories: {
         Row: {
@@ -2306,6 +2298,35 @@ export type Database = {
           },
         ]
       }
+      user_factions: {
+        Row: {
+          contribution_points: number
+          faction_slug: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          contribution_points?: number
+          faction_slug: string
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          contribution_points?: number
+          faction_slug?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_factions_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -2534,6 +2555,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      award_faction_mission: {
+        Args: {
+          p_faction_slug: string
+          p_mission_key: string
+          p_period_start: string
+          p_season: string
+          p_user: string
+        }
+        Returns: boolean
+      }
       buy_cosmetic: { Args: { p_cosmetic: string }; Returns: number }
       check_achievements: { Args: never; Returns: number }
       choose_faction: { Args: { p_faction_slug: string }; Returns: boolean }
@@ -2554,6 +2585,18 @@ export type Database = {
         Returns: boolean
       }
       discover_secret: { Args: { p_key: string }; Returns: boolean }
+      dragon_sequence_stats: {
+        Args: never
+        Returns: {
+          active_days: number
+          best_streak: number
+          current_streak: number
+          last_read_on: string
+          read_today: boolean
+          sequence_points: number
+          week_read_days: string[]
+        }[]
+      }
       ensure_profile: { Args: { p_username?: string }; Returns: undefined }
       equip_cosmetic: { Args: { p_cosmetic: string }; Returns: undefined }
       evaluate_achievements: {
@@ -2561,6 +2604,27 @@ export type Database = {
         Returns: number
       }
       expire_subscriptions: { Args: never; Returns: number }
+      faction_mission_dashboard: {
+        Args: never
+        Returns: {
+          cadence: string
+          completed: boolean
+          current_progress: number
+          mission_description: string
+          mission_key: string
+          mission_title: string
+          my_faction_name: string
+          my_faction_slug: string
+          my_season_points: number
+          reward_points: number
+          season_description: string
+          season_end_at: string
+          season_id: string
+          season_name: string
+          season_start_at: string
+          target_count: number
+        }[]
+      }
       frame_popularity: {
         Args: never
         Returns: {
@@ -2683,43 +2747,6 @@ export type Database = {
           current_streak: number
         }[]
       }
-      dragon_sequence_stats: {
-        Args: never
-        Returns: {
-          active_days: number
-          best_streak: number
-          current_streak: number
-          last_read_on: string | null
-          read_today: boolean
-          sequence_points: number
-          week_read_days: string[]
-        }[]
-      }
-      faction_mission_dashboard: {
-        Args: never
-        Returns: {
-          cadence: string
-          completed: boolean
-          current_progress: number
-          mission_description: string
-          mission_key: string
-          mission_title: string
-          my_faction_name: string | null
-          my_faction_slug: string | null
-          my_season_points: number
-          reward_points: number
-          season_description: string
-          season_end_at: string
-          season_id: string
-          season_name: string
-          season_start_at: string
-          target_count: number
-        }[]
-      }
-      start_faction_season: {
-        Args: { p_description?: string; p_duration_days?: number; p_name: string }
-        Returns: string
-      }
       record_chapter_open: { Args: { p_chapter: string }; Returns: boolean }
       record_chapter_read: { Args: { p_chapter: string }; Returns: boolean }
       redeem_invite_code: { Args: { p_code: string }; Returns: boolean }
@@ -2730,6 +2757,14 @@ export type Database = {
       set_gif_banner: {
         Args: { p_equipped: boolean; p_path: string }
         Returns: undefined
+      }
+      start_faction_season: {
+        Args: {
+          p_description?: string
+          p_duration_days?: number
+          p_name: string
+        }
+        Returns: string
       }
       sync_profile_plan: {
         Args: { p_user: string }

@@ -24,9 +24,9 @@ import { Route as AuthenticatedAtualizacoesRouteImport } from './routes/_authent
 import { Route as AuthenticatedConfiguracoesRouteImport } from './routes/_authenticated/configuracoes'
 import { Route as AuthenticatedConquistasRouteImport } from './routes/_authenticated/conquistas'
 import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticated/explorar'
+import { Route as AuthenticatedFaccoesRouteImport } from './routes/_authenticated/faccoes'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
-import { Route as AuthenticatedFaccoesRouteImport } from './routes/_authenticated/faccoes'
 import { Route as AuthenticatedHallDaFamaRouteImport } from './routes/_authenticated/hall-da-fama'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedInicioRouteImport } from './routes/_authenticated/inicio'
@@ -36,9 +36,9 @@ import { Route as AuthenticatedMeSurpreendaRouteImport } from './routes/_authent
 import { Route as AuthenticatedPersonalizarRouteImport } from './routes/_authenticated/personalizar'
 import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated/planos'
 import { Route as AuthenticatedRankingRouteImport } from './routes/_authenticated/ranking'
-import { Route as AuthenticatedSequenciaRouteImport } from './routes/_authenticated/sequencia'
 import { Route as AuthenticatedScansRouteImport } from './routes/_authenticated/scans'
 import { Route as AuthenticatedSejaParceiroRouteImport } from './routes/_authenticated/seja-parceiro'
+import { Route as AuthenticatedSequenciaRouteImport } from './routes/_authenticated/sequencia'
 import { Route as AuthenticatedLojaMoldurasRouteImport } from './routes/_authenticated/loja_.molduras'
 import { Route as AuthenticatedObraSlugRouteImport } from './routes/_authenticated/obra.$slug'
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
@@ -124,6 +124,11 @@ const AuthenticatedExplorarRoute = AuthenticatedExplorarRouteImport.update({
   path: '/explorar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFaccoesRoute = AuthenticatedFaccoesRouteImport.update({
+  id: '/faccoes',
+  path: '/faccoes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
@@ -132,11 +137,6 @@ const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
 const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
   id: '/feed',
   path: '/feed',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedFaccoesRoute = AuthenticatedFaccoesRouteImport.update({
-  id: '/faccoes',
-  path: '/faccoes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedHallDaFamaRoute = AuthenticatedHallDaFamaRouteImport.update({
@@ -186,11 +186,6 @@ const AuthenticatedRankingRoute = AuthenticatedRankingRouteImport.update({
   path: '/ranking',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedSequenciaRoute = AuthenticatedSequenciaRouteImport.update({
-  id: '/sequencia',
-  path: '/sequencia',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedScansRoute = AuthenticatedScansRouteImport.update({
   id: '/scans',
   path: '/scans',
@@ -202,6 +197,11 @@ const AuthenticatedSejaParceiroRoute =
     path: '/seja-parceiro',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedSequenciaRoute = AuthenticatedSequenciaRouteImport.update({
+  id: '/sequencia',
+  path: '/sequencia',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLojaMoldurasRoute =
   AuthenticatedLojaMoldurasRouteImport.update({
     id: '/loja_/molduras',
@@ -262,9 +262,9 @@ export interface FileRoutesByFullPath {
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/conquistas': typeof AuthenticatedConquistasRoute
   '/explorar': typeof AuthenticatedExplorarRoute
+  '/faccoes': typeof AuthenticatedFaccoesRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/feed': typeof AuthenticatedFeedRoute
-  '/faccoes': typeof AuthenticatedFaccoesRoute
   '/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
@@ -274,9 +274,9 @@ export interface FileRoutesByFullPath {
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
   '/ranking': typeof AuthenticatedRankingRoute
-  '/sequencia': typeof AuthenticatedSequenciaRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
+  '/sequencia': typeof AuthenticatedSequenciaRoute
   '/loja/molduras': typeof AuthenticatedLojaMoldurasRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
@@ -301,9 +301,9 @@ export interface FileRoutesByTo {
   '/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/conquistas': typeof AuthenticatedConquistasRoute
   '/explorar': typeof AuthenticatedExplorarRoute
+  '/faccoes': typeof AuthenticatedFaccoesRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/feed': typeof AuthenticatedFeedRoute
-  '/faccoes': typeof AuthenticatedFaccoesRoute
   '/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
@@ -313,9 +313,9 @@ export interface FileRoutesByTo {
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
   '/ranking': typeof AuthenticatedRankingRoute
-  '/sequencia': typeof AuthenticatedSequenciaRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
+  '/sequencia': typeof AuthenticatedSequenciaRoute
   '/loja/molduras': typeof AuthenticatedLojaMoldurasRoute
   '/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
@@ -342,9 +342,9 @@ export interface FileRoutesById {
   '/_authenticated/configuracoes': typeof AuthenticatedConfiguracoesRoute
   '/_authenticated/conquistas': typeof AuthenticatedConquistasRoute
   '/_authenticated/explorar': typeof AuthenticatedExplorarRoute
+  '/_authenticated/faccoes': typeof AuthenticatedFaccoesRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
-  '/_authenticated/faccoes': typeof AuthenticatedFaccoesRoute
   '/_authenticated/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/inicio': typeof AuthenticatedInicioRoute
@@ -354,9 +354,9 @@ export interface FileRoutesById {
   '/_authenticated/personalizar': typeof AuthenticatedPersonalizarRoute
   '/_authenticated/planos': typeof AuthenticatedPlanosRoute
   '/_authenticated/ranking': typeof AuthenticatedRankingRoute
-  '/_authenticated/sequencia': typeof AuthenticatedSequenciaRoute
   '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
+  '/_authenticated/sequencia': typeof AuthenticatedSequenciaRoute
   '/_authenticated/loja_/molduras': typeof AuthenticatedLojaMoldurasRoute
   '/_authenticated/obra/$slug': typeof AuthenticatedObraSlugRoute
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
@@ -383,6 +383,7 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/conquistas'
     | '/explorar'
+    | '/faccoes'
     | '/favoritos'
     | '/feed'
     | '/hall-da-fama'
@@ -396,6 +397,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/scans'
     | '/seja-parceiro'
+    | '/sequencia'
     | '/loja/molduras'
     | '/obra/$slug'
     | '/perfil/$username'
@@ -420,6 +422,7 @@ export interface FileRouteTypes {
     | '/configuracoes'
     | '/conquistas'
     | '/explorar'
+    | '/faccoes'
     | '/favoritos'
     | '/feed'
     | '/hall-da-fama'
@@ -433,6 +436,7 @@ export interface FileRouteTypes {
     | '/ranking'
     | '/scans'
     | '/seja-parceiro'
+    | '/sequencia'
     | '/loja/molduras'
     | '/obra/$slug'
     | '/perfil/$username'
@@ -458,6 +462,7 @@ export interface FileRouteTypes {
     | '/_authenticated/configuracoes'
     | '/_authenticated/conquistas'
     | '/_authenticated/explorar'
+    | '/_authenticated/faccoes'
     | '/_authenticated/favoritos'
     | '/_authenticated/feed'
     | '/_authenticated/hall-da-fama'
@@ -471,6 +476,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ranking'
     | '/_authenticated/scans'
     | '/_authenticated/seja-parceiro'
+    | '/_authenticated/sequencia'
     | '/_authenticated/loja_/molduras'
     | '/_authenticated/obra/$slug'
     | '/_authenticated/perfil/$username'
@@ -600,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExplorarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/faccoes': {
+      id: '/_authenticated/faccoes'
+      path: '/faccoes'
+      fullPath: '/faccoes'
+      preLoaderRoute: typeof AuthenticatedFaccoesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/favoritos': {
       id: '/_authenticated/favoritos'
       path: '/favoritos'
@@ -691,6 +704,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSejaParceiroRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sequencia': {
+      id: '/_authenticated/sequencia'
+      path: '/sequencia'
+      fullPath: '/sequencia'
+      preLoaderRoute: typeof AuthenticatedSequenciaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/loja_/molduras': {
       id: '/_authenticated/loja_/molduras'
       path: '/loja/molduras'
@@ -759,9 +779,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedConfiguracoesRoute: typeof AuthenticatedConfiguracoesRoute
   AuthenticatedConquistasRoute: typeof AuthenticatedConquistasRoute
   AuthenticatedExplorarRoute: typeof AuthenticatedExplorarRoute
+  AuthenticatedFaccoesRoute: typeof AuthenticatedFaccoesRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
-  AuthenticatedFaccoesRoute: typeof AuthenticatedFaccoesRoute
   AuthenticatedHallDaFamaRoute: typeof AuthenticatedHallDaFamaRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedInicioRoute: typeof AuthenticatedInicioRoute
@@ -771,9 +791,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPersonalizarRoute: typeof AuthenticatedPersonalizarRoute
   AuthenticatedPlanosRoute: typeof AuthenticatedPlanosRoute
   AuthenticatedRankingRoute: typeof AuthenticatedRankingRoute
-  AuthenticatedSequenciaRoute: typeof AuthenticatedSequenciaRoute
   AuthenticatedScansRoute: typeof AuthenticatedScansRoute
   AuthenticatedSejaParceiroRoute: typeof AuthenticatedSejaParceiroRoute
+  AuthenticatedSequenciaRoute: typeof AuthenticatedSequenciaRoute
   AuthenticatedLojaMoldurasRoute: typeof AuthenticatedLojaMoldurasRoute
   AuthenticatedObraSlugRoute: typeof AuthenticatedObraSlugRoute
   AuthenticatedPerfilUsernameRoute: typeof AuthenticatedPerfilUsernameRoute
@@ -791,9 +811,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedConfiguracoesRoute: AuthenticatedConfiguracoesRoute,
   AuthenticatedConquistasRoute: AuthenticatedConquistasRoute,
   AuthenticatedExplorarRoute: AuthenticatedExplorarRoute,
+  AuthenticatedFaccoesRoute: AuthenticatedFaccoesRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
-  AuthenticatedFaccoesRoute: AuthenticatedFaccoesRoute,
   AuthenticatedHallDaFamaRoute: AuthenticatedHallDaFamaRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedInicioRoute: AuthenticatedInicioRoute,
@@ -803,9 +823,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPersonalizarRoute: AuthenticatedPersonalizarRoute,
   AuthenticatedPlanosRoute: AuthenticatedPlanosRoute,
   AuthenticatedRankingRoute: AuthenticatedRankingRoute,
-  AuthenticatedSequenciaRoute: AuthenticatedSequenciaRoute,
   AuthenticatedScansRoute: AuthenticatedScansRoute,
   AuthenticatedSejaParceiroRoute: AuthenticatedSejaParceiroRoute,
+  AuthenticatedSequenciaRoute: AuthenticatedSequenciaRoute,
   AuthenticatedLojaMoldurasRoute: AuthenticatedLojaMoldurasRoute,
   AuthenticatedObraSlugRoute: AuthenticatedObraSlugRoute,
   AuthenticatedPerfilUsernameRoute: AuthenticatedPerfilUsernameRoute,
