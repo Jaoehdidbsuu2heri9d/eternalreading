@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
 const MAX_BYTES = 10 * 1024 * 1024;
 const MIME_EXT: Record<string, string> = {
@@ -27,6 +28,63 @@ async function authorizeAdmin(request: Request) {
   if (!adminRole.data && !ownerRole.data) {
     return { response: Response.json({ error: "forbidden" }, { status: 403 }) };
   }
+  return { user: data.user };
+}
+
+const SIGNATURE_TTL_SECONDS = 6 * 60 * 60;
+const MEDIA_PREFIX = "/api/public/media/";
+
+function mediaSigningSecret() {
+  // Prefer a dedicated secret; the existing service-role key is a server-only fallback.
+  return process.env["MEDIA_URL_SIGNING_SECRET"] || process.env["SUPABASE_SERVICE_ROLE_KEY"] || "";
+}
+
+function validMediaKey(key: string) {
+  return key.length <= 512
+    && /^(?:r2\/)?(?:covers|banners|chapters\/[0-9a-f-]{36})\/[a-z0-9_-]+\.(?:jpe?g|png|webp)$/i.test(key)
+    && !key.includes("..");
+}
+
+function mediaSignature(key: string, expires: number) {
+  const secret = mediaSigningSecret();
+  if (!secret) throw new Error("media_signing_not_configured");
+  return createHmac("sha256", secret).update(`${key}\n${expires}`).digest("hex");
+}
+
+function verifyMediaSignature(key: string, expiresValue: string | null, signature: string | null) {
+  if (!validMediaKey(key) || !expiresValue || !signature || !/^\d{10}$/.test(expiresValue) || !/^[a-f0-9]{64}$/i.test(signature)) {
+    return false;
+  }
+  const expires = Number(expiresValue);
+  const now = Math.floor(Date.now() / 1000);
+  if (!Number.isSafeInteger(expires) || expires < now || expires > now + SIGNATURE_TTL_SECONDS + 60) return false;
+  try {
+    const expected = Buffer.from(mediaSignature(key, expires), "hex");
+    const supplied = Buffer.from(signature, "hex");
+    return expected.length === supplied.length && timingSafeEqual(expected, supplied);
+  } catch {
+    return false;
+  }
+}
+
+async function authorizeMember(request: Request) {
+  const value = request.headers.get("authorization") ?? "";
+  const token = value.startsWith("Bearer ") ? value.slice(7).trim() : "";
+  if (!token) return { response: Response.json({ error: "unauthorized" }, { status: 401 }) };
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.auth.getUser(token);
+  if (error || !data.user) return { response: Response.json({ error: "unauthorized" }, { status: 401 }) };
+  const { data: profile, error: profileError } = await supabaseAdmin
+    .from("profiles")
+    .select("id")
+    .eq("id", data.user.id)
+    .maybeSingle();
+  if (profileError) {
+    console.error("[Media sign] Membership check failed");
+    return { response: Response.json({ error: "permission_check_failed" }, { status: 500 }) };
+  }
+  if (!profile) return { response: Response.json({ error: "membership_required" }, { status: 403 }) };
   return { user: data.user };
 }
 
@@ -85,6 +143,12 @@ export const Route = createFileRoute("/api/public/media/$")({
         if (!/^[a-zA-Z0-9/_.-]+\.(jpg|jpeg|png|webp)$/i.test(path) || path.includes("..")) {
           return new Response("Not found", { status: 404 });
         }
+        if (!verifyMediaSignature(path, new URL(request.url).searchParams.get("expires"), new URL(request.url).searchParams.get("signature"))) {
+          return new Response("Assinatura de mídia inválida ou expirada.", {
+            status: 403,
+            headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" },
+          });
+        }
 
         // New R2 objects use the r2/ prefix. Legacy Supabase keys remain unchanged.
         try {
@@ -119,6 +183,38 @@ export const Route = createFileRoute("/api/public/media/$")({
 
       POST: async ({ params, request }) => {
         const path = (params as { _splat?: string })._splat ?? "";
+
+        if (path === "sign") {
+          const access = await authorizeMember(request);
+          if ("response" in access) return access.response;
+          const rawLength = Number(request.headers.get("content-length") ?? "0");
+          if (rawLength > 64 * 1024) return Response.json({ error: "request_too_large" }, { status: 413 });
+
+          let body: { paths?: unknown };
+          try {
+            body = await request.json() as { paths?: unknown };
+          } catch {
+            return Response.json({ error: "invalid_json" }, { status: 400 });
+          }
+          if (!Array.isArray(body.paths) || body.paths.length < 1 || body.paths.length > 100
+            || body.paths.some((value) => typeof value !== "string" || !validMediaKey(value))) {
+            return Response.json({ error: "invalid_media_paths" }, { status: 400 });
+          }
+
+          const expires = Math.floor(Date.now() / 1000) + SIGNATURE_TTL_SECONDS;
+          try {
+            const signed = (body.paths as string[]).map((key) => {
+              const signature = mediaSignature(key, expires);
+              return { key, url: `${MEDIA_PREFIX}${key}?expires=${expires}&signature=${signature}` };
+            });
+            return Response.json({ signed, expiresAt: new Date(expires * 1000).toISOString() }, {
+              headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" },
+            });
+          } catch {
+            return Response.json({ error: "media_signing_not_configured" }, { status: 503 });
+          }
+        }
+
         if (path !== "upload") return new Response("Not found", { status: 404 });
 
         const access = await authorizeAdmin(request);
