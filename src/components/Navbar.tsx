@@ -14,6 +14,7 @@ const links = [
   { to: "/explorar", label: "Explorar" },
   { to: "/atualizacoes", label: "Atualizações" },
   { to: "/ranking", label: "Ranking" },
+  { to: "/faccoes", label: "Facções" },
   { to: "/favoritos", label: "Favoritos" },
   { to: "/historico", label: "Histórico" },
   { to: "/scans", label: "Scans" },

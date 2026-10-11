@@ -225,6 +225,13 @@
       "when": 1791800000000,
       "tag": "0031_dragon_sequence",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1791886400000,
+      "tag": "0032_eternal_factions",
+      "breakpoints": true
     }
   ]
 }

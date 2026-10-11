@@ -26,6 +26,7 @@ import { Route as AuthenticatedConquistasRouteImport } from './routes/_authentic
 import { Route as AuthenticatedExplorarRouteImport } from './routes/_authenticated/explorar'
 import { Route as AuthenticatedFavoritosRouteImport } from './routes/_authenticated/favoritos'
 import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
+import { Route as AuthenticatedFaccoesRouteImport } from './routes/_authenticated/faccoes'
 import { Route as AuthenticatedHallDaFamaRouteImport } from './routes/_authenticated/hall-da-fama'
 import { Route as AuthenticatedHistoricoRouteImport } from './routes/_authenticated/historico'
 import { Route as AuthenticatedInicioRouteImport } from './routes/_authenticated/inicio'
@@ -131,6 +132,11 @@ const AuthenticatedFavoritosRoute = AuthenticatedFavoritosRouteImport.update({
 const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
   id: '/feed',
   path: '/feed',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFaccoesRoute = AuthenticatedFaccoesRouteImport.update({
+  id: '/faccoes',
+  path: '/faccoes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedHallDaFamaRoute = AuthenticatedHallDaFamaRouteImport.update({
@@ -258,6 +264,7 @@ export interface FileRoutesByFullPath {
   '/explorar': typeof AuthenticatedExplorarRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/feed': typeof AuthenticatedFeedRoute
+  '/faccoes': typeof AuthenticatedFaccoesRoute
   '/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
@@ -296,6 +303,7 @@ export interface FileRoutesByTo {
   '/explorar': typeof AuthenticatedExplorarRoute
   '/favoritos': typeof AuthenticatedFavoritosRoute
   '/feed': typeof AuthenticatedFeedRoute
+  '/faccoes': typeof AuthenticatedFaccoesRoute
   '/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/historico': typeof AuthenticatedHistoricoRoute
   '/inicio': typeof AuthenticatedInicioRoute
@@ -336,6 +344,7 @@ export interface FileRoutesById {
   '/_authenticated/explorar': typeof AuthenticatedExplorarRoute
   '/_authenticated/favoritos': typeof AuthenticatedFavoritosRoute
   '/_authenticated/feed': typeof AuthenticatedFeedRoute
+  '/_authenticated/faccoes': typeof AuthenticatedFaccoesRoute
   '/_authenticated/hall-da-fama': typeof AuthenticatedHallDaFamaRoute
   '/_authenticated/historico': typeof AuthenticatedHistoricoRoute
   '/_authenticated/inicio': typeof AuthenticatedInicioRoute
@@ -752,6 +761,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedExplorarRoute: typeof AuthenticatedExplorarRoute
   AuthenticatedFavoritosRoute: typeof AuthenticatedFavoritosRoute
   AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
+  AuthenticatedFaccoesRoute: typeof AuthenticatedFaccoesRoute
   AuthenticatedHallDaFamaRoute: typeof AuthenticatedHallDaFamaRoute
   AuthenticatedHistoricoRoute: typeof AuthenticatedHistoricoRoute
   AuthenticatedInicioRoute: typeof AuthenticatedInicioRoute
@@ -783,6 +793,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedExplorarRoute: AuthenticatedExplorarRoute,
   AuthenticatedFavoritosRoute: AuthenticatedFavoritosRoute,
   AuthenticatedFeedRoute: AuthenticatedFeedRoute,
+  AuthenticatedFaccoesRoute: AuthenticatedFaccoesRoute,
   AuthenticatedHallDaFamaRoute: AuthenticatedHallDaFamaRoute,
   AuthenticatedHistoricoRoute: AuthenticatedHistoricoRoute,
   AuthenticatedInicioRoute: AuthenticatedInicioRoute,
