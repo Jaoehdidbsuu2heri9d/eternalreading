@@ -322,7 +322,7 @@ function FactionsPage() {
                   </div>
                   <div className="relative flex-1">
                     <h3 className="text-xl font-black leading-tight">{faction.name}</h3>
-                    <p className={`mt-2 text-sm font-semibold italic ${style.light}">“{faction.motto}”</p>
+                    <p className={`mt-2 text-sm font-semibold italic ${style.light}`}>“{faction.motto}”</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{faction.description}</p>
                     <div className="mt-4 flex flex-wrap gap-1.5">
                       {faction.virtues.map((virtue) => <span key={virtue} className={`rounded-full border px-2 py-1 text-[10px] font-medium ${style.border} ${style.badge}`}>{virtue}</span>)}
@@ -358,7 +358,7 @@ function FactionsPage() {
                   <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border ${style.border} ${style.badge}`}><Icon className="h-7 w-7" aria-hidden /></div>
                   <div className="min-w-0 flex-1">
                     <h2 className="text-2xl font-black sm:text-3xl">{activeFaction.name}</h2>
-                    <p className={`mt-1 font-semibold italic ${style.light}">“{activeFaction.motto}”</p>
+                    <p className={`mt-1 font-semibold italic ${style.light}`}>“{activeFaction.motto}”</p>
                   </div>
                 </div>
                 <p className="mt-5 text-sm leading-7 text-muted-foreground sm:text-base">{activeFaction.lore}</p>
