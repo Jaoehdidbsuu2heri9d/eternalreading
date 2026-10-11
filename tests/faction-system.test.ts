@@ -41,6 +41,12 @@ test("página de facções, tipos e navegação desktop/mobile estão conectados
   expect(page).toContain("Crônica de origem");
   expect(page).toContain("{faction.lore || faction.description}");
   expect(page).toContain("{faction.founder || \"Fundador desconhecido\"}");
+  expect(page).toContain('queryKey: ["eternal-factions-v2"]');
+  expect(page).toContain('.select("slug, name, short_name, founder, founder_title, motto, description, lore, virtues, emblem, accent_color, gradient_class, sort_order, active")');
+  expect(page).toContain('founder: "Aurel, o Primeiro Dragão"');
+  expect(page).toContain('founder: "Nyra, a Guardiã do Eclipse"');
+  expect(page).toContain('founder: "Auren, o Arquiteto de Mundos"');
+  expect(page).toContain('founder: "Veyr, o Observador"');
   expect(page).toContain("{activeFaction.lore}");
   expect(page).toContain("{activeFaction.founder}");
   expect(page).toContain("Companheiros de ordem");
