@@ -1007,6 +1007,55 @@ export type Database = {
           },
         ]
       }
+      faction_season_rewards: {
+        Row: {
+          cosmetic_id: string | null
+          faction_slug: string
+          granted_at: string
+          reward_key: string
+          season_id: string
+          user_id: string
+        }
+        Insert: {
+          cosmetic_id?: string | null
+          faction_slug: string
+          granted_at?: string
+          reward_key: string
+          season_id: string
+          user_id: string
+        }
+        Update: {
+          cosmetic_id?: string | null
+          faction_slug?: string
+          granted_at?: string
+          reward_key?: string
+          season_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_season_rewards_cosmetic_id_fkey"
+            columns: ["cosmetic_id"]
+            isOneToOne: false
+            referencedRelation: "cosmetics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "faction_season_rewards_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "faction_season_rewards_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "faction_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       faction_seasons: {
         Row: {
           created_at: string
