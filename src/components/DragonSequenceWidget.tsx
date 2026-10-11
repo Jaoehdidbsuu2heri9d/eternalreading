@@ -6,9 +6,11 @@ import {
   CalendarCheck,
   Check,
   ChevronRight,
+  Crown,
   Flame,
   Heart,
   RefreshCw,
+  Shield,
   Sparkles,
   Trophy,
 } from "lucide-react";
@@ -96,8 +98,74 @@ function useDragonSequence() {
   });
 }
 
+type DragonFactionTheme = {
+  slug: string;
+  name: string;
+  accent_color: string;
+  isChampion: boolean;
+  championSeasonName: string | null;
+};
+
+function useDragonFactionTheme() {
+  const { user } = useSession();
+  return useQuery({
+    queryKey: ["dragon-faction-theme", user?.id],
+    enabled: !!user,
+    queryFn: async (): Promise<DragonFactionTheme | null> => {
+      const { data: membership, error: membershipError } = await supabase
+        .from("user_factions")
+        .select("faction_slug")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      if (membershipError) throw membershipError;
+      if (!membership) return null;
+
+      const [factionResult, awardsResult] = await Promise.all([
+        supabase
+          .from("factions")
+          .select("slug, name, accent_color")
+          .eq("slug", membership.faction_slug)
+          .maybeSingle(),
+        supabase
+          .from("faction_season_rewards")
+          .select("season_id")
+          .eq("user_id", user!.id)
+          .eq("faction_slug", membership.faction_slug)
+          .eq("reward_key", "champion_dragon")
+          .order("granted_at", { ascending: false })
+          .limit(5),
+      ]);
+      if (factionResult.error) throw factionResult.error;
+      if (awardsResult.error) throw awardsResult.error;
+      if (!factionResult.data) return null;
+
+      let championSeasonName: string | null = null;
+      const championSeasonIds = [...new Set((awardsResult.data ?? []).map((award) => award.season_id))];
+      if (championSeasonIds.length) {
+        const { data: seasons, error: seasonsError } = await supabase
+          .from("faction_seasons")
+          .select("id, name")
+          .in("id", championSeasonIds);
+        if (seasonsError) throw seasonsError;
+        const nameById = new Map((seasons ?? []).map((season) => [season.id, season.name]));
+        championSeasonName = championSeasonIds.map((id) => nameById.get(id)).find(Boolean) ?? null;
+      }
+
+      return {
+        ...factionResult.data,
+        isChampion: championSeasonIds.length > 0,
+        championSeasonName,
+      };
+    },
+    staleTime: 60_000,
+    refetchOnWindowFocus: true,
+  });
+}
+
 export function DragonSequenceWidget({ compact = false }: { compact?: boolean }) {
   const query = useDragonSequence();
+  const factionThemeQuery = useDragonFactionTheme();
+  const factionTheme = factionThemeQuery.data ?? null;
   const stats = query.data ?? EMPTY_STATS;
   const stageIndex = stages.reduce((index, stage, current) => (
     stats.sequence_points >= stage.points ? current : index
@@ -136,8 +204,25 @@ export function DragonSequenceWidget({ compact = false }: { compact?: boolean })
       <section className="relative mb-8 overflow-hidden rounded-3xl border border-violet-400/20 bg-gradient-to-br from-[#201530] via-card to-[#101d20] p-4 shadow-lg shadow-violet-950/10 sm:p-6">
         <div aria-hidden className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full bg-violet-500/15 blur-3xl" />
         <div className="relative flex min-w-0 flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
-          <div className="mx-auto w-36 shrink-0 sm:w-44">
-            <DragonMascot stage={stageIndex} happy={stats.read_today} />
+          <div className="relative mx-auto w-36 shrink-0 sm:w-44">
+            {factionTheme ? (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-5 rounded-full blur-2xl"
+                style={{
+                  backgroundColor: `${factionTheme.accent_color}50`,
+                  boxShadow: factionTheme.isChampion ? `0 0 34px ${factionTheme.accent_color}80` : `0 0 18px ${factionTheme.accent_color}45`,
+                }}
+              />
+            ) : null}
+            <div className="relative">
+              <DragonMascot stage={stageIndex} happy={stats.read_today} factionColor={factionTheme?.accent_color} />
+            </div>
+            {factionTheme?.isChampion ? (
+              <span className="absolute -right-1 top-1 inline-flex items-center gap-1 rounded-full border border-amber-300/30 bg-amber-400/15 px-2 py-1 text-[9px] font-black text-amber-200 shadow-lg">
+                <Crown className="h-3 w-3" aria-hidden /> Campeão
+              </span>
+            ) : null}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
@@ -147,6 +232,11 @@ export function DragonSequenceWidget({ compact = false }: { compact?: boolean })
               {stats.read_today ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-1 text-[10px] font-semibold text-emerald-300">
                   <Check className="h-3 w-3" aria-hidden /> Alimentado hoje
+                </span>
+              ) : null}
+              {factionTheme ? (
+                <span className="inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[10px] font-semibold" style={{ borderColor: `${factionTheme.accent_color}55`, color: factionTheme.accent_color }}>
+                  <Shield className="h-3 w-3" aria-hidden /> {factionTheme.name}
                 </span>
               ) : null}
             </div>
@@ -175,12 +265,36 @@ export function DragonSequenceWidget({ compact = false }: { compact?: boolean })
       <section className="relative mb-6 overflow-hidden rounded-3xl border border-violet-400/20 bg-gradient-to-br from-[#21152e] via-[#171020] to-[#0c171b] p-5 sm:p-8">
         <div aria-hidden className="pointer-events-none absolute -right-12 -top-12 h-72 w-72 rounded-full bg-violet-500/15 blur-3xl" />
         <div className="relative grid min-w-0 items-center gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] sm:gap-8">
-          <div className="mx-auto w-56 max-w-full sm:w-full sm:max-w-[340px]">
-            <DragonMascot stage={stageIndex} happy={stats.read_today} />
+          <div className="relative mx-auto w-56 max-w-full sm:w-full sm:max-w-[340px]">
+            {factionTheme ? (
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-6 rounded-full blur-3xl"
+                style={{
+                  backgroundColor: `${factionTheme.accent_color}45`,
+                  boxShadow: factionTheme.isChampion ? `0 0 46px ${factionTheme.accent_color}85` : `0 0 24px ${factionTheme.accent_color}45`,
+                }}
+              />
+            ) : null}
+            <div className="relative">
+              <DragonMascot stage={stageIndex} happy={stats.read_today} factionColor={factionTheme?.accent_color} />
+            </div>
+            {factionTheme?.isChampion ? (
+              <span className="absolute right-0 top-3 inline-flex items-center gap-1.5 rounded-full border border-amber-300/30 bg-amber-400/15 px-3 py-1.5 text-xs font-black text-amber-200 shadow-lg">
+                <Crown className="h-3.5 w-3.5" aria-hidden /> Aura de campeão
+              </span>
+            ) : null}
           </div>
           <div className="min-w-0">
-            <div className="inline-flex items-center gap-2 rounded-full border border-orange-400/25 bg-orange-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-orange-300">
-              <Flame className="h-4 w-4" aria-hidden /> Seu companheiro de leitura
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-orange-400/25 bg-orange-400/10 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-orange-300">
+                <Flame className="h-4 w-4" aria-hidden /> Seu companheiro de leitura
+              </span>
+              {factionTheme ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold" style={{ borderColor: `${factionTheme.accent_color}55`, color: factionTheme.accent_color }}>
+                  <Shield className="h-3.5 w-3.5" aria-hidden /> {factionTheme.name}
+                </span>
+              ) : null}
             </div>
             <h1 className="mt-4 text-3xl font-black leading-tight sm:text-4xl">Fagulha, o <span className="text-gradient-eternal">Dragãozinho</span></h1>
             <p className={`mt-2 font-semibold ${stage.color}`}>{stage.title} · Estágio {stageIndex + 1} de {stages.length}</p>
@@ -312,11 +426,11 @@ function DragonMini({ stage, unlocked }: { stage: number; unlocked: boolean }) {
   );
 }
 
-function DragonMascot({ stage, happy }: { stage: number; happy: boolean }) {
+function DragonMascot({ stage, happy, factionColor }: { stage: number; happy: boolean; factionColor?: string | undefined }) {
   const svgId = useId().replace(/:/g, "");
-  const body = ["#6ee7b7", "#6ee7b7", "#67e8f9", "#7dd3fc", "#a78bfa", "#fbbf24", "#f0abfc"][stage] ?? "#6ee7b7";
+  const body = factionColor ?? (["#6ee7b7", "#6ee7b7", "#67e8f9", "#7dd3fc", "#a78bfa", "#fbbf24", "#f0abfc"][stage] ?? "#6ee7b7");
   const wing = ["#c4b5fd", "#a7f3d0", "#67e8f9", "#93c5fd", "#c4b5fd", "#fcd34d", "#f5d0fe"][stage] ?? "#c4b5fd";
-  const glow = ["#a78bfa", "#34d399", "#22d3ee", "#60a5fa", "#8b5cf6", "#f59e0b", "#e879f9"][stage] ?? "#a78bfa";
+  const glow = factionColor ?? (["#a78bfa", "#34d399", "#22d3ee", "#60a5fa", "#8b5cf6", "#f59e0b", "#e879f9"][stage] ?? "#a78bfa");
 
   return (
     <svg viewBox="0 0 240 190" role="img" aria-label={`Fagulha, dragãozinho estágio ${stage + 1}`} className="dragon-float h-auto w-full overflow-visible">
@@ -339,7 +453,7 @@ function DragonMascot({ stage, happy }: { stage: number; happy: boolean }) {
       {stage >= 4 ? <circle cx="120" cy="60" r="48" fill="none" stroke={glow} strokeWidth="1.5" strokeDasharray="3 8" opacity=".7" /> : null}
       <path d="M91 115 C45 134 50 101 68 92 C81 86 83 101 72 105" fill="none" stroke={body} strokeWidth="13" strokeLinecap="round" />
       <path d="M91 91 C58 48 38 55 42 87 C45 102 60 108 75 110 C64 94 66 83 55 76 C71 78 81 89 87 106Z" fill={`url(#${svgId}-dragon-wing)`} stroke={glow} strokeWidth="2" strokeLinejoin="round" className="dragon-wing" />
-      <path d="M148 91 C180 46 204 57 198 86 C195 103 178 110 164 111 C179 92 173 83 188 74 C171 78 160 91 154 108Z" fill="url(#dragon-wing)" stroke={glow} strokeWidth="2" strokeLinejoin="round" className="dragon-wing" />
+      <path d="M148 91 C180 46 204 57 198 86 C195 103 178 110 164 111 C179 92 173 83 188 74 C171 78 160 91 154 108Z" fill={`url(#${svgId}-dragon-wing)`} stroke={glow} strokeWidth="2" strokeLinejoin="round" className="dragon-wing" />
       {stage >= 5 ? <path d="M101 36 L107 20 L116 34 L124 16 L132 35 L143 23 L145 43" fill="none" stroke={glow} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /> : null}
       <path d="M139 125 C171 140 181 128 178 116" fill="none" stroke={body} strokeWidth="15" strokeLinecap="round" />
       <path d="M169 120 L181 116 L177 131" fill={body} stroke={glow} strokeWidth="2" strokeLinejoin="round" />
@@ -352,7 +466,7 @@ function DragonMascot({ stage, happy }: { stage: number; happy: boolean }) {
       <ellipse cx="120" cy="126" rx="40" ry="43" fill={`url(#${svgId}-dragon-body)`} stroke="#0f766e" strokeWidth="2" />
       <ellipse cx="121" cy="136" rx="22" ry="27" fill="#d1fae5" opacity=".9" />
       <path d="M110 119 Q121 114 132 119 M107 131 Q121 126 135 131 M109 143 Q121 139 133 143 M113 154 Q121 151 129 154" fill="none" stroke="#6ee7b7" strokeWidth="2" strokeLinecap="round" />
-      <ellipse cx="99" cy="158" rx="17" ry="9" fill="url(#dragon-body)" stroke="#0f766e" strokeWidth="2" />
+      <ellipse cx="99" cy="158" rx="17" ry="9" fill={`url(#${svgId}-dragon-body)`} stroke="#0f766e" strokeWidth="2" />
       <ellipse cx="143" cy="158" rx="17" ry="9" fill="url(#dragon-body)" stroke="#0f766e" strokeWidth="2" />
       <path d="M91 162 L97 166 L102 161 M135 161 L141 166 L147 161" fill="none" stroke="#ecfdf5" strokeWidth="2" strokeLinecap="round" />
       <path d="M92 81 C83 62 93 41 112 34 C130 27 151 40 154 59 C165 69 161 91 146 99 C130 110 105 102 95 92Z" fill="url(#dragon-body)" stroke="#0f766e" strokeWidth="2" />

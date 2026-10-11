@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Shield, Trophy } from "lucide-react";
+import { Crown, Shield, Sparkles, Trophy } from "lucide-react";
 
 import { Badge } from "@/components/common/EBadge";
 import { MangaGrid } from "@/components/MangaGrid";
@@ -20,6 +20,16 @@ import { cosmeticBackground, CosmeticSurface, useCosmeticMedia } from "@/compone
 import { BannerVideo } from "@/components/cosmetics/BannerVideo";
 import { hasEffect } from "@/lib/cosmetics";
 import { isVideoPath } from "@/lib/media";
+
+type FactionSeasonRewardRow = {
+  season_id: string;
+  faction_slug: string;
+  reward_key: string;
+  granted_at: string;
+  season_name: string;
+  faction_name: string;
+  accent_color: string;
+};
 
 export const Route = createFileRoute("/_authenticated/perfil/$username")({
   head: () => ({
@@ -68,6 +78,41 @@ function ProfilePage() {
         .maybeSingle();
       if (factionError) throw factionError;
       return faction ? { ...membership, faction } : null;
+    },
+    staleTime: 60_000,
+  });
+  const factionSeasonRewardsQ = useQuery({
+    queryKey: ["profile-faction-season-rewards", p?.id],
+    enabled: !!p,
+    queryFn: async (): Promise<FactionSeasonRewardRow[]> => {
+      const { data: grants, error: grantsError } = await supabase
+        .from("faction_season_rewards")
+        .select("season_id, faction_slug, reward_key, granted_at")
+        .eq("user_id", p!.id)
+        .order("granted_at", { ascending: false });
+      if (grantsError) throw grantsError;
+      if (!grants?.length) return [];
+
+      const seasonIds = [...new Set(grants.map((grant) => grant.season_id))];
+      const factionSlugs = [...new Set(grants.map((grant) => grant.faction_slug))];
+      const [seasonsResult, factionsResult] = await Promise.all([
+        supabase.from("faction_seasons").select("id, name").in("id", seasonIds),
+        supabase.from("factions").select("slug, name, accent_color").in("slug", factionSlugs),
+      ]);
+      if (seasonsResult.error) throw seasonsResult.error;
+      if (factionsResult.error) throw factionsResult.error;
+
+      const seasonNames = new Map((seasonsResult.data ?? []).map((season) => [season.id, season.name]));
+      const factionBySlug = new Map((factionsResult.data ?? []).map((faction) => [faction.slug, faction]));
+      return grants.map((grant) => {
+        const faction = factionBySlug.get(grant.faction_slug);
+        return {
+          ...grant,
+          season_name: seasonNames.get(grant.season_id) ?? "Temporada Eternal",
+          faction_name: faction?.name ?? grant.faction_slug,
+          accent_color: faction?.accent_color ?? "#A78BFA",
+        };
+      });
     },
     staleTime: 60_000,
   });
@@ -133,6 +178,16 @@ function ProfilePage() {
   const badge = equipped?.["badge"]?.preview;
   const isMe = user?.id === p.id;
   const customIsVideo = isVideoPath(p.gif_banner_path);
+  const legacyBySeason = new Map<string, FactionSeasonRewardRow>();
+  for (const reward of factionSeasonRewardsQ.data ?? []) {
+    if (!legacyBySeason.has(reward.season_id)) legacyBySeason.set(reward.season_id, reward);
+  }
+  const warLegacies = [...legacyBySeason.values()].slice(0, 3).map((reward) => ({
+    ...reward,
+    champion: (factionSeasonRewardsQ.data ?? []).some(
+      (item) => item.season_id === reward.season_id && item.reward_key === "champion_dragon",
+    ),
+  }));
 
   return (
     <div style={bgItem ? { background: cosmeticBackground(bgItem.preview, bgMedia) } : undefined} className={`min-h-full ${animClass(bgItem?.animation)}`}>
@@ -176,6 +231,41 @@ function ProfilePage() {
         </div>
         </ProfileBorder>
         <FollowPanel userId={p.id} me={user?.id} />
+        {warLegacies.length ? (
+          <section className="mt-4 rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-400/5 via-card to-violet-500/5 p-4 sm:p-5">
+            <div className="mb-3 flex items-center gap-2">
+              <Trophy className="h-5 w-5 text-amber-300" aria-hidden />
+              <div>
+                <h2 className="font-bold">Legado da Guerra</h2>
+                <p className="text-xs text-muted-foreground">Conquistas permanentes das temporadas das facções.</p>
+              </div>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {warLegacies.map((legacy) => (
+                <div key={legacy.season_id} className="flex min-w-0 items-start gap-3 rounded-xl border bg-background/40 p-3" style={{ borderColor: `${legacy.accent_color}55` }}>
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: legacy.accent_color, backgroundColor: `${legacy.accent_color}18` }}>
+                    {legacy.champion ? <Crown className="h-5 w-5" aria-hidden /> : <Shield className="h-5 w-5" aria-hidden />}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold" style={{ color: legacy.accent_color }}>
+                      {legacy.champion ? "Campeão da temporada" : "Participante da temporada"}
+                    </p>
+                    <p className="mt-0.5 text-xs font-medium">{legacy.season_name}</p>
+                    <p className="mt-1 text-[11px] text-muted-foreground">{legacy.faction_name}</p>
+                    {legacy.champion ? (
+                      <p className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-amber-300">
+                        <Sparkles className="h-3 w-3" aria-hidden /> Moldura, título e aura do Fagulha desbloqueados
+                      </p>
+                    ) : (
+                      <p className="mt-1 text-[10px] text-muted-foreground">Brasão de participação desbloqueado</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] text-muted-foreground">Os cosméticos ficam na coleção para você equipar em Personalizar; o legado da temporada permanece registrado no perfil.</p>
+          </section>
+        ) : null}
         {p.bio && <p className="mt-4 text-muted-foreground">{p.bio}</p>}
 
         <div className="surface-panel mt-6 rounded-2xl p-4">
