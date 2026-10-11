@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Trophy } from "lucide-react";
+import { Shield, Trophy } from "lucide-react";
 
 import { Badge } from "@/components/common/EBadge";
 import { MangaGrid } from "@/components/MangaGrid";
@@ -50,6 +50,27 @@ function ProfilePage() {
     },
   });
   const p = profile.data;
+  const factionQ = useQuery({
+    queryKey: ["profile-faction", p?.id],
+    enabled: !!p,
+    queryFn: async () => {
+      const { data: membership, error: membershipError } = await supabase
+        .from("user_factions")
+        .select("faction_slug, contribution_points")
+        .eq("user_id", p!.id)
+        .maybeSingle();
+      if (membershipError) throw membershipError;
+      if (!membership) return null;
+      const { data: faction, error: factionError } = await supabase
+        .from("factions")
+        .select("slug, name, accent_color, emblem")
+        .eq("slug", membership.faction_slug)
+        .maybeSingle();
+      if (factionError) throw factionError;
+      return faction ? { ...membership, faction } : null;
+    },
+    staleTime: 60_000,
+  });
   const favs = useQuery({ queryKey: ["favorites", p?.id], enabled: !!p, queryFn: () => fetchFavorites(p!.id) });
   const { data: equipped } = useEquipped(p?.id);
   // GIF só aparece se o dono ainda tiver plano (conferido também ao salvar).
@@ -133,6 +154,17 @@ function ProfilePage() {
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-bold">{p.display_name ?? p.username}</h1>
               {badge && <Badge tone="primary">{badge}</Badge>}
+              {factionQ.data?.faction && (
+                <Link
+                  to="/faccoes"
+                  title={`Membro da ${factionQ.data.faction.name}`}
+                  className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition hover:bg-secondary/70"
+                  style={{ borderColor: `${factionQ.data.faction.accent_color}66`, color: factionQ.data.faction.accent_color }}
+                >
+                  <Shield className="h-3.5 w-3.5" aria-hidden />
+                  {factionQ.data.faction.name}
+                </Link>
+              )}
             </div>
             {title && <p className="text-gradient-eternal text-sm font-medium">"{title}"</p>}
             <p className="text-sm text-muted-foreground">@{p.username} • membro desde {formatDate(p.created_at)}</p>
