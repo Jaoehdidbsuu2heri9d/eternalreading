@@ -35,6 +35,7 @@ import { Route as AuthenticatedMeSurpreendaRouteImport } from './routes/_authent
 import { Route as AuthenticatedPersonalizarRouteImport } from './routes/_authenticated/personalizar'
 import { Route as AuthenticatedPlanosRouteImport } from './routes/_authenticated/planos'
 import { Route as AuthenticatedRankingRouteImport } from './routes/_authenticated/ranking'
+import { Route as AuthenticatedSequenciaRouteImport } from './routes/_authenticated/sequencia'
 import { Route as AuthenticatedScansRouteImport } from './routes/_authenticated/scans'
 import { Route as AuthenticatedSejaParceiroRouteImport } from './routes/_authenticated/seja-parceiro'
 import { Route as AuthenticatedLojaMoldurasRouteImport } from './routes/_authenticated/loja_.molduras'
@@ -179,6 +180,11 @@ const AuthenticatedRankingRoute = AuthenticatedRankingRouteImport.update({
   path: '/ranking',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSequenciaRoute = AuthenticatedSequenciaRouteImport.update({
+  id: '/sequencia',
+  path: '/sequencia',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedScansRoute = AuthenticatedScansRouteImport.update({
   id: '/scans',
   path: '/scans',
@@ -261,6 +267,7 @@ export interface FileRoutesByFullPath {
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
   '/ranking': typeof AuthenticatedRankingRoute
+  '/sequencia': typeof AuthenticatedSequenciaRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/loja/molduras': typeof AuthenticatedLojaMoldurasRoute
@@ -298,6 +305,7 @@ export interface FileRoutesByTo {
   '/personalizar': typeof AuthenticatedPersonalizarRoute
   '/planos': typeof AuthenticatedPlanosRoute
   '/ranking': typeof AuthenticatedRankingRoute
+  '/sequencia': typeof AuthenticatedSequenciaRoute
   '/scans': typeof AuthenticatedScansRoute
   '/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/loja/molduras': typeof AuthenticatedLojaMoldurasRoute
@@ -337,6 +345,7 @@ export interface FileRoutesById {
   '/_authenticated/personalizar': typeof AuthenticatedPersonalizarRoute
   '/_authenticated/planos': typeof AuthenticatedPlanosRoute
   '/_authenticated/ranking': typeof AuthenticatedRankingRoute
+  '/_authenticated/sequencia': typeof AuthenticatedSequenciaRoute
   '/_authenticated/scans': typeof AuthenticatedScansRoute
   '/_authenticated/seja-parceiro': typeof AuthenticatedSejaParceiroRoute
   '/_authenticated/loja_/molduras': typeof AuthenticatedLojaMoldurasRoute
@@ -752,6 +761,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPersonalizarRoute: typeof AuthenticatedPersonalizarRoute
   AuthenticatedPlanosRoute: typeof AuthenticatedPlanosRoute
   AuthenticatedRankingRoute: typeof AuthenticatedRankingRoute
+  AuthenticatedSequenciaRoute: typeof AuthenticatedSequenciaRoute
   AuthenticatedScansRoute: typeof AuthenticatedScansRoute
   AuthenticatedSejaParceiroRoute: typeof AuthenticatedSejaParceiroRoute
   AuthenticatedLojaMoldurasRoute: typeof AuthenticatedLojaMoldurasRoute
@@ -782,6 +792,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPersonalizarRoute: AuthenticatedPersonalizarRoute,
   AuthenticatedPlanosRoute: AuthenticatedPlanosRoute,
   AuthenticatedRankingRoute: AuthenticatedRankingRoute,
+  AuthenticatedSequenciaRoute: AuthenticatedSequenciaRoute,
   AuthenticatedScansRoute: AuthenticatedScansRoute,
   AuthenticatedSejaParceiroRoute: AuthenticatedSejaParceiroRoute,
   AuthenticatedLojaMoldurasRoute: AuthenticatedLojaMoldurasRoute,
