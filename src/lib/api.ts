@@ -166,7 +166,13 @@ export async function fetchGenres(): Promise<Genre[]> {
 export async function fetchScans() {
   const { data, error } = await supabase.from("scans").select("*").order("name");
   if (error) throw error;
-  return data ?? [];
+  const rows = data ?? [];
+  const signed = await signMediaUrls(rows.flatMap((scan) => [scan.logo_url ?? null, scan.banner_url ?? null]));
+  return rows.map((scan, index) => ({
+    ...scan,
+    logo_url: signed[index * 2] ?? scan.logo_url,
+    banner_url: signed[index * 2 + 1] ?? scan.banner_url,
+  }));
 }
 
 /** Últimas atualizações: capítulos publicados recentemente com a obra. */
