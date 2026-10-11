@@ -329,7 +329,7 @@ function FactionsPage() {
                     <p className={`mt-2 text-sm font-semibold italic ${style.light}`}>“{faction.motto}”</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{faction.description}</p>
                     <div className="mt-4 flex flex-wrap gap-1.5">
-                      {faction.virtues.map((virtue) => <span key={virtue} className={`rounded-full border px-2 py-1 text-[10px] font-medium ${style.border} ${style.badge}`}>{virtue}</span>)}
+                      {(faction.virtues ?? []).map((virtue) => <span key={virtue} className={`rounded-full border px-2 py-1 text-[10px] font-medium ${style.border} ${style.badge}`}>{virtue}</span>)}
                     </div>
                   </div>
                   <div className="relative mt-5 grid grid-cols-2 gap-2 border-t border-border/70 pt-4">
@@ -367,7 +367,7 @@ function FactionsPage() {
                 </div>
                 <p className="mt-5 text-sm leading-7 text-muted-foreground sm:text-base">{activeFaction.lore}</p>
                 <div className="mt-5 flex flex-wrap gap-2">
-                  {activeFaction.virtues.map((virtue) => <span key={virtue} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${style.border} ${style.badge}`}>{virtue}</span>)}
+                  {(activeFaction.virtues ?? []).map((virtue) => <span key={virtue} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${style.border} ${style.badge}`}>{virtue}</span>)}
                 </div>
                 <div className="mt-6 rounded-2xl border border-border/70 bg-background/35 p-4">
                   <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Fundador</p>
