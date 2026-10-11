@@ -5,6 +5,7 @@ import { ArrowRight, BookOpen, Flame, Sparkles, WandSparkles } from "lucide-reac
 import { Badge } from "@/components/common/EBadge";
 import { Button } from "@/components/common/EButton";
 import { MangaGrid, MangaGridSkeleton } from "@/components/MangaGrid";
+import { DragonSequenceWidget } from "@/components/DragonSequenceWidget";
 import { SectionTitle } from "@/components/PageHeader";
 import { fetchCatalog, fetchHistory, fetchLatestUpdates } from "@/lib/api";
 import { formatChapterNumber, formatRelativeDate } from "@/lib/format";
@@ -51,6 +52,8 @@ function HomePage() {
           <Button variant="outline" className="gap-2 rounded-xl">Explorar catálogo <ArrowRight className="h-4 w-4" /></Button>
         </Link>
       </div>
+
+      <DragonSequenceWidget compact />
 
       {hero ? (
         <section className="group relative isolate mb-10 min-h-[390px] overflow-hidden rounded-[2rem] border border-white/10 bg-[#100d18] shadow-2xl shadow-violet-950/20 sm:min-h-[430px]">
