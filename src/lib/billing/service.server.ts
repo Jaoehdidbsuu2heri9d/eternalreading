@@ -12,19 +12,47 @@ function addMonth(date: string): string {
   return d.toISOString();
 }
 
-/** Processa um evento já autenticado. Idempotente pelo event_id. */
+const BETA_BADGE_CUTOFF = new Date("2026-11-27T03:00:00.000Z");
+
+async function grantBetaTesterBadge(db: Admin, userId: string) {
+  // Nov. 27 begins at midnight in Brazil (UTC-03); no sandbox event can call this.
+  if (Date.now() >= BETA_BADGE_CUTOFF.getTime()) return;
+  const { data: badge, error: badgeError } = await db.from("cosmetics")
+    .select("id").eq("slug", "eternal-beta-tester").eq("active", true).maybeSingle();
+  if (badgeError) throw badgeError;
+  if (!badge) throw new Error("beta_tester_badge_not_configured");
+  const { error } = await db.from("user_cosmetics").upsert({
+    user_id: userId,
+    cosmetic_id: badge.id,
+    equipped: false,
+    source: "beta-subscription",
+  }, { onConflict: "user_id,cosmetic_id", ignoreDuplicates: true });
+  if (error) throw error;
+}
+
+/** Processa um evento já autenticado. Idempotente pelo event_id e retomável após falha. */
 export async function applyEvent(db: Admin, provider: string, ev: NormalizedEvent, payload: unknown) {
   const ins = await db.from("payment_events")
     .insert({ provider, event_id: ev.eventId, event_type: ev.rawType, payload: payload as never })
     .select("id").maybeSingle();
+
+  let eventRow: string;
   if (ins.error) {
-    if (ins.error.code === "23505") return "duplicate";
-    throw ins.error;
+    if (ins.error.code !== "23505") throw ins.error;
+    const existing = await db.from("payment_events").select("id, processed")
+      .eq("provider", provider).eq("event_id", ev.eventId).single();
+    if (existing.error) throw existing.error;
+    if (existing.data.processed) return "duplicate";
+    eventRow = existing.data.id;
+  } else {
+    if (!ins.data?.id) throw new Error("payment_event_insert_missing_id");
+    eventRow = ins.data.id;
   }
-  const eventRow = ins.data!.id;
+
   try {
     if (ev.type !== "ignored") await handle(db, provider, ev);
-    await db.from("payment_events").update({ processed: true }).eq("id", eventRow);
+    const { error } = await db.from("payment_events").update({ processed: true, error: null }).eq("id", eventRow);
+    if (error) throw error;
     return "ok";
   } catch (e) {
     await db.from("payment_events").update({ error: String((e as Error).message ?? e).slice(0, 500) }).eq("id", eventRow);
@@ -58,6 +86,9 @@ async function handle(db: Admin, provider: string, ev: NormalizedEvent) {
       patch["started_at"] = sub.started_at ?? new Date().toISOString();
       patch["next_due_date"] = end.slice(0, 10);
       await replaceOtherSubscriptions(db, provider, sub.user_id, sub.id);
+      if (provider === "asaas" && process.env["ASAAS_ENV"] === "production") {
+        await grantBetaTesterBadge(db, sub.user_id);
+      }
       break;
     }
     case "payment_overdue": if (sub.status === "active") patch["status"] = "past_due"; break;
