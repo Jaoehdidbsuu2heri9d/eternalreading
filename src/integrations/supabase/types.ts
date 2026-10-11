@@ -1043,6 +1043,60 @@ export type Database = {
           },
         ]
       }
+      factions: {
+        Row: {
+          active: boolean
+          accent_color: string
+          created_at: string
+          description: string
+          emblem: string
+          founder: string
+          founder_title: string
+          gradient_class: string
+          lore: string
+          motto: string
+          name: string
+          short_name: string
+          slug: string
+          sort_order: number
+          virtues: string[]
+        }
+        Insert: {
+          active?: boolean
+          accent_color: string
+          created_at?: string
+          description: string
+          emblem: string
+          founder: string
+          founder_title: string
+          gradient_class: string
+          lore: string
+          motto: string
+          name: string
+          short_name: string
+          slug: string
+          sort_order: number
+          virtues?: string[]
+        }
+        Update: {
+          active?: boolean
+          accent_color?: string
+          created_at?: string
+          description?: string
+          emblem?: string
+          founder?: string
+          founder_title?: string
+          gradient_class?: string
+          lore?: string
+          motto?: string
+          name?: string
+          short_name?: string
+          slug?: string
+          sort_order?: number
+          virtues?: string[]
+        }
+        Relationships: []
+      }
       follows: {
         Row: {
           created_at: string
@@ -1060,6 +1114,35 @@ export type Database = {
           following_id?: string
         }
         Relationships: []
+      }
+      user_factions: {
+        Row: {
+          contribution_points: number
+          faction_slug: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          contribution_points?: number
+          faction_slug: string
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          contribution_points?: number
+          faction_slug?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_factions_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+        ]
       }
       frame_categories: {
         Row: {
@@ -2237,6 +2320,7 @@ export type Database = {
       }
       buy_cosmetic: { Args: { p_cosmetic: string }; Returns: number }
       check_achievements: { Args: never; Returns: number }
+      choose_faction: { Args: { p_faction_slug: string }; Returns: boolean }
       coins_apply: {
         Args: {
           p_actor: string
