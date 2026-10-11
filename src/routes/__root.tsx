@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { BetaLaunchBanner } from "@/components/BetaLaunchBanner";
+import { SiteLegalFooter } from "@/components/SiteLegalFooter";
 
 function NotFoundComponent() {
   return (
@@ -154,5 +156,5 @@ function GlobalEventTheme({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  return <QueryClientProvider client={queryClient}><GlobalEventTheme><Outlet /></GlobalEventTheme></QueryClientProvider>;
+  return <QueryClientProvider client={queryClient}><GlobalEventTheme><BetaLaunchBanner /><Outlet /><SiteLegalFooter /></GlobalEventTheme></QueryClientProvider>;
 }

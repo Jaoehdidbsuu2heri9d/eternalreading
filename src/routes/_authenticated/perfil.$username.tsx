@@ -116,6 +116,21 @@ function ProfilePage() {
     },
     staleTime: 60_000,
   });
+  const betaTesterBadgeQ = useQuery({
+    queryKey: ["profile-beta-tester-badge", p?.id],
+    enabled: !!p,
+    queryFn: async () => {
+      const { data: badge, error: badgeError } = await supabase.from("cosmetics")
+        .select("id").eq("slug", "eternal-beta-tester").eq("active", true).maybeSingle();
+      if (badgeError) throw badgeError;
+      if (!badge) return false;
+      const { data: owned, error: ownedError } = await supabase.from("user_cosmetics")
+        .select("cosmetic_id").eq("user_id", p!.id).eq("cosmetic_id", badge.id).maybeSingle();
+      if (ownedError) throw ownedError;
+      return !!owned;
+    },
+    staleTime: 60_000,
+  });
   const favs = useQuery({ queryKey: ["favorites", p?.id], enabled: !!p, queryFn: () => fetchFavorites(p!.id) });
   const { data: equipped } = useEquipped(p?.id);
   // GIF só aparece se o dono ainda tiver plano (conferido também ao salvar).
@@ -209,6 +224,11 @@ function ProfilePage() {
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="text-2xl font-bold">{p.display_name ?? p.username}</h1>
               {badge && <Badge tone="primary">{badge}</Badge>}
+              {betaTesterBadgeQ.data ? (
+                <span title="Assinatura real confirmada durante a beta antes do lançamento oficial" className="inline-flex items-center gap-1.5 rounded-full border border-violet-300/30 bg-violet-400/10 px-2.5 py-1 text-xs font-extrabold tracking-wide text-violet-200 shadow-[0_0_18px_rgba(167,139,250,0.12)]">
+                  <Sparkles className="h-3.5 w-3.5" aria-hidden /> 🧪 Testador Beta
+                </span>
+              ) : null}
               {factionQ.data?.faction && (
                 <Link
                   to="/faccoes"

@@ -28,6 +28,20 @@ export const startCheckout = createServerFn({ method: "POST" })
   .inputValidator((d) => CheckoutInput.parse(d))
   .handler(async ({ data, context }) => {
     const { userId, claims } = context;
+    const billingEnvironment = process.env["ASAAS_ENV"] ?? "sandbox";
+    if (billingEnvironment !== "sandbox" && billingEnvironment !== "production") {
+      throw new Error("O ambiente de pagamento está configurado incorretamente.");
+    }
+    if (billingEnvironment === "production") {
+      const apiKey = process.env["ASAAS_API_KEY"] ?? "";
+      const webhookToken = process.env["ASAAS_WEBHOOK_TOKEN"] ?? "";
+      if (process.env["ASAAS_LIVE_BILLING_ENABLED"] !== "true") {
+        throw new Error("As assinaturas reais ainda não foram liberadas para a beta.");
+      }
+      if (!apiKey || !webhookToken || apiKey.startsWith("$aact_hmlg_")) {
+        throw new Error("A configuração de produção do Asaas está incompleta. Nenhuma cobrança foi criada.");
+      }
+    }
     const { supabaseAdmin: db } = await import("@/integrations/supabase/client.server");
     const { getPaymentProvider } = await import("@/lib/billing/provider.server");
     const provider = await getPaymentProvider();

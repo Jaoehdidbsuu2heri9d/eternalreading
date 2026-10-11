@@ -15,8 +15,14 @@ export const Route = createFileRoute("/api/public/webhooks/asaas")({
         const { applyDonationEvent } = await import("@/lib/donations/service.server");
         try {
           const body = JSON.parse(raw);
-          const donorResult = await applyDonationEvent(supabaseAdmin, "asaas", ev, body);
-          const r = donorResult ?? await applyEvent(supabaseAdmin, "asaas", ev, body);
+          const mode = process.env["ASAAS_ENV"] ?? "sandbox";
+          // One-time donations remain explicitly sandbox-only. Subscription events
+          // use an environment-specific provider ID to isolate test/live records.
+          const donorResult = mode === "sandbox"
+            ? await applyDonationEvent(supabaseAdmin, "asaas", ev, body)
+            : null;
+          const subscriptionProvider = asaasProvider().name;
+          const r = donorResult ?? await applyEvent(supabaseAdmin, subscriptionProvider, ev, body);
           return Response.json({ ok: true, result: r });
         } catch (e) {
           console.error("asaas webhook failed", ev.rawType, (e as Error).message);

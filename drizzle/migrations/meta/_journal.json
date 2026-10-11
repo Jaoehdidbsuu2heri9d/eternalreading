@@ -246,6 +246,13 @@
       "when": 1792059200000,
       "tag": "0034_faction_season_cosmetics",
       "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1792145600000,
+      "tag": "0035_beta_launch_protections",
+      "breakpoints": true
     }
   ]
 }
