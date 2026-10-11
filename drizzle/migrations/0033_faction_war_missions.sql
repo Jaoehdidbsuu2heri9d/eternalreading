@@ -488,6 +488,12 @@ BEGIN
   IF p_duration_days < 7 OR p_duration_days > 60 THEN
     RAISE EXCEPTION 'A duração deve ficar entre 7 e 60 dias';
   END IF;
+  IF EXISTS (
+    SELECT 1 FROM public.faction_seasons
+    WHERE status = 'active' AND start_at <= now() AND end_at > now()
+  ) THEN
+    RAISE EXCEPTION 'A temporada atual ainda está em andamento';
+  END IF;
 
   UPDATE public.faction_seasons s
   SET status = 'completed',
