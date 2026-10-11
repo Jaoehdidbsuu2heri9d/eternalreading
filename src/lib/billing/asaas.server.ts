@@ -6,13 +6,33 @@ import { timingSafeEqual } from "crypto";
 
 import type { NormalizedEvent, NormalizedEventType, PaymentProvider } from "./provider.server";
 
+type AsaasEnvironment = "sandbox" | "production";
+
+function environment(): AsaasEnvironment {
+  const value = process.env["ASAAS_ENV"] ?? "sandbox";
+  if (value !== "sandbox" && value !== "production") throw new Error("billing_invalid_environment");
+  return value;
+}
+
 function baseUrl() {
-  return process.env["ASAAS_ENV"] === "production" ? "https://api.asaas.com/v3" : "https://api-sandbox.asaas.com/v3";
+  return environment() === "production" ? "https://api.asaas.com/v3" : "https://api-sandbox.asaas.com/v3";
+}
+
+function providerName() {
+  // Keeps old sandbox test subscriptions separate from real production benefits.
+  return environment() === "production" ? "asaas" : "asaas_sandbox";
+}
+
+function assertApiKeyMatchesEnvironment(key: string) {
+  const mode = environment();
+  if (mode === "production" && key.startsWith("$aact_hmlg_")) throw new Error("billing_environment_key_mismatch");
+  if (mode === "sandbox" && key.startsWith("$aact_prod_")) throw new Error("billing_environment_key_mismatch");
 }
 
 async function call<T>(path: string, init: RequestInit = {}): Promise<T> {
   const key = process.env["ASAAS_API_KEY"];
   if (!key) throw new Error("billing_not_configured");
+  assertApiKeyMatchesEnvironment(key);
   const res = await fetch(`${baseUrl()}${path}`, {
     ...init,
     headers: { "Content-Type": "application/json", "User-Agent": "Eternal", access_token: key, ...(init.headers ?? {}) },
@@ -44,7 +64,7 @@ const MAP: Record<string, NormalizedEventType> = {
 
 export function asaasProvider(): PaymentProvider {
   return {
-    name: "asaas",
+    name: providerName(),
     async createCustomer({ name, email, cpf, userId }) {
       const c = await call<{ id: string }>("/customers", {
         method: "POST",
