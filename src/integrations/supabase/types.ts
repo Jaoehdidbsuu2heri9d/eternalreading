@@ -2383,6 +2383,18 @@ export type Database = {
           current_streak: number
         }[]
       }
+      dragon_sequence_stats: {
+        Args: never
+        Returns: {
+          active_days: number
+          best_streak: number
+          current_streak: number
+          last_read_on: string | null
+          read_today: boolean
+          sequence_points: number
+          week_read_days: string[]
+        }[]
+      }
       record_chapter_open: { Args: { p_chapter: string }; Returns: boolean }
       record_chapter_read: { Args: { p_chapter: string }; Returns: boolean }
       redeem_invite_code: { Args: { p_code: string }; Returns: boolean }
