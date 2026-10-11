@@ -63,7 +63,10 @@ export async function signMediaUrls(values: Array<string | null | undefined>): P
 
   return values.map((value) => {
     const key = mediaKeyFromUrl(value);
-    return key ? signedByKey.get(key) ?? value : value;
+    if (!key) return value;
+    const signed = signedByKey.get(key);
+    if (!signed) throw new Error("O servidor não autorizou uma das imagens solicitadas.");
+    return signed;
   });
 }
 
