@@ -158,7 +158,8 @@ export const Route = createFileRoute("/api/public/media/$")({
             return new Response(object.body, {
               headers: {
                 "Content-Type": object.contentType,
-                "Cache-Control": "public, max-age=31536000, immutable",
+                "Cache-Control": "private, max-age=300, must-revalidate",
+                "Referrer-Policy": "no-referrer",
                 "X-Storage-Provider": "cloudflare-r2",
                 "X-Content-Type-Options": "nosniff",
               },
@@ -174,7 +175,8 @@ export const Route = createFileRoute("/api/public/media/$")({
         return new Response(data, {
           headers: {
             "Content-Type": data.type || "image/jpeg",
-            "Cache-Control": "public, max-age=31536000, immutable",
+            "Cache-Control": "private, max-age=300, must-revalidate",
+                "Referrer-Policy": "no-referrer",
             "X-Storage-Provider": "supabase-legacy",
             "X-Content-Type-Options": "nosniff",
           },
