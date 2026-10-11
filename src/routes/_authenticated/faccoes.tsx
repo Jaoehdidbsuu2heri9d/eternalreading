@@ -63,6 +63,31 @@ type FactionWithStats = Faction & {
   points: number;
 };
 
+// Preserva nomes e crônicas oficiais mesmo se uma resposta antiga do navegador
+// vier sem esses campos durante uma atualização do app.
+const factionLoreDefaults: Record<string, Pick<Faction, "founder" | "founder_title" | "lore">> = {
+  "ordem-da-chama": {
+    founder: "Aurel, o Primeiro Dragão",
+    founder_title: "Fundador da Chama Rubra",
+    lore: "A lenda conta que Aurel encontrou a primeira chama nos escombros de uma biblioteca esquecida. Em vez de guardá-la para si, dividiu sua luz com quem ainda tinha coragem de continuar lendo. Desde então, a Ordem da Chama acredita que persistência transforma qualquer leitor em protagonista. Seu estandarte traz um dragão rubro, símbolo de coragem, lealdade e recomeço.",
+  },
+  "ordem-lunar": {
+    founder: "Nyra, a Guardiã do Eclipse",
+    founder_title: "Fundadora do Véu Prateado",
+    lore: "Nyra percorreu histórias que outros abandonaram por parecerem sem respostas. Ao observar um eclipse através de um portal antigo, descobriu que até a sombra mais densa guarda uma pista. A Ordem Lunar valoriza paciência, imaginação e sensibilidade: seus membros sabem que a melhor revelação é aquela que faz todas as páginas anteriores ganharem um novo sentido.",
+  },
+  "guardioes-do-portal": {
+    founder: "Auren, o Arquiteto de Mundos",
+    founder_title: "Primeiro Guardião",
+    lore: "Diz-se que Auren construiu um portal para cada história ainda não descoberta. Os Guardiões não ficam presos a um único mundo: exploram fantasia, romance, ação, drama e tudo o que a biblioteca oferece. Sua missão é abrir caminhos, compartilhar recomendações e garantir que nenhum leitor fique sem uma próxima aventura.",
+  },
+  "corvos-eternos": {
+    founder: "Veyr, o Observador",
+    founder_title: "Guardião dos Arquivos",
+    lore: "Veyr nunca lia apenas o que estava escrito: observava símbolos, escolhas e pequenos detalhes que passavam despercebidos. Ao reunir suas anotações, criou os Arquivos Eternos. Os Corvos acreditam que histórias ficam ainda melhores quando são discutidas, lembradas e compartilhadas. O seu brasão representa atenção, estratégia e a força de uma comunidade que pensa junto.",
+  },
+};
+
 const emblemIcons: Record<string, LucideIcon> = {
   flame: Flame,
   moon: Moon,
@@ -122,15 +147,30 @@ function FactionsPage() {
   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   const factionsQuery = useQuery({
-    queryKey: ["eternal-factions"],
+    // v2 força o navegador a descartar dados antigos que podem não conter lore/fundador.
+    queryKey: ["eternal-factions-v2"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("factions")
-        .select("*")
+        .select("slug, name, short_name, founder, founder_title, motto, description, lore, virtues, emblem, accent_color, gradient_class, sort_order, active")
         .eq("active", true)
         .order("sort_order", { ascending: true });
       if (error) throw error;
-      return (data ?? []) as Faction[];
+      return ((data ?? []) as Faction[]).map((faction) => {
+        const fallback = factionLoreDefaults[faction.slug];
+        return {
+          ...faction,
+          founder: typeof faction.founder === "string" && faction.founder.trim()
+            ? faction.founder
+            : fallback?.founder ?? "Fundador da Eternal",
+          founder_title: typeof faction.founder_title === "string" && faction.founder_title.trim()
+            ? faction.founder_title
+            : fallback?.founder_title ?? "Membro fundador",
+          lore: typeof faction.lore === "string" && faction.lore.trim()
+            ? faction.lore
+            : fallback?.lore ?? faction.description,
+        };
+      });
     },
     staleTime: 5 * 60_000,
   });
