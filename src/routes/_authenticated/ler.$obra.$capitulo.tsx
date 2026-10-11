@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -26,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/ler/$obra/$capitulo")({
 function ReaderPage() {
   const { obra, capitulo } = Route.useParams();
   const { user } = useSession();
+  const queryClient = useQueryClient();
   const manga = useQuery({ queryKey: ["manga", obra], queryFn: () => fetchMangaBySlug(obra) });
   const chapters = useQuery({
     queryKey: ["chapters", manga.data?.id],
@@ -69,6 +70,8 @@ function ReaderPage() {
       if (disposed) return;
       if (data && !error) {
         xpGiven.current = true;
+        void queryClient.invalidateQueries({ queryKey: ["dragon-sequence-stats", user.id] });
+        void queryClient.invalidateQueries({ queryKey: ["profile-stats", user.id] });
       } else if (!error && ++attempts < 5) {
         // Leitura muito rápida: aguarda o tempo mínimo aferido pelo banco.
         retryHandle = window.setTimeout(() => { void confirmRead(); }, 2500);
@@ -103,7 +106,7 @@ function ReaderPage() {
       if (retryHandle !== undefined) window.clearTimeout(retryHandle);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [user, manga.data, chapter, pages.isSuccess, pages.data]);
+  }, [user, manga.data, chapter, pages.isSuccess, pages.data, queryClient]);
 
   const nav = (
     <div className="flex items-center justify-between gap-2">
