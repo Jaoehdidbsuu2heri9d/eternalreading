@@ -75,24 +75,28 @@ const visualStyles: Record<string, { border: string; badge: string; glow: string
     badge: "bg-red-400/10 text-red-200",
     glow: "bg-red-500/10",
     light: "text-red-300",
+    gradient: "bg-gradient-to-br from-red-950/80 via-rose-950/40 to-card",
   },
   "ordem-lunar": {
     border: "border-violet-400/30",
     badge: "bg-violet-400/10 text-violet-200",
     glow: "bg-violet-500/10",
     light: "text-violet-300",
+    gradient: "bg-gradient-to-br from-violet-950/80 via-indigo-950/40 to-card",
   },
   "guardioes-do-portal": {
     border: "border-emerald-400/30",
     badge: "bg-emerald-400/10 text-emerald-200",
     glow: "bg-emerald-500/10",
     light: "text-emerald-300",
+    gradient: "bg-gradient-to-br from-emerald-950/80 via-teal-950/40 to-card",
   },
   "corvos-eternos": {
     border: "border-blue-400/30",
     badge: "bg-blue-400/10 text-blue-200",
     glow: "bg-blue-500/10",
     light: "text-blue-300",
+    gradient: "bg-gradient-to-br from-slate-950/90 via-blue-950/40 to-card",
   },
 };
 
@@ -304,7 +308,7 @@ function FactionsPage() {
               const selected = faction.slug === activeSlug;
               const belongs = faction.slug === myMembership?.faction_slug;
               return (
-                <article key={faction.slug} className={`group relative flex min-w-0 flex-col overflow-hidden rounded-3xl border bg-gradient-to-br p-4 transition duration-200 sm:p-5 ${faction.gradient_class} ${selected ? `ring-2 ring-offset-2 ring-offset-background ${style.border}` : "border-border hover:border-primary/30"}`}>
+                <article key={faction.slug} className={`group relative flex min-w-0 flex-col overflow-hidden rounded-3xl border bg-gradient-to-br p-4 transition duration-200 sm:p-5 ${style.gradient} ${selected ? `ring-2 ring-offset-2 ring-offset-background ${style.border}` : "border-border hover:border-primary/30"}`}>
                   <div aria-hidden className={`pointer-events-none absolute -right-12 -top-14 h-40 w-40 rounded-full blur-3xl ${style.glow}`} />
                   <div className="relative mb-4 flex items-start justify-between gap-3">
                     <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border ${style.border} ${style.badge}`}>
@@ -344,7 +348,7 @@ function FactionsPage() {
         const Icon = emblemIcons[activeFaction.emblem] ?? Shield;
         const style = visualStyles[activeFaction.slug] ?? visualStyles["ordem-da-chama"]!;
         return (
-          <section className={`mb-8 overflow-hidden rounded-3xl border bg-gradient-to-br p-5 sm:p-8 ${activeFaction.gradient_class} ${style.border}`}>
+          <section className={`mb-8 overflow-hidden rounded-3xl border bg-gradient-to-br p-5 sm:p-8 ${style.gradient} ${style.border}`}>
             <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(280px,.75fr)]">
               <div className="min-w-0">
                 <div className={`mb-3 inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wider ${style.border} ${style.badge}`}>
