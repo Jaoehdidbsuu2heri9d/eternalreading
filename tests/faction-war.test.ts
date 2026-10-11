@@ -34,6 +34,7 @@ test("pontos de guerra são calculados pelo servidor com leitura validada", () =
   expect(migration).toContain("SECURITY DEFINER");
   expect(migration).toContain("REVOKE ALL ON FUNCTION public.award_faction_mission(uuid, uuid, text, text, date) FROM PUBLIC, anon, authenticated");
   expect(migration).toContain("public.has_role(uid, 'admin'::public.app_role)");
+  expect(migration).toContain("A temporada atual ainda está em andamento");
   expect(migration).toContain("GRANT EXECUTE ON FUNCTION public.faction_mission_dashboard() TO authenticated");
 });
 
