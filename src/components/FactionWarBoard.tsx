@@ -383,6 +383,58 @@ export function FactionWarBoard() {
         </div>
       ) : null}
 
+      <section className="rounded-3xl border border-primary/20 bg-card p-4 sm:p-6">
+        <div className="mb-4 flex items-start gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <Sparkles className="h-5 w-5" aria-hidden />
+          </span>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Relíquias das Ordens</p>
+            <h3 className="mt-1 text-xl font-black">Recompensas de temporada</h3>
+            <p className="mt-1 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              Sua participação fica registrada no perfil. As recompensas são liberadas quando a temporada termina e não dependem de assinatura ou compra.
+            </p>
+          </div>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <article className="rounded-2xl border border-border bg-background/40 p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-400/10 text-violet-300">
+              <Shield className="h-5 w-5" aria-hidden />
+            </div>
+            <h4 className="mt-3 font-bold">Brasão de participação</h4>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Quem contribui com ao menos uma leitura verificada recebe o estandarte cosmético da própria facção.</p>
+            <span className="mt-3 inline-flex rounded-full border border-violet-400/20 bg-violet-400/5 px-2.5 py-1 text-[10px] font-semibold text-violet-200">Permanente</span>
+          </article>
+          <article className="rounded-2xl border border-border bg-background/40 p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/10 text-amber-300">
+              <Crown className="h-5 w-5" aria-hidden />
+            </div>
+            <h4 className="mt-3 font-bold">Título de campeão</h4>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Integrantes ativos da facção vencedora desbloqueiam um título lendário para exibir no perfil.</p>
+            <span className="mt-3 inline-flex rounded-full border border-amber-400/20 bg-amber-400/5 px-2.5 py-1 text-[10px] font-semibold text-amber-200">Só para vencedores</span>
+          </article>
+          <article className="rounded-2xl border border-border bg-background/40 p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-fuchsia-400/10 text-fuchsia-300">
+              <Sparkles className="h-5 w-5" aria-hidden />
+            </div>
+            <h4 className="mt-3 font-bold">Moldura da vitória</h4>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Uma moldura animada com as cores e a aura da facção campeã, adicionada à coleção Personalizar.</p>
+            <span className="mt-3 inline-flex rounded-full border border-fuchsia-400/20 bg-fuchsia-400/5 px-2.5 py-1 text-[10px] font-semibold text-fuchsia-200">Cosmético exclusivo</span>
+          </article>
+          <article className="rounded-2xl border border-border bg-background/40 p-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300">
+              <Flame className="h-5 w-5" aria-hidden />
+            </div>
+            <h4 className="mt-3 font-bold">Aura campeã do Fagulha</h4>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">O Dragãozinho ganha uma aura permanente com a cor da sua ordem quando ela conquista uma temporada.</p>
+            <span className="mt-3 inline-flex rounded-full border border-emerald-400/20 bg-emerald-400/5 px-2.5 py-1 text-[10px] font-semibold text-emerald-200">Marca de vitória</span>
+          </article>
+        </div>
+        <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+          Títulos e molduras entram no inventário sem substituir seus itens equipados. Você pode equipá-los depois em Personalizar; o histórico de participação e vitórias aparece automaticamente no perfil.
+        </p>
+      </section>
+
       {completedHistory.length ? (
         <section className="rounded-3xl border border-border bg-card p-4 sm:p-6">
           <div className="mb-4 flex items-center gap-2">
