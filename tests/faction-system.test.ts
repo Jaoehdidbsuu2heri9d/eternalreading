@@ -38,6 +38,11 @@ test("página de facções, tipos e navegação desktop/mobile estão conectados
   expect(page).toContain('createFileRoute("/_authenticated/faccoes")');
   expect(page).toContain('supabase.rpc("choose_faction"');
   expect(page).toContain("Crônica oficial");
+  expect(page).toContain("Crônica de origem");
+  expect(page).toContain("{faction.lore || faction.description}");
+  expect(page).toContain("{faction.founder || \"Fundador desconhecido\"}");
+  expect(page).toContain("{activeFaction.lore}");
+  expect(page).toContain("{activeFaction.founder}");
   expect(page).toContain("Companheiros de ordem");
   expect(navbar).toContain('{ to: "/faccoes", label: "Facções" }');
   expect(mobileNav).toContain('{ to: "/faccoes", label: "Facções", Icon: Swords }');
