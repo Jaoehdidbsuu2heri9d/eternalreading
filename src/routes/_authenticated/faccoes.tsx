@@ -178,6 +178,9 @@ function FactionsPage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["eternal-faction-members"] }),
         queryClient.invalidateQueries({ queryKey: ["eternal-faction-member-profiles"] }),
+        queryClient.invalidateQueries({ queryKey: ["faction-mission-dashboard"] }),
+        queryClient.invalidateQueries({ queryKey: ["faction-season-scores"] }),
+        queryClient.invalidateQueries({ queryKey: ["faction-season-members-counts"] }),
       ]);
     },
   });
