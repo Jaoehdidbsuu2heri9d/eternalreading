@@ -1,5 +1,6 @@
 /** Funções da Administração para obras, capítulos e páginas. O banco confere o cargo em cada ação. */
 import { supabase } from "@/integrations/supabase/client";
+import { signMediaUrls } from "@/lib/api";
 import type { MangaStatus, MangaType } from "@/lib/types";
 
 export const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -106,7 +107,13 @@ export async function listWorks(): Promise<AdminWork[]> {
     .is("deleted_at", null)
     .order("updated_at", { ascending: false });
   if (error) throw error;
-  return data as unknown as AdminWork[];
+  const rows = (data ?? []) as unknown as AdminWork[];
+  const signed = await signMediaUrls(rows.flatMap((work) => [work.cover_url, work.banner_url]));
+  return rows.map((work, index) => ({
+    ...work,
+    cover_url: signed[index * 2] ?? work.cover_url,
+    banner_url: signed[index * 2 + 1] ?? work.banner_url,
+  }));
 }
 
 export type WorkInput = Omit<AdminWork, "id" | "slug" | "created_at" | "updated_at" | "scan" | "chapters" | "manga_genres"> & { genre_ids: string[] };
