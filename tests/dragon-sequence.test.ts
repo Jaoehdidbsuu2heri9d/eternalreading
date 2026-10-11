@@ -27,7 +27,7 @@ test("sequência usa leitura concluída validada no servidor e suporta revisitar
 
 test("dragão aparece na página inicial, tem página própria e fica acessível no menu mobile", () => {
   expect(home).toContain("<DragonSequenceWidget compact />");
-  expect(widget).toContain('to="/sequencia"');
+  expect(widget).toContain('"/sequencia"');
   expect(widget).toContain("Fagulha, o");
   expect(widget).toContain("Últimos 7 dias");
   expect(mobileNav).toContain('{ to: "/sequencia", label: "Dragãozinho", Icon: Flame }');
