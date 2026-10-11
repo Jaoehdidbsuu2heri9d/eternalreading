@@ -102,7 +102,7 @@ export function DragonSequenceWidget({ compact = false }: { compact?: boolean })
   const stageIndex = stages.reduce((index, stage, current) => (
     stats.sequence_points >= stage.points ? current : index
   ), 0);
-  const stage = stages[stageIndex];
+  const stage = stages[stageIndex]!;
   const nextStage = stage.next === null ? null : stages[stageIndex + 1]!;
   const progressToNext = nextStage
     ? Math.min(100, Math.max(0, ((stats.sequence_points - stage.points) / (nextStage.points - stage.points)) * 100))
