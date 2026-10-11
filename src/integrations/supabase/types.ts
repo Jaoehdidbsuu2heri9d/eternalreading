@@ -1352,13 +1352,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "faction_seasons_created_by_fkey"
-            columns: ["created_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "faction_seasons_winner_slug_fkey"
             columns: ["winner_slug"]
             isOneToOne: false
