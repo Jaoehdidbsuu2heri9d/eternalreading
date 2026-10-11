@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ExternalLink } from "lucide-react";
 
 import { MangaGrid } from "@/components/MangaGrid";
-import { supabase } from "@/integrations/supabase/client";
-import { fetchCatalog } from "@/lib/api";
+import { fetchCatalog, fetchScans } from "@/lib/api";
 
 export const Route = createFileRoute("/_authenticated/scan/$slug")({
   head: () => ({
@@ -24,9 +23,8 @@ function ScanPage() {
   const scan = useQuery({
     queryKey: ["scan", slug],
     queryFn: async () => {
-      const { data, error } = await supabase.from("scans").select("*").eq("slug", slug).maybeSingle();
-      if (error) throw error;
-      return data;
+      const scans = await fetchScans();
+      return scans.find((item) => item.slug === slug) ?? null;
     },
   });
   const works = useQuery({ queryKey: ["catalog", { scan: slug }], queryFn: () => fetchCatalog({ scan: slug }) });
