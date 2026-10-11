@@ -6,6 +6,7 @@ const page = readFileSync("src/routes/_authenticated/faccoes.tsx", "utf8");
 const navbar = readFileSync("src/components/Navbar.tsx", "utf8");
 const mobileNav = readFileSync("src/components/MobileNav.tsx", "utf8");
 const types = readFileSync("src/integrations/supabase/types.ts", "utf8");
+const profile = readFileSync("src/routes/_authenticated/perfil.$username.tsx", "utf8");
 
 test("semeia as quatro ordens oficiais e preserva lore, fundador, lema e virtudes", () => {
   for (const slug of ["ordem-da-chama", "ordem-lunar", "guardioes-do-portal", "corvos-eternos"]) {
@@ -42,4 +43,6 @@ test("página de facções, tipos e navegação desktop/mobile estão conectados
   expect(mobileNav).toContain('{ to: "/faccoes", label: "Facções", Icon: Swords }');
   expect(types).toContain("choose_faction: { Args: { p_faction_slug: string }; Returns: boolean }");
   expect(types).toContain("user_factions: {");
+  expect(profile).toContain('to="/faccoes"');
+  expect(profile).toContain('queryKey: ["profile-faction", p?.id]');
 });
