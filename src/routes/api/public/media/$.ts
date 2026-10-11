@@ -192,7 +192,9 @@ export const Route = createFileRoute("/api/public/media/$")({
 
           let body: { paths?: unknown };
           try {
-            body = await request.json() as { paths?: unknown };
+            const rawBody = await request.text();
+            if (rawBody.length > 64 * 1024) return Response.json({ error: "request_too_large" }, { status: 413 });
+            body = JSON.parse(rawBody) as { paths?: unknown };
           } catch {
             return Response.json({ error: "invalid_json" }, { status: 400 });
           }
