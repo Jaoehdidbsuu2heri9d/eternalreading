@@ -10,6 +10,7 @@ import {
   Flame,
   Heart,
   RefreshCw,
+  Shield,
   Sparkles,
   Trophy,
 } from "lucide-react";
