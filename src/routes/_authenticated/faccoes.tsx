@@ -328,6 +328,22 @@ function FactionsPage() {
                     <h3 className="text-xl font-black leading-tight">{faction.name}</h3>
                     <p className={`mt-2 text-sm font-semibold italic ${style.light}`}>“{faction.motto}”</p>
                     <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{faction.description}</p>
+
+                    <div className={`mt-4 rounded-xl border p-3 ${style.border} bg-background/30`}>
+                      <div className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.14em] ${style.light}`}>
+                        <ScrollText className="h-3.5 w-3.5" aria-hidden />
+                        Crônica de origem
+                      </div>
+                      <p className="mt-2 text-xs leading-relaxed text-muted-foreground [display:-webkit-box] [-webkit-line-clamp:3] [-webkit-box-orient:vertical] overflow-hidden">
+                        {faction.lore || faction.description}
+                      </p>
+                      <div className="mt-3 border-t border-border/70 pt-3">
+                        <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Fundador(a)</p>
+                        <p className="mt-1 text-sm font-bold">{faction.founder || "Fundador desconhecido"}</p>
+                        <p className={`mt-0.5 text-xs ${style.light}`}>{faction.founder_title || "Guardião fundador"}</p>
+                      </div>
+                    </div>
+
                     <div className="mt-4 flex flex-wrap gap-1.5">
                       {(faction.virtues ?? []).map((virtue) => <span key={virtue} className={`rounded-full border px-2 py-1 text-[10px] font-medium ${style.border} ${style.badge}`}>{virtue}</span>)}
                     </div>
