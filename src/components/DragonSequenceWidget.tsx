@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -103,7 +103,7 @@ export function DragonSequenceWidget({ compact = false }: { compact?: boolean })
     stats.sequence_points >= stage.points ? current : index
   ), 0);
   const stage = stages[stageIndex];
-  const nextStage = stage.next === null ? null : stages[stageIndex + 1];
+  const nextStage = stage.next === null ? null : stages[stageIndex + 1]!;
   const progressToNext = nextStage
     ? Math.min(100, Math.max(0, ((stats.sequence_points - stage.points) / (nextStage.points - stage.points)) * 100))
     : 100;
@@ -313,6 +313,7 @@ function DragonMini({ stage, unlocked }: { stage: number; unlocked: boolean }) {
 }
 
 function DragonMascot({ stage, happy }: { stage: number; happy: boolean }) {
+  const svgId = useId().replace(/:/g, "");
   const body = ["#6ee7b7", "#6ee7b7", "#67e8f9", "#7dd3fc", "#a78bfa", "#fbbf24", "#f0abfc"][stage] ?? "#6ee7b7";
   const wing = ["#c4b5fd", "#a7f3d0", "#67e8f9", "#93c5fd", "#c4b5fd", "#fcd34d", "#f5d0fe"][stage] ?? "#c4b5fd";
   const glow = ["#a78bfa", "#34d399", "#22d3ee", "#60a5fa", "#8b5cf6", "#f59e0b", "#e879f9"][stage] ?? "#a78bfa";
@@ -320,24 +321,24 @@ function DragonMascot({ stage, happy }: { stage: number; happy: boolean }) {
   return (
     <svg viewBox="0 0 240 190" role="img" aria-label={`Fagulha, dragãozinho estágio ${stage + 1}`} className="dragon-float h-auto w-full overflow-visible">
       <defs>
-        <linearGradient id="dragon-body" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={`${svgId}-dragon-body`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor={body} />
           <stop offset="100%" stopColor="#0f766e" />
         </linearGradient>
-        <linearGradient id="dragon-wing" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={`${svgId}-dragon-wing`} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor={wing} />
           <stop offset="100%" stopColor={glow} />
         </linearGradient>
-        <radialGradient id="dragon-glow">
+        <radialGradient id={`${svgId}-dragon-glow`}>
           <stop offset="0%" stopColor={glow} stopOpacity=".25" />
           <stop offset="100%" stopColor={glow} stopOpacity="0" />
         </radialGradient>
       </defs>
       <ellipse cx="120" cy="170" rx="58" ry="10" fill="#000" opacity=".18" />
-      <circle cx="120" cy="98" r="82" fill="url(#dragon-glow)" />
+      <circle cx="120" cy="98" r="82" fill={`url(#${svgId}-dragon-glow)`} />
       {stage >= 4 ? <circle cx="120" cy="60" r="48" fill="none" stroke={glow} strokeWidth="1.5" strokeDasharray="3 8" opacity=".7" /> : null}
       <path d="M91 115 C45 134 50 101 68 92 C81 86 83 101 72 105" fill="none" stroke={body} strokeWidth="13" strokeLinecap="round" />
-      <path d="M91 91 C58 48 38 55 42 87 C45 102 60 108 75 110 C64 94 66 83 55 76 C71 78 81 89 87 106Z" fill="url(#dragon-wing)" stroke={glow} strokeWidth="2" strokeLinejoin="round" className="dragon-wing" />
+      <path d="M91 91 C58 48 38 55 42 87 C45 102 60 108 75 110 C64 94 66 83 55 76 C71 78 81 89 87 106Z" fill={`url(#${svgId}-dragon-wing)`} stroke={glow} strokeWidth="2" strokeLinejoin="round" className="dragon-wing" />
       <path d="M148 91 C180 46 204 57 198 86 C195 103 178 110 164 111 C179 92 173 83 188 74 C171 78 160 91 154 108Z" fill="url(#dragon-wing)" stroke={glow} strokeWidth="2" strokeLinejoin="round" className="dragon-wing" />
       {stage >= 5 ? <path d="M101 36 L107 20 L116 34 L124 16 L132 35 L143 23 L145 43" fill="none" stroke={glow} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /> : null}
       <path d="M139 125 C171 140 181 128 178 116" fill="none" stroke={body} strokeWidth="15" strokeLinecap="round" />
@@ -348,7 +349,7 @@ function DragonMascot({ stage, happy }: { stage: number; happy: boolean }) {
           <path d="M145 84 L154 72 L156 87 L168 83 L161 97" fill={body} stroke="#0f766e" strokeWidth="2" strokeLinejoin="round" />
         </>
       ) : null}
-      <ellipse cx="120" cy="126" rx="40" ry="43" fill="url(#dragon-body)" stroke="#0f766e" strokeWidth="2" />
+      <ellipse cx="120" cy="126" rx="40" ry="43" fill={`url(#${svgId}-dragon-body)`} stroke="#0f766e" strokeWidth="2" />
       <ellipse cx="121" cy="136" rx="22" ry="27" fill="#d1fae5" opacity=".9" />
       <path d="M110 119 Q121 114 132 119 M107 131 Q121 126 135 131 M109 143 Q121 139 133 143 M113 154 Q121 151 129 154" fill="none" stroke="#6ee7b7" strokeWidth="2" strokeLinecap="round" />
       <ellipse cx="99" cy="158" rx="17" ry="9" fill="url(#dragon-body)" stroke="#0f766e" strokeWidth="2" />
