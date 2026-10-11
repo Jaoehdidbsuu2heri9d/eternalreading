@@ -72,6 +72,9 @@ function ReaderPage() {
         xpGiven.current = true;
         void queryClient.invalidateQueries({ queryKey: ["dragon-sequence-stats", user.id] });
         void queryClient.invalidateQueries({ queryKey: ["profile-stats", user.id] });
+        void queryClient.invalidateQueries({ queryKey: ["faction-mission-dashboard"] });
+        void queryClient.invalidateQueries({ queryKey: ["faction-season-scores"] });
+        void queryClient.invalidateQueries({ queryKey: ["faction-season-members-counts"] });
       } else if (!error && ++attempts < 5) {
         // Leitura muito rápida: aguarda o tempo mínimo aferido pelo banco.
         retryHandle = window.setTimeout(() => { void confirmRead(); }, 2500);

@@ -232,6 +232,13 @@
       "when": 1791886400000,
       "tag": "0032_eternal_factions",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1791972800000,
+      "tag": "0033_faction_war_missions",
+      "breakpoints": true
     }
   ]
 }

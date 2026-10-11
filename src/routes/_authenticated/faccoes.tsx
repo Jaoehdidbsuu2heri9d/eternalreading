@@ -21,6 +21,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { UserAvatar } from "@/components/UserAvatar";
+import { FactionWarBoard } from "@/components/FactionWarBoard";
 import { useSession } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -177,6 +178,9 @@ function FactionsPage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["eternal-faction-members"] }),
         queryClient.invalidateQueries({ queryKey: ["eternal-faction-member-profiles"] }),
+        queryClient.invalidateQueries({ queryKey: ["faction-mission-dashboard"] }),
+        queryClient.invalidateQueries({ queryKey: ["faction-season-scores"] }),
+        queryClient.invalidateQueries({ queryKey: ["faction-season-members-counts"] }),
       ]);
     },
   });
@@ -437,12 +441,14 @@ function FactionsPage() {
         );
       })() : null}
 
+      <FactionWarBoard />
+
       <section className="rounded-3xl border border-border bg-card/70 p-5 sm:p-6">
         <div className="flex items-start gap-3">
           <Crown className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" aria-hidden />
           <div>
-            <h2 className="font-bold">As Crônicas ainda estão sendo escritas</h2>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Esta é a fundação oficial das quatro ordens. Na próxima etapa, os membros poderão completar missões coletivas, disputar temporadas e desbloquear brasões e cosméticos exclusivos. Por enquanto, cada capítulo concluído após a escolha fortalece a contribuição da sua facção.</p>
+            <h2 className="font-bold">A história será lembrada</h2>
+            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Cada temporada encerrada preserva sua campeã no mural da Guerra. A participação vale mais que o tamanho da facção: leituras verificadas e missões concluídas são a base da pontuação.</p>
           </div>
         </div>
       </section>

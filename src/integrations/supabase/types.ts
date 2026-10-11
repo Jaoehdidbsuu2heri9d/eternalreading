@@ -1144,6 +1144,222 @@ export type Database = {
           },
         ]
       }
+      faction_mission_completions: {
+        Row: {
+          completed_at: string
+          faction_slug: string
+          id: string
+          mission_key: string
+          period_start: string
+          points_awarded: number
+          season_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          faction_slug: string
+          id?: string
+          mission_key: string
+          period_start: string
+          points_awarded: number
+          season_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          faction_slug?: string
+          id?: string
+          mission_key?: string
+          period_start?: string
+          points_awarded?: number
+          season_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_mission_completions_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "faction_mission_completions_mission_key_fkey"
+            columns: ["mission_key"]
+            isOneToOne: false
+            referencedRelation: "faction_missions"
+            referencedColumns: ["mission_key"]
+          },
+          {
+            foreignKeyName: "faction_mission_completions_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "faction_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_missions: {
+        Row: {
+          active: boolean
+          cadence: string
+          description: string
+          mission_key: string
+          reward_points: number
+          sort_order: number
+          target_count: number
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          cadence: string
+          description: string
+          mission_key: string
+          reward_points: number
+          sort_order?: number
+          target_count: number
+          title: string
+        }
+        Update: {
+          active?: boolean
+          cadence?: string
+          description?: string
+          mission_key?: string
+          reward_points?: number
+          sort_order?: number
+          target_count?: number
+          title?: string
+        }
+        Relationships: []
+      }
+      faction_season_members: {
+        Row: {
+          chapters_read: number
+          contribution_points: number
+          faction_slug: string
+          joined_at: string
+          last_activity_at: string | null
+          season_id: string
+          user_id: string
+        }
+        Insert: {
+          chapters_read?: number
+          contribution_points?: number
+          faction_slug: string
+          joined_at?: string
+          last_activity_at?: string | null
+          season_id: string
+          user_id: string
+        }
+        Update: {
+          chapters_read?: number
+          contribution_points?: number
+          faction_slug?: string
+          joined_at?: string
+          last_activity_at?: string | null
+          season_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_season_members_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "faction_season_members_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "faction_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_season_scores: {
+        Row: {
+          chapters_read: number
+          faction_slug: string
+          points: number
+          season_id: string
+          updated_at: string
+        }
+        Insert: {
+          chapters_read?: number
+          faction_slug: string
+          points?: number
+          season_id: string
+          updated_at?: string
+        }
+        Update: {
+          chapters_read?: number
+          faction_slug?: string
+          points?: number
+          season_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_season_scores_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "faction_season_scores_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "faction_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_seasons: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string
+          end_at: string
+          id: string
+          name: string
+          start_at: string
+          status: string
+          winner_slug: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          end_at: string
+          id?: string
+          name: string
+          start_at?: string
+          status?: string
+          winner_slug?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          end_at?: string
+          id?: string
+          name?: string
+          start_at?: string
+          status?: string
+          winner_slug?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_seasons_winner_slug_fkey"
+            columns: ["winner_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       frame_categories: {
         Row: {
           active: boolean
@@ -2478,6 +2694,31 @@ export type Database = {
           sequence_points: number
           week_read_days: string[]
         }[]
+      }
+      faction_mission_dashboard: {
+        Args: never
+        Returns: {
+          cadence: string
+          completed: boolean
+          current_progress: number
+          mission_description: string
+          mission_key: string
+          mission_title: string
+          my_faction_name: string | null
+          my_faction_slug: string | null
+          my_season_points: number
+          reward_points: number
+          season_description: string
+          season_end_at: string
+          season_id: string
+          season_name: string
+          season_start_at: string
+          target_count: number
+        }[]
+      }
+      start_faction_season: {
+        Args: { p_description?: string; p_duration_days?: number; p_name: string }
+        Returns: string
       }
       record_chapter_open: { Args: { p_chapter: string }; Returns: boolean }
       record_chapter_read: { Args: { p_chapter: string }; Returns: boolean }
