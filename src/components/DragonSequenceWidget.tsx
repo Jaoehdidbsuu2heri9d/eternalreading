@@ -426,7 +426,7 @@ function DragonMini({ stage, unlocked }: { stage: number; unlocked: boolean }) {
   );
 }
 
-function DragonMascot({ stage, happy, factionColor }: { stage: number; happy: boolean; factionColor?: string }) {
+function DragonMascot({ stage, happy, factionColor }: { stage: number; happy: boolean; factionColor?: string | undefined }) {
   const svgId = useId().replace(/:/g, "");
   const body = factionColor ?? (["#6ee7b7", "#6ee7b7", "#67e8f9", "#7dd3fc", "#a78bfa", "#fbbf24", "#f0abfc"][stage] ?? "#6ee7b7");
   const wing = ["#c4b5fd", "#a7f3d0", "#67e8f9", "#93c5fd", "#c4b5fd", "#fcd34d", "#f5d0fe"][stage] ?? "#c4b5fd";
