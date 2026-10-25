@@ -13,7 +13,6 @@ import { formatDate } from "@/lib/format";
 import { useEquipped, useSignedUrl } from "@/lib/media";
 import { levelProgress, PLAN_LABEL, type Profile } from "@/lib/types";
 import { nextTitle, useTitles } from "@/lib/titles";
-import { TitleBadge } from "@/components/TitleBadge";
 import { useSession } from "@/hooks/useAuth";
 import { animClass, useVisibleAnim } from "@/lib/cosmetics";
 import { cosmeticBackground, CosmeticSurface, useCosmeticMedia } from "@/components/cosmetics/CosmeticPreview";
@@ -358,7 +357,7 @@ function ProfilePage() {
           <div aria-hidden className="pointer-events-none absolute -right-8 -top-12 h-36 w-36 rounded-full bg-violet-500/10 blur-3xl" />
           <div className="relative mb-3 flex items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary"><TitleBadge level={p.level} /></span>
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Trophy className="h-5 w-5" aria-hidden /></span>
               <div className="min-w-0">
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Progressão do leitor</p>
                 <p className="text-lg font-black">Nível {p.level}</p>
