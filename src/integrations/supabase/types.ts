@@ -2759,6 +2759,18 @@ export type Database = {
           unlocked_at: string
         }[]
       }
+      profile_public_stats: {
+        Args: { p_user: string }
+        Returns: {
+          achievements_count: number
+          best_streak: number
+          chapters_read: number
+          current_streak: number
+          week_chapters: number
+          weekly_activity: Json
+          works_read: number
+        }[]
+      }
       reader_title: {
         Args: { p_level: number }
         Returns: {
