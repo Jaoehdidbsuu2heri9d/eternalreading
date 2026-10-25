@@ -5,6 +5,7 @@ import { KeyRound } from "lucide-react";
 import { Button } from "@/components/common/EButton";
 import { Field, Input } from "@/components/common/EInput";
 import { Logo } from "@/components/Logo";
+import { InviteCommunityCTA } from "@/components/InviteCommunityCTA";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/convite")({
@@ -17,6 +18,8 @@ export const Route = createFileRoute("/convite")({
       },
       { property: "og:title", content: "Convite — Eternal" },
       { property: "og:description", content: "Comunidade fechada de leitura, só com convite." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: InvitePage,
@@ -57,31 +60,38 @@ function InvitePage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md surface-panel p-8">
+    <div className="flex min-h-screen items-center justify-center px-4 py-8 sm:py-12">
+      <div className="w-full max-w-md surface-panel p-5 sm:p-8">
         <Logo className="mb-6" />
         <span className="gradient-eternal mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl text-primary-foreground">
           <KeyRound className="h-5 w-5" aria-hidden />
         </span>
-        <h1 className="text-2xl font-semibold">Comunidade fechada</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          O Eternal é acessível apenas com convite. Digite o código que você recebeu.
+        <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Criar conta · Etapa 1 de 2</p>
+        <h1 className="text-2xl font-semibold">Seu convite para a Eternal</h1>
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+          Para criar sua conta, você precisa de um código de convite da comunidade oficial do WhatsApp.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        <div className="mt-6"><InviteCommunityCTA /></div>
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4 border-t border-border pt-6">
           <Field label="Código de convite" htmlFor="codigo" hint="Não compartilhe seu código com terceiros.">
             <Input
               id="codigo"
               required
+              autoComplete="off"
+              spellCheck={false}
+              aria-invalid={!!error}
+              aria-describedby={error ? "invite-community-help invite-error" : "invite-community-help"}
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="XXXX-XXXX"
-              className="uppercase tracking-widest"
+              className={error ? "uppercase border-destructive focus-visible:ring-destructive" : "uppercase"}
             />
           </Field>
 
           {error ? (
-            <p role="alert" className="text-sm text-destructive">
+            <p id="invite-error" role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm leading-relaxed text-destructive">
               {error}
             </p>
           ) : null}
@@ -93,7 +103,7 @@ function InvitePage() {
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           Já tem conta?{" "}
-          <Link to="/login" className="text-primary-foreground underline underline-offset-4">
+          <Link to="/login" className="rounded-sm text-primary-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             Entrar
           </Link>
         </p>
