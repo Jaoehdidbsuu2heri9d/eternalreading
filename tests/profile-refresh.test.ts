@@ -11,7 +11,7 @@ test("profile stats RPC exposes only aggregates to authenticated users", () => {
   expect(migration).toContain("SECURITY DEFINER");
   expect(migration).toContain("IF auth.uid() IS NULL THEN");
   expect(migration).toContain("count(DISTINCT cr.chapter_id)::integer");
-  expect(migration).toContain("'weekly_activity'");
+  expect(migration).toContain("weekly_activity jsonb");
   expect(migration).toContain("REVOKE ALL ON FUNCTION public.profile_public_stats(uuid) FROM PUBLIC, anon");
   expect(migration).toContain("GRANT EXECUTE ON FUNCTION public.profile_public_stats(uuid) TO authenticated");
   expect(migration).not.toContain("RETURN QUERY SELECT cr.chapter_id");
