@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Crown, Shield, Sparkles, Trophy } from "lucide-react";
+import { ArrowUpRight, BookOpen, CalendarDays, Check, Copy, Crown, Flame, Heart, Share2, Shield, Sparkles, Trophy } from "lucide-react";
 
 import { Badge } from "@/components/common/EBadge";
 import { MangaGrid } from "@/components/MangaGrid";
@@ -31,6 +31,17 @@ type FactionSeasonRewardRow = {
   accent_color: string;
 };
 
+type ProfileWeeklyDay = { date: string; count: number; label: string };
+type ProfilePublicStats = {
+  works_read: number;
+  chapters_read: number;
+  achievements_count: number;
+  current_streak: number;
+  best_streak: number;
+  week_chapters: number;
+  weekly_activity: ProfileWeeklyDay[];
+};
+
 export const Route = createFileRoute("/_authenticated/perfil/$username")({
   head: () => ({
     meta: [
@@ -51,6 +62,7 @@ function ProfilePage() {
   const { user } = useSession();
   const qc = useQueryClient();
   const [selection, setSelection] = useState<string[] | null>(null);
+  const [shareStatus, setShareStatus] = useState<"idle" | "done" | "error">("idle");
   const profile = useQuery({
     queryKey: ["profile-by-username", username],
     queryFn: async () => {
@@ -137,16 +149,23 @@ function ProfilePage() {
   const gifUrl = useSignedUrl("profile-banners", p && p.plan !== "free" && p.gif_banner_equipped ? p.gif_banner_path : null);
 
   const stats = useQuery({
-    queryKey: ["profile-stats", p?.id],
+    queryKey: ["profile-public-stats", p?.id],
     enabled: !!p,
-    queryFn: async () => {
-      const [hist, ach, streak] = await Promise.all([
-        supabase.from("reading_history").select("manga_id", { count: "exact", head: true }).eq("user_id", p!.id),
-        supabase.from("user_achievements").select("unlocked_at, achievement:achievements ( id, name, description )").eq("user_id", p!.id).order("unlocked_at", { ascending: false }),
-        supabase.rpc("reading_streak", { p_user: p!.id }),
-      ]);
-      return { works: hist.count ?? 0, achievements: ach.data ?? [], streak: streak.data?.[0]?.current_streak ?? 0, best: streak.data?.[0]?.best_streak ?? 0 };
+    queryFn: async (): Promise<ProfilePublicStats> => {
+      const { data, error } = await supabase.rpc("profile_public_stats", { p_user: p!.id });
+      if (error) throw error;
+      const result = data?.[0] as unknown as ProfilePublicStats | undefined;
+      return result ?? {
+        works_read: 0,
+        chapters_read: 0,
+        achievements_count: 0,
+        current_streak: 0,
+        best_streak: 0,
+        week_chapters: 0,
+        weekly_activity: [],
+      };
     },
+    staleTime: 60_000,
   });
 
   const earnedTitles = useQuery({
