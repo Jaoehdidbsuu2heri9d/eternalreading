@@ -222,10 +222,38 @@ function ProfilePage() {
       (item) => item.season_id === reward.season_id && item.reward_key === "champion_dragon",
     ),
   }));
+  const weeklyActivity = stats.data?.weekly_activity ?? [];
+  const maxActivity = Math.max(1, ...weeklyActivity.map((day) => day.count));
+  const statCards = [
+    { label: "Obras lidas", value: stats.data?.works_read, icon: BookOpen, tone: "text-violet-300", wash: "bg-violet-400/10" },
+    { label: "Capítulos", value: stats.data?.chapters_read, icon: CalendarDays, tone: "text-sky-300", wash: "bg-sky-400/10" },
+    { label: "Favoritos", value: favs.data?.length, icon: Heart, tone: "text-pink-300", wash: "bg-pink-400/10" },
+    { label: "Conquistas", value: stats.data?.achievements_count, icon: Trophy, tone: "text-amber-300", wash: "bg-amber-400/10" },
+    { label: "Dias seguidos", value: stats.data?.current_streak, icon: Flame, tone: "text-orange-300", wash: "bg-orange-400/10" },
+  ];
+  const shareProfile = async () => {
+    const url = new URL(`/perfil/${encodeURIComponent(p.username)}`, window.location.origin).toString();
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: `${p.display_name ?? p.username} — Eternal Reading`, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+      }
+      setShareStatus("done");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      try {
+        await navigator.clipboard.writeText(url);
+        setShareStatus("done");
+      } catch {
+        setShareStatus("error");
+      }
+    }
+  };
 
   return (
     <div style={bgItem ? { background: cosmeticBackground(bgItem.preview, bgMedia) } : undefined} className={`min-h-full ${animClass(bgItem?.animation)}`}>
-      <div className="relative h-40 overflow-hidden sm:h-56">
+      <div className="relative h-44 overflow-hidden sm:h-60">
         {gifUrl ? (
           customIsVideo ? <BannerVideo src={gifUrl} /> : <img src={gifUrl} alt="" className="h-full w-full object-cover" />
         ) : bannerItem ? (
@@ -233,43 +261,64 @@ function ProfilePage() {
         ) : (
           <div className="gradient-eternal h-full w-full" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/15 to-background/5" />
+        <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-violet-500/25 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 left-1/4 h-48 w-48 rounded-full bg-fuchsia-500/15 blur-3xl" />
       </div>
-      <div className="mx-auto -mt-14 max-w-5xl px-4 pb-10">
+      <div className="mx-auto -mt-12 max-w-6xl px-3 pb-10 sm:-mt-16 sm:px-4">
         <ProfileBorder item={borderItem && !hasEffect(borderItem.effect) ? borderItem : undefined}>
-        <div className="relative flex flex-col items-start gap-4 sm:flex-row sm:items-end">
-          <UserAvatar userId={p.id} username={p.username} avatarPath={p.avatar_path} avatarUrl={p.avatar_url} size={112} className="border-4 border-background" />
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-bold">{p.display_name ?? p.username}</h1>
-              {badge && <Badge tone="primary">{badge}</Badge>}
-              {betaTesterBadgeQ.data ? (
-                <span title="Assinatura real confirmada durante a beta antes do lançamento oficial" className="inline-flex items-center gap-1.5 rounded-full border border-violet-300/30 bg-violet-400/10 px-2.5 py-1 text-xs font-extrabold tracking-wide text-violet-200 shadow-[0_0_18px_rgba(167,139,250,0.12)]">
-                  <Sparkles className="h-3.5 w-3.5" aria-hidden /> 🧪 Testador Beta
+          <div className="relative overflow-hidden rounded-[13px] bg-background/90 p-4 sm:p-6">
+            <div aria-hidden className="pointer-events-none absolute -right-10 -top-14 h-40 w-40 rounded-full bg-primary/10 blur-3xl" />
+            <div className="relative flex min-w-0 flex-col gap-4 sm:flex-row sm:items-end">
+              <div className="relative shrink-0 self-start">
+                <UserAvatar userId={p.id} username={p.username} avatarPath={p.avatar_path} avatarUrl={p.avatar_url} size={120} className="border-4 border-background shadow-xl ring-2 ring-primary/25" />
+                <span className="absolute -bottom-1 -right-1 flex h-8 min-w-8 items-center justify-center rounded-full border-2 border-background bg-background px-1.5 text-xs font-black text-primary shadow-lg">
+                  {p.level}
                 </span>
-              ) : null}
-              {factionQ.data?.faction && (
-                <Link
-                  to="/faccoes"
-                  title={`Membro da ${factionQ.data.faction.name}`}
-                  className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition hover:bg-secondary/70"
-                  style={{ borderColor: `${factionQ.data.faction.accent_color}66`, color: factionQ.data.faction.accent_color }}
-                >
-                  <Shield className="h-3.5 w-3.5" aria-hidden />
-                  {factionQ.data.faction.name}
-                </Link>
-              )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.18em] text-primary">
+                  <Sparkles className="h-3 w-3" aria-hidden /> Perfil de leitor
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-2xl font-black leading-tight tracking-tight sm:text-3xl">{p.display_name ?? p.username}</h1>
+                  {badge && <Badge tone="primary">{badge}</Badge>}
+                  {betaTesterBadgeQ.data ? (
+                    <span title="Assinatura real confirmada durante a beta antes do lançamento oficial" className="inline-flex items-center gap-1.5 rounded-full border border-violet-300/30 bg-violet-400/10 px-2.5 py-1 text-xs font-extrabold tracking-wide text-violet-200 shadow-[0_0_18px_rgba(167,139,250,0.12)]">
+                      <Sparkles className="h-3.5 w-3.5" aria-hidden /> Testador Beta
+                    </span>
+                  ) : null}
+                  {factionQ.data?.faction && (
+                    <Link to="/faccoes" title={`Membro da ${factionQ.data.faction.name}`}
+                      className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition hover:bg-secondary/70"
+                      style={{ borderColor: `${factionQ.data.faction.accent_color}66`, color: factionQ.data.faction.accent_color }}>
+                      <Shield className="h-3.5 w-3.5" aria-hidden /> {factionQ.data.faction.name}
+                    </Link>
+                  )}
+                </div>
+                {title && <p className="mt-1 text-gradient-eternal text-sm font-semibold">“{title}”</p>}
+                <p className="mt-2 text-xs text-muted-foreground">@{p.username} <span aria-hidden>·</span> membro desde {formatDate(p.created_at)}</p>
+                {p.bio && <p className="mt-3 max-w-2xl whitespace-pre-wrap text-sm leading-relaxed text-foreground/85">{p.bio}</p>}
+              </div>
+              <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:max-w-52 sm:justify-end">
+                <Badge tone={p.plan === "free" ? "muted" : "eternal"}>{PLAN_LABEL[p.plan]}</Badge>
+                {isMe && (
+                  <Link to="/personalizar" className="inline-flex min-h-9 items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-bold text-primary-foreground transition hover:opacity-90">
+                    <Sparkles className="h-3.5 w-3.5" aria-hidden /> Personalizar
+                  </Link>
+                )}
+                <button type="button" onClick={shareProfile} className="inline-flex min-h-9 items-center gap-1.5 rounded-xl border border-border bg-background/70 px-3 py-2 text-xs font-semibold transition hover:border-primary/40 hover:bg-secondary/60">
+                  {shareStatus === "done" ? <Check className="h-3.5 w-3.5 text-emerald-300" aria-hidden /> : shareStatus === "error" ? <Copy className="h-3.5 w-3.5" aria-hidden /> : <Share2 className="h-3.5 w-3.5" aria-hidden />}
+                  {shareStatus === "done" ? "Link pronto" : shareStatus === "error" ? "Tentar compartilhar" : "Compartilhar perfil"}
+                </button>
+                {shareStatus === "error" ? <p role="status" className="w-full text-[10px] text-destructive">Não foi possível abrir o compartilhamento.</p> : null}
+              </div>
             </div>
-            {title && <p className="text-gradient-eternal text-sm font-medium">"{title}"</p>}
-            <p className="text-sm text-muted-foreground">@{p.username} • membro desde {formatDate(p.created_at)}</p>
           </div>
-          <div className="flex items-center gap-2">
-            <Badge tone={p.plan === "free" ? "muted" : "eternal"}>{PLAN_LABEL[p.plan]}</Badge>
-            {isMe && <Link to="/personalizar" className="text-sm text-primary hover:underline">Personalizar</Link>}
-          </div>
-        </div>
         </ProfileBorder>
-        <FollowPanel userId={p.id} me={user?.id} />
+        <div className="mt-4">
+          <FollowPanel userId={p.id} me={user?.id} />
+        </div>
         {warLegacies.length ? (
           <section className="mt-4 rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-400/5 via-card to-violet-500/5 p-4 sm:p-5">
             <div className="mb-3 flex items-center gap-2">
