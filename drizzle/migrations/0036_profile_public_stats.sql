@@ -61,12 +61,12 @@ BEGIN
     COALESCE((
       SELECT jsonb_agg(
         jsonb_build_object(
-          'date', day_value::date,
+          'date', days.day_value::date,
           'count', COALESCE(day_count.count_value, 0),
-          'label', to_char(day_value::date, 'Dy')
-        ) ORDER BY day_value
+          'label', to_char(days.day_value::date, 'Dy')
+        ) ORDER BY days.day_value
       )
-      FROM generate_series(v_start::timestamp, v_today::timestamp, interval '1 day') AS day_value
+      FROM generate_series(v_start::timestamp, v_today::timestamp, interval '1 day') AS days(day_value)
       LEFT JOIN (
         SELECT cr.read_on, count(DISTINCT cr.chapter_id)::integer AS count_value
         FROM public.chapter_reads cr
