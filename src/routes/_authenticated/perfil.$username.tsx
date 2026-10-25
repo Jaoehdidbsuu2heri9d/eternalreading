@@ -354,34 +354,88 @@ function ProfilePage() {
             <p className="mt-3 text-[11px] text-muted-foreground">Os cosméticos ficam na coleção para você equipar em Personalizar; o legado da temporada permanece registrado no perfil.</p>
           </section>
         ) : null}
-        {p.bio && <p className="mt-4 text-muted-foreground">{p.bio}</p>}
-
-        <div className="surface-panel mt-6 rounded-2xl p-4">
-          <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-sm">
-            <span className="flex items-center gap-2 font-medium">Nível {p.level}<TitleBadge level={p.level} /></span>
-            <span className="text-muted-foreground">{p.xp} / {lv.next} XP</span>
-          </div>
-          <div className="h-2 overflow-hidden rounded-full bg-surface-2">
-            <div className="gradient-eternal h-full" style={{ width: `${lv.pct}%` }} />
-          </div>
-          {nextT ? (
-            <p className="mt-2 text-xs text-muted-foreground">
-              Próximo título: <span className="font-medium text-foreground">{nextT.name}</span> no nível {nextT.level_min}
-              {p.level < nextT.level_min ? ` (faltam ${nextT.level_min - p.level} níveis)` : ""}
-            </p>
-          ) : (
-            <p className="mt-2 text-xs text-muted-foreground">Título máximo alcançado.</p>
-          )}
-        </div>
-
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {[["Obras lidas", stats.data?.works], ["Favoritos", favs.data?.length], ["Conquistas", stats.data?.achievements.length], ["Dias seguidos", stats.data?.streak]].map(([l, v]) => (
-            <div key={l as string} className="surface-panel rounded-2xl p-3 text-center">
-              <p className="text-xl font-bold">{v ?? "—"}</p>
-              <p className="text-xs text-muted-foreground">{l}</p>
+        <section className="surface-panel relative mt-6 overflow-hidden rounded-3xl border border-primary/15 bg-gradient-to-br from-violet-500/10 via-card to-fuchsia-500/5 p-4 sm:p-5">
+          <div aria-hidden className="pointer-events-none absolute -right-8 -top-12 h-36 w-36 rounded-full bg-violet-500/10 blur-3xl" />
+          <div className="relative mb-3 flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary"><TitleBadge level={p.level} /></span>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-primary">Progressão do leitor</p>
+                <p className="text-lg font-black">Nível {p.level}</p>
+              </div>
             </div>
-          ))}
-        </div>
+            <span className="shrink-0 rounded-xl border border-border bg-background/60 px-3 py-2 text-xs font-bold tabular-nums">{lv.pct}%</span>
+          </div>
+          <div className="relative h-3 overflow-hidden rounded-full bg-secondary/80">
+            <div className="gradient-eternal h-full rounded-full transition-[width] duration-700" style={{ width: `${lv.pct}%` }} />
+          </div>
+          <div className="relative mt-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <span className="font-semibold tabular-nums">{p.xp.toLocaleString("pt-BR")} XP acumulados</span>
+            <span className="text-muted-foreground">{Math.max(0, lv.next - p.xp).toLocaleString("pt-BR")} XP para o próximo nível</span>
+          </div>
+          <div className="relative mt-3 flex items-start gap-2 rounded-xl border border-border/70 bg-background/35 p-3">
+            <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden />
+            {nextT ? (
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Próximo título: <span className="font-bold text-foreground">{nextT.name}</span> no nível {nextT.level_min}
+                {p.level < nextT.level_min ? ` — faltam ${nextT.level_min - p.level} níveis` : " — próximo marco disponível!"}
+              </p>
+            ) : (
+              <p className="text-xs text-muted-foreground">Título máximo alcançado. Seu progresso continua registrado.</p>
+            )}
+          </div>
+        </section>
+
+        <section className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5" aria-label="Resumo do leitor">
+          {statCards.map((item) => {
+            const Icon = item.icon;
+            return (
+              <article key={item.label} className="group relative min-w-0 overflow-hidden rounded-2xl border border-border/80 bg-card/75 p-3.5 transition duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 sm:p-4">
+                <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${item.wash} ${item.tone}`}>
+                  <Icon className="h-4 w-4" aria-hidden />
+                </span>
+                <p className="mt-3 truncate text-2xl font-black tabular-nums">{item.value == null ? "—" : item.value.toLocaleString("pt-BR")}</p>
+                <p className="mt-0.5 text-[11px] font-medium text-muted-foreground sm:text-xs">{item.label}</p>
+              </article>
+            );
+          })}
+        </section>
+
+        <section className="surface-panel mt-4 rounded-3xl p-4 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300"><CalendarDays className="h-5 w-5" aria-hidden /></span>
+              <div>
+                <h2 className="font-bold">Ritmo de leitura</h2>
+                <p className="mt-0.5 text-xs text-muted-foreground">Atividade nos últimos sete dias</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-xl font-black tabular-nums">{(stats.data?.week_chapters ?? 0).toLocaleString("pt-BR")}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">capítulos</p>
+            </div>
+          </div>
+          <div className="mt-5 grid grid-cols-7 gap-2 sm:gap-3">
+            {weeklyActivity.map((day) => {
+              const date = new Date(`${day.date}T12:00:00`);
+              const label = new Intl.DateTimeFormat("pt-BR", { weekday: "short" }).format(date).replace(".", "");
+              const barHeight = day.count ? Math.max(12, Math.round((day.count / maxActivity) * 100)) : 0;
+              return (
+                <div key={day.date} className="flex min-w-0 flex-col items-center gap-2" aria-label={`${label}: ${day.count} capítulos`}>
+                  <div className="flex h-20 w-full items-end overflow-hidden rounded-xl bg-secondary/60 p-1.5">
+                    <div className={`w-full rounded-lg transition-all duration-500 ${day.count ? "bg-gradient-to-t from-violet-600 via-fuchsia-500 to-violet-300" : "bg-transparent"}`} style={{ height: `${barHeight}%` }} />
+                  </div>
+                  <span className="text-[10px] font-semibold capitalize text-muted-foreground">{label}</span>
+                  <span className={`text-xs font-bold tabular-nums ${day.count ? "text-foreground" : "text-muted-foreground"}`}>{day.count}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/70 pt-3 text-xs text-muted-foreground">
+            <span className="inline-flex items-center gap-1.5"><Flame className="h-3.5 w-3.5 text-orange-300" aria-hidden /> Sequência atual: <strong className="text-foreground">{stats.data?.current_streak ?? 0} dias</strong></span>
+            <span>Recorde: <strong className="text-foreground">{stats.data?.best_streak ?? 0} dias</strong></span>
+          </div>
+        </section>
 
         <div className="mb-3 mt-8 flex items-center justify-between gap-2">
           <h2 className="text-xl font-semibold">Conquistas em destaque</h2>
