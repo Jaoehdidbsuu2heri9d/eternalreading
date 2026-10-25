@@ -253,6 +253,13 @@
       "when": 1792145600000,
       "tag": "0035_beta_launch_protections",
       "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "7",
+      "when": 1792232000000,
+      "tag": "0036_profile_public_stats",
+      "breakpoints": true
     }
   ]
 }
