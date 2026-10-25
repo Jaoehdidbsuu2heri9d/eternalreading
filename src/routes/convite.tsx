@@ -63,7 +63,7 @@ function InvitePage() {
     <div className="flex min-h-screen items-center justify-center px-4 py-8 sm:py-12">
       <div className="w-full max-w-md surface-panel p-5 sm:p-8">
         <Logo className="mb-6" />
-        <span className="gradient-eternal mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl text-primary-foreground">
+        <span className="gradient-eternal mb-4 flex h-11 w-11 items-center justify-center rounded-xl text-primary-foreground">
           <KeyRound className="h-5 w-5" aria-hidden />
         </span>
         <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Criar conta · Etapa 1 de 2</p>
