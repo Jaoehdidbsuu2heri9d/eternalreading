@@ -442,17 +442,31 @@ function ProfilePage() {
           {isMe && <Link to="/conquistas" className="text-sm text-primary hover:underline">Ver todas</Link>}
         </div>
         {(trophyQ.data ?? []).filter((a) => a.featured).length === 0 ? (
-          <p className="text-sm text-muted-foreground">Nenhuma conquista em destaque ainda.</p>
+          <div className="rounded-2xl border border-dashed border-border bg-card/40 px-4 py-6 text-center sm:px-6">
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Trophy className="h-6 w-6" aria-hidden /></span>
+            <p className="mt-3 font-semibold">Sua vitrine ainda está vazia</p>
+            <p className="mx-auto mt-1 max-w-sm text-xs leading-relaxed text-muted-foreground">Escolha suas conquistas favoritas para mostrar aos outros leitores o que você já alcançou na Eternal.</p>
+            {isMe ? <p className="mt-3 text-xs font-semibold text-primary">Use a seleção abaixo para destacar até cinco conquistas.</p> : null}
+          </div>
         ) : (
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2">
             {(trophyQ.data ?? []).filter((a) => a.featured).slice(0, 5).map((a) => (
-              <div key={a.id} className="surface-panel rounded-xl p-3">
-                <div className="flex items-center gap-2">
-                  <Trophy className="h-4 w-4 text-primary" aria-hidden />
-                  <span className="font-semibold">{a.name}</span>
+              <article key={a.id} className="group relative min-w-0 overflow-hidden rounded-2xl border border-amber-300/15 bg-gradient-to-br from-amber-400/10 via-card to-violet-500/5 p-4 transition hover:border-amber-300/35">
+                <div aria-hidden className="pointer-events-none absolute -right-5 -top-5 h-24 w-24 rounded-full bg-amber-400/10 blur-2xl" />
+                <div className="relative flex items-start gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-amber-300/20 bg-amber-400/10 text-amber-300">
+                    <Trophy className="h-5 w-5" aria-hidden />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h3 className="font-bold leading-snug">{a.name}</h3>
+                      <span className="rounded-full border border-amber-300/20 bg-amber-300/5 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-200">{a.rarity}</span>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">Conquistada em {formatDate(a.unlocked_at)}</p>
+                    {a.owners_pct != null ? <p className="mt-2 text-[10px] font-medium text-amber-200/80">{a.owners_pct.toLocaleString("pt-BR")}% dos leitores conquistaram esta conquista</p> : null}
+                  </div>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">{a.rarity} · {formatDate(a.unlocked_at)}</p>
-              </div>
+              </article>
             ))}
           </div>
         )}
