@@ -72,7 +72,7 @@ BEGIN
         FROM public.chapter_reads cr
         WHERE cr.user_id = p_user AND cr.read_on BETWEEN v_start AND v_today
         GROUP BY cr.read_on
-      ) day_count ON day_count.read_on = day_value::date
+      ) day_count ON day_count.read_on = days.day_value::date
     ), '[]'::jsonb);
 END;
 $$;
