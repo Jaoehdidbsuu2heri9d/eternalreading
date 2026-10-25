@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Button } from "@/components/common/EButton";
 import { Field, Input } from "@/components/common/EInput";
 import { Logo } from "@/components/Logo";
+import { InviteCommunityCTA } from "@/components/InviteCommunityCTA";
 import { supabase } from "@/integrations/supabase/client";
 
 const searchSchema = z.object({ code: z.string().optional() });
@@ -17,6 +18,8 @@ export const Route = createFileRoute("/cadastro")({
       { name: "description", content: "Crie sua conta na comunidade Eternal usando um código de convite." },
       { property: "og:title", content: "Criar conta — Eternal" },
       { property: "og:description", content: "Crie sua conta na comunidade Eternal." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: SignUpPage,
@@ -87,18 +90,22 @@ function SignUpPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md surface-panel p-8">
+    <div className="flex min-h-screen items-center justify-center px-4 py-8 sm:py-12">
+      <div className="w-full max-w-md surface-panel p-5 sm:p-8">
         <Logo className="mb-6" />
+        <p className="mb-2 text-xs font-medium uppercase text-muted-foreground">Criar conta · Etapa 2 de 2</p>
         <h1 className="text-2xl font-semibold">Criar conta</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
           {code ? "Convite validado. Complete seu cadastro." : "Valide um código de convite primeiro."}
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+        {!code ? <div className="mt-6"><InviteCommunityCTA /></div> : null}
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-5" aria-describedby={error ? "signup-error" : undefined}>
           <Field label="Nome de usuário" htmlFor="username">
             <Input
               id="username"
+              autoComplete="username"
               required
               value={form.username}
               onChange={(e) => setForm({ ...form, username: e.target.value })}
@@ -126,7 +133,7 @@ function SignUpPage() {
           </Field>
 
           {error ? (
-            <p role="alert" className="text-sm text-destructive">
+            <p id="signup-error" role="alert" className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm leading-relaxed text-destructive">
               {error}
             </p>
           ) : null}
@@ -138,7 +145,7 @@ function SignUpPage() {
 
         {!code ? (
           <p className="mt-6 text-center text-sm">
-            <Link to="/convite" className="text-primary-foreground underline underline-offset-4">
+            <Link to="/convite" className="rounded-sm text-primary-foreground underline underline-offset-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
               Inserir código de convite
             </Link>
           </p>

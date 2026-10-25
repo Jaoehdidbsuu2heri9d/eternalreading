@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -968,45 +968,6 @@ export type Database = {
           },
         ]
       }
-      faction_season_scores: {
-        Row: {
-          chapters_read: number
-          faction_slug: string
-          points: number
-          season_id: string
-          updated_at: string
-        }
-        Insert: {
-          chapters_read?: number
-          faction_slug: string
-          points?: number
-          season_id: string
-          updated_at?: string
-        }
-        Update: {
-          chapters_read?: number
-          faction_slug?: string
-          points?: number
-          season_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "faction_season_scores_faction_slug_fkey"
-            columns: ["faction_slug"]
-            isOneToOne: false
-            referencedRelation: "factions"
-            referencedColumns: ["slug"]
-          },
-          {
-            foreignKeyName: "faction_season_scores_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "faction_seasons"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       faction_season_rewards: {
         Row: {
           cosmetic_id: string | null
@@ -1049,6 +1010,45 @@ export type Database = {
           },
           {
             foreignKeyName: "faction_season_rewards_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "faction_seasons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      faction_season_scores: {
+        Row: {
+          chapters_read: number
+          faction_slug: string
+          points: number
+          season_id: string
+          updated_at: string
+        }
+        Insert: {
+          chapters_read?: number
+          faction_slug: string
+          points?: number
+          season_id: string
+          updated_at?: string
+        }
+        Update: {
+          chapters_read?: number
+          faction_slug?: string
+          points?: number
+          season_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faction_season_scores_faction_slug_fkey"
+            columns: ["faction_slug"]
+            isOneToOne: false
+            referencedRelation: "factions"
+            referencedColumns: ["slug"]
+          },
+          {
+            foreignKeyName: "faction_season_scores_season_id_fkey"
             columns: ["season_id"]
             isOneToOne: false
             referencedRelation: "faction_seasons"
